@@ -1,0 +1,42 @@
+diff --git a/node_modules/engine.io-parser/build/cjs/decodePacket.browser.js b/node_modules/engine.io-parser/build/cjs/decodePacket.browser.js
+index f434be6..85cc231 100644
+--- a/node_modules/engine.io-parser/build/cjs/decodePacket.browser.js
++++ b/node_modules/engine.io-parser/build/cjs/decodePacket.browser.js
+@@ -15,7 +15,7 @@ const decodePacket = (encodedPacket, binaryType) => {
+     if (type === "b") {
+         return {
+             type: "message",
+-            data: decodeBase64Packet(encodedPacket.substring(1), binaryType),
++            data: Buffer.from(encodedPacket.substring(1), 'base64'),
+         };
+     }
+     const packetType = commons_js_1.PACKET_TYPES_REVERSE[type];
+@@ -32,15 +32,6 @@ const decodePacket = (encodedPacket, binaryType) => {
+         };
+ };
+ exports.decodePacket = decodePacket;
+-const decodeBase64Packet = (data, binaryType) => {
+-    if (withNativeArrayBuffer) {
+-        const decoded = (0, base64_arraybuffer_js_1.decode)(data);
+-        return mapBinary(decoded, binaryType);
+-    }
+-    else {
+-        return { base64: true, data }; // fallback for old browsers
+-    }
+-};
+ const mapBinary = (data, binaryType) => {
+     switch (binaryType) {
+         case "blob":
+diff --git a/node_modules/engine.io-parser/build/cjs/encodePacket.browser.js b/node_modules/engine.io-parser/build/cjs/encodePacket.browser.js
+index 959d870..ec6e513 100644
+--- a/node_modules/engine.io-parser/build/cjs/encodePacket.browser.js
++++ b/node_modules/engine.io-parser/build/cjs/encodePacket.browser.js
+@@ -28,7 +28,7 @@ const encodePacket = ({ type, data }, supportsBinary, callback) => {
+             return callback(data);
+         }
+         else {
+-            return encodeBlobAsBase64(new Blob([data]), callback);
++            return callback('b' + Buffer.from(data).toString('base64'));
+         }
+     }
+     // plain string
