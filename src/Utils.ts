@@ -1,6 +1,6 @@
 import * as FileSystem from "expo-file-system";
 import ImageResizer from "@bam.tech/react-native-image-resizer";
-import { SmashDID } from "smash-node-lib";
+import { SmashDID } from "@smashchats/library";
 
 import { Message } from "@/src/app/profile/[user]/(tabs)/messages.js";
 

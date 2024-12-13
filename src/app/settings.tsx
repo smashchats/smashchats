@@ -3,7 +3,7 @@ import { Button, View, TextInput, Switch } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { SmashProfileMeta } from "smash-node-lib";
+import { SmashProfileMeta } from "@smashchats/library";
 
 import { ThemedText } from "@/src/components/ThemedText";
 import { Avatar } from "@/src/components/Avatar";

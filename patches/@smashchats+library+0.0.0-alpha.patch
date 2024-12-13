@@ -1,7 +1,7 @@
-diff --git a/node_modules/smash-node-lib/dist/src/SMESocketReadWrite.js b/node_modules/smash-node-lib/dist/src/SMESocketReadWrite.js
+diff --git a/node_modules/@smashchats/library/dist/src/SMESocketReadWrite.js b/node_modules/@smashchats/library/dist/src/SMESocketReadWrite.js
 index ea96b3f..a042189 100644
---- a/node_modules/smash-node-lib/dist/src/SMESocketReadWrite.js
-+++ b/node_modules/smash-node-lib/dist/src/SMESocketReadWrite.js
+--- a/node_modules/@smashchats/library/dist/src/SMESocketReadWrite.js
++++ b/node_modules/@smashchats/library/dist/src/SMESocketReadWrite.js
 @@ -8,7 +8,7 @@ const solveChallenge = async (data, auth, socket, logger) => {
          const symmetricKey = await CryptoUtils.singleton.deriveKey({
              ...auth.keyAlgorithm,
@@ -11,10 +11,10 @@ index ea96b3f..a042189 100644
          const unencryptedChallenge = await CryptoUtils.singleton.decrypt({
              ...auth.encryptionAlgorithm,
              iv: ivBuffer,
-diff --git a/node_modules/smash-node-lib/dist/src/SignalSession.js b/node_modules/smash-node-lib/dist/src/SignalSession.js
+diff --git a/node_modules/@smashchats/library/dist/src/SignalSession.js b/node_modules/@smashchats/library/dist/src/SignalSession.js
 index bafbec3..175e367 100644
---- a/node_modules/smash-node-lib/dist/src/SignalSession.js
-+++ b/node_modules/smash-node-lib/dist/src/SignalSession.js
+--- a/node_modules/@smashchats/library/dist/src/SignalSession.js
++++ b/node_modules/@smashchats/library/dist/src/SignalSession.js
 @@ -22,15 +22,15 @@ export class SignalSession {
          try {
              const bundle = new PreKeyBundleProtocol();

@@ -3,7 +3,7 @@ import { ScrollView, View } from "react-native";
 
 import { useLocalSearchParams } from "expo-router";
 import { eq } from "drizzle-orm";
-import { EncapsulatedSmashMessage, SmashDID } from "smash-node-lib";
+import { EncapsulatedSmashMessage, SmashDID } from "@smashchats/library";
 
 import { Colors } from "@/src/constants/Colors.js";
 import ProfileScreenContext from "@/src/context/ProfileScreenContext.js";

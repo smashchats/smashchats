@@ -12,7 +12,7 @@ import {
     userReducer,
     UserState,
 } from "@/src/context/UsersContext.js";
-import { SmashUser } from "smash-node-lib";
+import { SmashUser } from "@smashchats/library";
 
 export interface Settings {
     telemetryEnabled: boolean;

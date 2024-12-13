@@ -1,6 +1,6 @@
 import { InferSelectModel, InferInsertModel, eq } from "drizzle-orm";
 
-import { EncapsulatedSmashMessage, SmashDID } from "smash-node-lib";
+import { EncapsulatedSmashMessage, SmashDID } from "@smashchats/library";
 
 import { messages } from "@/src/db/schema.js";
 import { drizzle_db } from "@/src/db/database";

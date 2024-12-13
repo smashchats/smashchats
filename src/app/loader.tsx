@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { SplashScreen, Stack } from "expo-router";
 import { PostHogProvider } from "posthog-react-native";
 
-import { SmashUser } from "smash-node-lib";
+import { SmashUser } from "@smashchats/library";
 
 import { handleUserMessages, loadIdentity } from "@/src/IdentityUtils";
 import {

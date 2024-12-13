@@ -12,7 +12,7 @@ import {
 import { ChatListView } from "@/src/db/schema";
 import { UserDisplayData } from "@/src/events/UserDisplayDataReducer.jsx";
 import { fireEvent, render } from "@testing-library/react-native";
-import { EncapsulatedSmashMessage, SmashDID } from "smash-node-lib";
+import { EncapsulatedSmashMessage, SmashDID } from "@smashchats/library";
 
 const DEFAULT_VALUES: Partial<ChatListView> = {
     most_recent_message: "string",

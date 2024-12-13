@@ -1,5 +1,5 @@
 import { new_parser } from "@/src/events/UserDisplayDataReducer";
-import { EncapsulatedSmashMessage, SmashDID } from "smash-node-lib";
+import { EncapsulatedSmashMessage, SmashDID } from "@smashchats/library";
 
 describe("SmashMessage converter", () => {
     test("they send you their profile", () => {

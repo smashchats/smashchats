@@ -6,7 +6,7 @@ import {
     useMicrophonePermission,
     Camera,
 } from "react-native-vision-camera";
-import { EncapsulatedSmashMessage, SmashDID } from "smash-node-lib";
+import { EncapsulatedSmashMessage, SmashDID } from "@smashchats/library";
 
 import { Colors } from "@/src/constants/Colors.js";
 import { ChatList } from "@/src/components/fragments/ChatList/ChatList.jsx";

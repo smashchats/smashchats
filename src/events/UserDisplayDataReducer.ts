@@ -8,7 +8,7 @@ import {
 import { EventBase } from "@/src/events/types.js";
 import { SharedWithServerAdminUserEvent } from "@/src/events/shared_with_server_admin.js";
 import { EnrichedSmashMessage } from "@/src/models/Messages";
-import { SmashDID } from "smash-node-lib";
+import { SmashDID } from "@smashchats/library";
 
 const userMessageToAbstract = (msg: UserMessageEvent) => {
     switch (msg.data.type) {

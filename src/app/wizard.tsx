@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Button, TextInput, View } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 
-import { SmashProfileMeta } from "smash-node-lib";
+import { SmashProfileMeta } from "@smashchats/library";
 
 import { handleUserMessages, loadIdentity } from "@/src/IdentityUtils";
 import {

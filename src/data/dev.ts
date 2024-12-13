@@ -1,4 +1,4 @@
-import { JoinAction } from "smash-node-lib";
+import { JoinAction } from "@smashchats/library";
 
 // sme.dev.smashchats.com
 

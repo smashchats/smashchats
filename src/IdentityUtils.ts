@@ -6,7 +6,7 @@ import {
     SmashMessaging,
     SmashProfileMeta,
     SmashUser,
-} from "smash-node-lib";
+} from "@smashchats/library";
 import { IJsonIdentity } from "2key-ratchet";
 
 import { getData, saveData } from "@/src/StorageUtils.js";

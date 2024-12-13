@@ -4,7 +4,7 @@ import {
     GlobalActionBase,
     GlobalParams,
 } from "@/src/context/GlobalContext.js";
-import { EncapsulatedSmashMessage, SmashDID } from "smash-node-lib";
+import { EncapsulatedSmashMessage, SmashDID } from "@smashchats/library";
 import { SmashMessageToMessage } from "@/src/context/ChatListContext.js";
 
 interface UserReadDiscussionAction extends GlobalActionBase {

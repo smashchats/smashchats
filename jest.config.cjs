@@ -15,7 +15,7 @@ module.exports = {
         "^.+\\.(js|jsx|ts|tsx)$": "babel-jest"
     },
     transformIgnorePatterns: [
-        "node_modules/(?!(jest-)?react-native|expo|@expo|@react-native|smash-node-lib)"
+        "node_modules/(?!(jest-)?react-native|expo|@expo|@react-native|@smashchats/library)"
     ],
     coverageDirectory: "./coverage",
     testPathIgnorePatterns: ["node_modules"],

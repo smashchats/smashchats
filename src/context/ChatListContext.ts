@@ -1,4 +1,4 @@
-import { EncapsulatedSmashMessage, SmashDID } from "smash-node-lib";
+import { EncapsulatedSmashMessage, SmashDID } from "@smashchats/library";
 
 import { UserDisplayData } from "@/src/events/UserDisplayDataReducer.js";
 import { Action, GlobalActionBase } from "@/src/context/GlobalContext.jsx";

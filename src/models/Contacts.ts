@@ -2,7 +2,7 @@ import { InferInsertModel, InferSelectModel, eq } from "drizzle-orm";
 
 import { contacts } from "@/src/db/schema.js";
 import { drizzle_db } from "@/src/db/database";
-import { SmashEndpoint, SmashDID, SmashProfile } from "smash-node-lib";
+import { SmashEndpoint, SmashDID, SmashProfile } from "@smashchats/library";
 import { trustRelations } from "@/src/db/schema.js";
 
 export type Contact = InferSelectModel<typeof contacts>;

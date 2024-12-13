@@ -15,7 +15,7 @@ import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 // ================================
-import { SmashMessaging } from "smash-node-lib";
+import { SmashMessaging } from "@smashchats/library";
 
 import migrations from "@/drizzle/migrations.js";
 import { GlobalProvider } from "@/src/context/GlobalContext.js";
