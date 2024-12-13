@@ -46,13 +46,12 @@ export default function ProfileLayout() {
             ]);
             setInputTitle(userMeta?.title?.trim() ?? "");
             setInputDescription(userMeta?.description?.trim() ?? "");
-            setMeta({
-                ...(userMeta ?? {
-                    title: "",
-                    description: "",
-                    picture: "",
-                }),
-            });
+            const meta = {
+                title: userMeta?.title?.trim() ?? "",
+                description: userMeta?.description?.trim() ?? "",
+                picture: userMeta?.picture?.trim() ?? "",
+            };
+            setMeta(meta);
             setSettings({ ...(settings ?? DEFAULT_SETTINGS) });
             setLoaded(true);
         })();

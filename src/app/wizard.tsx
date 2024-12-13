@@ -53,7 +53,7 @@ export default function Wizard() {
             const meta = {
                 title: identityMeta.title.trim(),
                 description: identityMeta.description.trim(),
-                picture: identityMeta.picture.trim(),
+                picture: (identityMeta.picture ?? "").trim(),
             };
             await saveData<SmashProfileMeta>("settings.user_meta", meta);
             await saveData<Settings>("settings.settings", DEFAULT_SETTINGS);
@@ -102,7 +102,7 @@ export default function Wizard() {
         }
     };
 
-    const textColor = useThemeColor({ }, "text");
+    const textColor = useThemeColor({}, "text");
 
     return (
         <View

@@ -44,10 +44,10 @@ export function Home() {
                     messageId: m.sha256,
                 });
             };
-            user.on("message", listener);
+            user.on("data", listener);
 
             return () => {
-                user.removeListener("message", listener);
+                user.removeListener("data", listener);
             };
         }
     }, [user]);

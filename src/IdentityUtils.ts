@@ -132,9 +132,9 @@ export const handleUserMessages = async (user: SmashUser) => {
             }
         }
     };
-    user.on("message", messageListener);
+    user.on("data", messageListener);
     return () => {
-        user.removeListener("message", messageListener);
+        user.removeListener("data", messageListener);
     };
 };
 

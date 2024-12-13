@@ -57,7 +57,7 @@
     "react-native-web": "~0.19.10",
     "react-native-webview": "^13.12.3",
     "react-native-webview-crypto": "^0.0.26",
-    "smash-node-lib": "^0.0.0-alpha-16f096b"
+    "smash-node-lib": "^0.0.0-alpha-27a3051"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

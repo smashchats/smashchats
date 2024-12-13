@@ -100,9 +100,9 @@ export const ProfileMessages = ({ paddingTop }: { paddingTop: number }) => {
                 });
             }
         };
-        globalState.selfSmashUser.on("message", callback);
+        globalState.selfSmashUser.on("data", callback);
         return () => {
-            globalState.selfSmashUser.removeListener("message", callback);
+            globalState.selfSmashUser.removeListener("data", callback);
         };
     }, [globalState.selfSmashUser]);
 
