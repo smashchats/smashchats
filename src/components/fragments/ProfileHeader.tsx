@@ -1,10 +1,7 @@
-import { BlurView } from "@react-native-community/blur";
+import React, { PropsWithChildren } from "react";
+import { Pressable, View, Alert } from "react-native";
+
 import { useRouter } from "expo-router";
-import { PropsWithChildren } from "react";
-
-import React from "react";
-import { Pressable, Platform, View, Alert } from "react-native";
-
 import { Image } from "expo-image";
 
 import Text from "@/src/components/design-system/Text.jsx";
@@ -26,30 +23,15 @@ export const ProfileHeaderWrapper = ({
                 zIndex: 100,
             }}
         >
-            {Platform.OS === "ios" && (
-                <BlurView
-                    style={{
-                        height: height,
-                        maxHeight: height,
-                    }}
-                    blurType="light"
-                    blurAmount={10}
-                    reducedTransparencyFallbackColor="white"
-                >
-                    {children}
-                </BlurView>
-            )}
-            {Platform.OS === "android" && (
-                <View
-                    style={{
-                        height: height,
-                        maxHeight: height,
-                        backgroundColor: Colors.light.text,
-                    }}
-                >
-                    {children}
-                </View>
-            )}
+            <View
+                style={{
+                    height: height,
+                    maxHeight: height,
+                    backgroundColor: Colors.light.text,
+                }}
+            >
+                {children}
+            </View>
         </View>
     );
 };
@@ -126,7 +108,7 @@ export const ProfileHeader = ({
                             gap: 8,
                         }}
                     >
-                        {false && (
+                        {__DEV__ && (
                             <SmashOrPass
                                 onPass={console.error}
                                 onSmash={console.log}

@@ -153,22 +153,6 @@ brew install ruby
 sudo gem install fastlane -NV
 ```
 
-## TODO
-
-- [ ] save "active" contact --> display as purple
-- [x] don't save "profile" messages
-- [x] show all discovered profiles in chat list
-- [x] show discovered profiles as (some text TBD) so that we can identify them
-- [ ] fix chat list ordering
-- [ ] mark messages as read
-- [ ] mark messages as received
-- [ ] hide user "self" in chat list (even in db?)
-- [ ] send media messages
-- [ ] replace routing? https://github.com/expo/router/issues/723
-- [x] disable wizard
-- [x] qr code for DID
-- [x] prod & dev always join and discover
-
 ## Building for production
 
 https://docs.expo.dev/guides/local-app-production/

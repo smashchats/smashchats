@@ -19,6 +19,7 @@ app/*.keystore
 
 # fastlane specific
 fastlane/report.xml
+key.json
 
 # deliver temporary files
 fastlane/Preview.html

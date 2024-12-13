@@ -64,24 +64,19 @@ export const chatListReducer = (
     state: ChatListParams,
     action: ChatListAction | Action
 ): ChatListParams => {
-    switch (action.type) {
-        case "CHAT_LIST_TOGGLE_FILTER_ACTION": {
-            const isUserAddingFilter = !state.selectedFilters.includes(
-                action.filter
-            );
-            const selectedFilters = isUserAddingFilter
-                ? [...state.selectedFilters, action.filter]
-                : [...state.selectedFilters.filter((f) => f != action.filter)];
-
-            return {
-                ...state,
-                selectedFilters,
-            };
-        }
-
-        default:
-            return state;
+    if (action.type !== "CHAT_LIST_TOGGLE_FILTER_ACTION") {
+        return state;
     }
+
+    const isUserAddingFilter = !state.selectedFilters.includes(action.filter);
+    const selectedFilters = isUserAddingFilter
+        ? [...state.selectedFilters, action.filter]
+        : [...state.selectedFilters.filter((f) => f != action.filter)];
+
+    return {
+        ...state,
+        selectedFilters,
+    };
 };
 
 export const SmashMessageToMessage = (

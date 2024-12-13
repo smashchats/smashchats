@@ -162,6 +162,9 @@ const ProfileScreenWithoutProvider = () => {
         if (canceled) {
             return;
         }
+
+        // TODO send to peer when library will allow us to do that
+        console.info("assets", assets);
     };
 
     const headerHeight = 55;
@@ -218,6 +221,9 @@ const ProfileScreenWithoutProvider = () => {
                                 name="chevron-right"
                                 size={24}
                                 color="white"
+                                style={{
+                                    transform: [{ translateY: 10 }],
+                                }}
                             />
                         </Pressable>
                     )}

@@ -3,7 +3,6 @@ import { ScrollView, TouchableOpacity } from "react-native";
 
 import { Image } from "expo-image";
 import * as ScreenOrientation from "expo-screen-orientation";
-import ImageView from "react-native-image-viewing";
 
 import { Colors } from "@/src/constants/Colors.js";
 import { Box } from "@/src/components/design-system/Box.jsx";
@@ -39,20 +38,6 @@ export const ProfilePictures = () => {
             {/* Doesn't support Landscape Orientation, see: https://github.com/jobtoday/react-native-image-viewing/blob/master/src/ImageViewing.tsx#L102*/}
             {/* Might want to change to `react-native-image-zoom-viewer`: https://github.com/jobtoday/react-native-image-viewing/issues/141#issuecomment-1605478538 */}
             {/* Or re-implement myself */}
-
-            {/* @ts-ignore */}
-            <ImageView
-                images={images}
-                imageIndex={imageViewIndex}
-                visible={imageViewIndex >= 0}
-                keyExtractor={(_p: any, idx: number) => `image-${idx}`}
-                onRequestClose={() => {
-                    ScreenOrientation.lockAsync(
-                        ScreenOrientation.OrientationLock.PORTRAIT_UP
-                    );
-                    setImageViewIndex(-1);
-                }}
-            />
 
             <ScrollView
                 contentInsetAdjustmentBehavior="automatic"

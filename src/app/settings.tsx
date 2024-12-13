@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button, View, TextInput, Switch } from "react-native";
 import * as ImagePicker from "expo-image-picker";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { SmashProfileMeta } from "smash-node-lib";
 
@@ -118,110 +119,123 @@ export default function ProfileLayout() {
         }
     };
 
-    const textColor = useThemeColor({ }, "text");
+    const textColor = useThemeColor({}, "text");
 
     return (
-        <View style={{ flex: 1, padding: 15 }}>
-            <View style={{ alignItems: "center", justifyContent: "center" }}>
-                <Avatar
-                    contact={{ meta_picture: meta.picture } as TrustedContact}
-                    variant="xlarge"
-                />
-                <View style={{ marginTop: 15 }}>
-                    <Button title="Change image" onPress={pickImage} />
-                </View>
-            </View>
-            <View style={{ marginTop: 20, width: "100%" }}>
-                <ThemedText style={{ marginBottom: 10 }}>
-                    Display Name
-                </ThemedText>
-                <TextInput
-                    style={{
-                        borderWidth: 1,
-                        borderColor: Colors.textLightGray,
-                        color: textColor,
-                        padding: 10,
-                        borderRadius: 5,
-                        width: "100%",
-                    }}
-                    placeholder="Enter your name"
-                    placeholderTextColor={Colors.textLightGray}
-                    value={inputTitle}
-                    onChangeText={setInputTitle}
-                    onEndEditing={handleInputTitleToMeta}
-                    onBlur={handleInputTitleToMeta}
-                />
-            </View>
-            <View style={{ marginTop: 20, width: "100%" }}>
-                <ThemedText style={{ marginBottom: 10 }}>
-                    Description
-                </ThemedText>
-                <TextInput
-                    style={{
-                        borderWidth: 1,
-                        borderColor: Colors.textLightGray,
-                        color: textColor,
-                        padding: 10,
-                        borderRadius: 5,
-                        width: "100%",
-                        height: 100,
-                        textAlignVertical: "top",
-                    }}
-                    placeholder="Enter a description about yourself"
-                    placeholderTextColor={Colors.textLightGray}
-                    multiline={true}
-                    numberOfLines={4}
-                    value={inputDescription}
-                    onEndEditing={handleInputDescriptionToMeta}
-                    onBlur={handleInputDescriptionToMeta}
-                    onChangeText={setInputDescription}
-                />
-            </View>
-            <View
-                style={{
-                    marginTop: 20,
-                    marginBottom: 20,
-                    height: 1,
-                    backgroundColor: Colors.textLightGray,
-                    width: "100%",
-                    opacity: 0.2,
-                }}
-            />
-            <ThemedText
-                style={{ fontSize: 16, fontWeight: "500", marginBottom: 10 }}
-            >
-                Privacy
-            </ThemedText>
-            <View style={{ marginTop: 20, width: "100%" }}>
+        <SafeAreaView
+            edges={["top", "bottom"]}
+            style={{ flex: 1, padding: 15, backgroundColor: Colors.background }}
+        >
+            <View style={{ flex: 1, padding: 15 }}>
                 <View
-                    style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                    }}
+                    style={{ alignItems: "center", justifyContent: "center" }}
                 >
-                    <ThemedText>Enable Analytics</ThemedText>
-                    <Switch
-                        value={settings.telemetryEnabled}
-                        onValueChange={(value) => {
-                            setSettings((old) => ({
-                                ...old,
-                                telemetryEnabled: value,
-                            }));
+                    <Avatar
+                        contact={
+                            { meta_picture: meta.picture } as TrustedContact
+                        }
+                        variant="xlarge"
+                    />
+                    <View style={{ marginTop: 15 }}>
+                        <Button title="Change image" onPress={pickImage} />
+                    </View>
+                </View>
+                <View style={{ marginTop: 20, width: "100%" }}>
+                    <ThemedText style={{ marginBottom: 10 }}>
+                        Display Name
+                    </ThemedText>
+                    <TextInput
+                        style={{
+                            borderWidth: 1,
+                            borderColor: Colors.textLightGray,
+                            color: textColor,
+                            padding: 10,
+                            borderRadius: 5,
+                            width: "100%",
                         }}
+                        placeholder="Enter your name"
+                        placeholderTextColor={Colors.textLightGray}
+                        value={inputTitle}
+                        onChangeText={setInputTitle}
+                        onEndEditing={handleInputTitleToMeta}
+                        onBlur={handleInputTitleToMeta}
                     />
                 </View>
+                <View style={{ marginTop: 20, width: "100%" }}>
+                    <ThemedText style={{ marginBottom: 10 }}>
+                        Description
+                    </ThemedText>
+                    <TextInput
+                        style={{
+                            borderWidth: 1,
+                            borderColor: Colors.textLightGray,
+                            color: textColor,
+                            padding: 10,
+                            borderRadius: 5,
+                            width: "100%",
+                            height: 100,
+                            textAlignVertical: "top",
+                        }}
+                        placeholder="Enter a description about yourself"
+                        placeholderTextColor={Colors.textLightGray}
+                        multiline={true}
+                        numberOfLines={4}
+                        value={inputDescription}
+                        onEndEditing={handleInputDescriptionToMeta}
+                        onBlur={handleInputDescriptionToMeta}
+                        onChangeText={setInputDescription}
+                    />
+                </View>
+                <View
+                    style={{
+                        marginTop: 20,
+                        marginBottom: 20,
+                        height: 1,
+                        backgroundColor: Colors.textLightGray,
+                        width: "100%",
+                        opacity: 0.2,
+                    }}
+                />
                 <ThemedText
                     style={{
-                        marginTop: 8,
-                        fontSize: 12,
-                        color: Colors.textLightGray,
+                        fontSize: 16,
+                        fontWeight: "500",
+                        marginBottom: 10,
                     }}
                 >
-                    Help improve SmashChats by sharing anonymous usage data. No
-                    personal information is collected.
+                    Privacy
                 </ThemedText>
+                <View style={{ marginTop: 20, width: "100%" }}>
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                        }}
+                    >
+                        <ThemedText>Enable Analytics</ThemedText>
+                        <Switch
+                            value={settings.telemetryEnabled}
+                            onValueChange={(value) => {
+                                setSettings((old) => ({
+                                    ...old,
+                                    telemetryEnabled: value,
+                                }));
+                            }}
+                        />
+                    </View>
+                    <ThemedText
+                        style={{
+                            marginTop: 8,
+                            fontSize: 12,
+                            color: Colors.textLightGray,
+                        }}
+                    >
+                        Help improve SmashChats by sharing anonymous usage data.
+                        No personal information is collected.
+                    </ThemedText>
+                </View>
             </View>
-        </View>
+        </SafeAreaView>
     );
 }

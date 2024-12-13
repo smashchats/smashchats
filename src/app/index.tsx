@@ -1,7 +1,12 @@
 import React, { useEffect } from "react";
 
 import { SafeAreaView } from "react-native-safe-area-context";
-import { EncapsulatedSmashMessage, JoinAction, SmashDID } from "smash-node-lib";
+import {
+    useCameraPermission,
+    useMicrophonePermission,
+    Camera,
+} from "react-native-vision-camera";
+import { EncapsulatedSmashMessage, SmashDID } from "smash-node-lib";
 
 import { Colors } from "@/src/constants/Colors.js";
 import { ChatList } from "@/src/components/fragments/ChatList/ChatList.jsx";
@@ -11,12 +16,6 @@ import {
     useGlobalState,
 } from "@/src/context/GlobalContext.js";
 import { getEnrichedMessage } from "@/src/IdentityUtils";
-
-import {
-    useCameraPermission,
-    useMicrophonePermission,
-    Camera,
-} from "react-native-vision-camera";
 
 export function Home() {
     const dispatch = useGlobalDispatch();

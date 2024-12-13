@@ -10,13 +10,12 @@
     "web": "expo start --web",
     "test": "jest --watchAll",
     "lint": "expo lint",
-    "postinstall": "patch-package && node ./scripts/fix-node-modules.cjs"
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@bam.tech/react-native-image-resizer": "^3.0.11",
     "@expo/vector-icons": "^14.0.2",
     "@react-native-async-storage/async-storage": "1.23.1",
-    "@react-native-community/blur": "^4.4.1",
     "@react-navigation/material-top-tabs": "^6.6.14",
     "@react-navigation/native": "^6.0.2",
     "@ungap/structured-clone": "^1.2.0",
@@ -47,7 +46,6 @@
     "react-dom": "18.2.0",
     "react-native": "0.74.3",
     "react-native-gesture-handler": "~2.16.1",
-    "react-native-image-viewing": "^0.2.2",
     "react-native-pager-view": "6.3.0",
     "react-native-qr": "^1.0.0",
     "react-native-quick-crypto": "^0.7.6",
