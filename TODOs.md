@@ -17,5 +17,6 @@
 - [x] prod & dev always join and discover
 - [ ] fastlane android bump version
 - [ ] fastlane android upload
-- [ ] fastlane ios
-- [ ] fastlane ios bump version
+- [ ] follow https://www.runway.team/blog/how-to-set-up-a-ci-cd-pipeline-for-your-ios-app-fastlane-github-actions
+  - [ ] fastlane ios
+  - [ ] fastlane ios bump version
