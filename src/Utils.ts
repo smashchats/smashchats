@@ -4,13 +4,8 @@ import { SmashDID } from "@smashchats/library";
 
 import { Message } from "@/src/app/profile/[user]/(tabs)/messages.js";
 
-const USE_LOCAL_DNS = false;
-
 const DOH_SERVERS = ["https://dns.google/resolve"];
-const SERVER =
-    __DEV__ && USE_LOCAL_DNS
-        ? "http://192.168.0.160:8053/dns-query"
-        : DOH_SERVERS[0];
+const SERVER = DOH_SERVERS[0];
 
 const getDnsRecord = (
     domain: string,

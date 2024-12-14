@@ -24,8 +24,6 @@ import { useColorScheme } from "@/src/hooks/useColorScheme.js";
 
 import { drizzle_db, expo_db } from "@/src/db/database";
 import LoaderScreen from "@/src/app/loader";
-// import { resetIdentity } from "@/src/db/reset";
-// const RESET_DB = __DEV__ && false;
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -43,24 +41,6 @@ export default function RootLayout() {
     let success = false;
     let error: Error | undefined = undefined;
 
-    // if (RESET_DB) {
-    //     SplashScreen.hideAsync();
-    //     (async () => {
-    //         await resetIdentity(drizzle_db);
-    //     })();
-
-    //     return (
-    //         <View
-    //             style={{
-    //                 flex: 1,
-    //                 justifyContent: "center",
-    //                 alignItems: "center",
-    //             }}
-    //         >
-    //             <ThemedText>Resetting database...</ThemedText>
-    //         </View>
-    //     );
-    // }
     const { success: _success, error: _error } = useMigrations(
         drizzle_db,
         migrations
