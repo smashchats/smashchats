@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { Dispatch, useEffect } from "react";
 import { View } from "react-native";
 import { SplashScreen, Stack } from "expo-router";
 import { PostHogProvider } from "posthog-react-native";
@@ -7,6 +7,7 @@ import { SmashUser } from "@smashchats/library";
 
 import { handleUserMessages, loadIdentity } from "@/src/IdentityUtils";
 import {
+    Action,
     DEFAULT_SETTINGS,
     Settings,
     useGlobalDispatch,
@@ -14,7 +15,7 @@ import {
 } from "@/src/context/GlobalContext";
 import { getData, saveData } from "@/src/StorageUtils";
 import { ThemedText } from "@/src/components/ThemedText";
-import { dev_nab_join_action } from "@/src/data/dev";
+import { dev_nab_join_action } from "@/data/dev";
 import { createTrustRelation } from "@/src/models/TrustRelation";
 
 export default function LoaderScreen() {
@@ -34,6 +35,77 @@ export default function LoaderScreen() {
         }
     };
 
+    const initializeApp = async (
+        dispatch: Dispatch<Action>,
+        settings: Settings | null
+    ) => {
+        await SplashScreen.hideAsync();
+
+        if (settings === null) {
+            await handleNewUser(dispatch);
+        } else {
+            await handleExistingUser(dispatch, settings);
+        }
+    };
+
+    const handleNewUser = async (dispatch: Dispatch<Action>) => {
+        await saveData<Settings>("settings.settings", DEFAULT_SETTINGS);
+        dispatch({
+            type: "SET_SETTINGS_ACTION",
+            settings: DEFAULT_SETTINGS,
+        });
+        dispatch({
+            type: "SET_APP_WORKFLOW_ACTION",
+            appWorkflow: "REGISTERING",
+        });
+
+        const user = await setupUser(dispatch);
+        dispatch({
+            type: "SET_APP_WORKFLOW_ACTION",
+            appWorkflow: "REGISTERED",
+        });
+
+        await finalizeSetup(dispatch, user);
+    };
+
+    const handleExistingUser = async (
+        dispatch: Dispatch<Action>,
+        settings: Settings
+    ) => {
+        dispatch({
+            type: "SET_SETTINGS_ACTION",
+            settings,
+        });
+        dispatch({
+            type: "SET_APP_WORKFLOW_ACTION",
+            appWorkflow: "CONNECTING",
+        });
+
+        const user = await setupUser(dispatch);
+        await finalizeSetup(dispatch, user);
+    };
+
+    const setupUser = async (dispatch: Dispatch<Action>) => {
+        const user = await loadIdentity(__DEV__ ? "DEBUG" : "WARN");
+        dispatch({
+            type: "SET_USER_ACTION",
+            user,
+        });
+        return user;
+    };
+
+    const finalizeSetup = async (
+        dispatch: Dispatch<Action>,
+        user: SmashUser
+    ) => {
+        handleUserMessages(user);
+        await initializeUserAndDiscoverNetwork(user);
+        dispatch({
+            type: "SET_APP_WORKFLOW_ACTION",
+            appWorkflow: "CONNECTED",
+        });
+    };
+
     useEffect(() => {
         dispatch({
             type: "SET_APP_WORKFLOW_ACTION",
@@ -44,57 +116,9 @@ export default function LoaderScreen() {
             const [settings] = await Promise.all([
                 getData<Settings>("settings.settings"),
             ]);
-            if (settings !== null) {
-                SplashScreen.hideAsync();
-
-                dispatch({
-                    type: "SET_SETTINGS_ACTION",
-                    settings: settings,
-                });
-                dispatch({
-                    type: "SET_APP_WORKFLOW_ACTION",
-                    appWorkflow: "CONNECTING",
-                });
-                const user = await loadIdentity("WARN");
-                dispatch({
-                    type: "SET_USER_ACTION",
-                    user,
-                });
-                handleUserMessages(user);
-                await initializeUserAndDiscoverNetwork(user);
-                dispatch({
-                    type: "SET_APP_WORKFLOW_ACTION",
-                    appWorkflow: "CONNECTED",
-                });
-            } else {
-                saveData<Settings>("settings.settings", DEFAULT_SETTINGS);
-                dispatch({
-                    type: "SET_APP_WORKFLOW_ACTION",
-                    appWorkflow: "REGISTERING",
-                });
-                SplashScreen.hideAsync();
-                const user = await loadIdentity("WARN");
-                dispatch({
-                    type: "SET_APP_WORKFLOW_ACTION",
-                    appWorkflow: "REGISTERED",
-                });
-                dispatch({
-                    type: "SET_USER_ACTION",
-                    user,
-                });
-                handleUserMessages(user);
-                await initializeUserAndDiscoverNetwork(user);
-                dispatch({
-                    type: "SET_APP_WORKFLOW_ACTION",
-                    appWorkflow: "CONNECTED",
-                });
-            }
+            await initializeApp(dispatch, settings);
         })();
     }, []);
-
-    useEffect(() => {
-        console.debug(state.appWorkflow);
-    }, [state.appWorkflow]);
 
     return (
         <>

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ScrollView, View } from "react-native";
 
 import { useLocalSearchParams } from "expo-router";
@@ -6,7 +6,6 @@ import { eq } from "drizzle-orm";
 import { EncapsulatedSmashMessage, SmashDID } from "@smashchats/library";
 
 import { Colors } from "@/src/constants/Colors.js";
-import ProfileScreenContext from "@/src/context/ProfileScreenContext.js";
 import { Box } from "@/src/components/design-system/Box.jsx";
 import ProfileMessagesScreenText from "@/src/components/ProfileMessagesScreenText.jsx";
 import ProfileMessagesScreenDate from "@/src/components/ProfileMessagesScreenDate.jsx";
@@ -33,8 +32,8 @@ export type Message = {
 export const ProfileMessages = ({ paddingTop }: { paddingTop: number }) => {
     const { user: peerId } = useLocalSearchParams();
 
-    const [profileScreenState, profileDispatch] =
-        useContext(ProfileScreenContext);
+    const [hasScrolledToEnd, setHasScrolledToEnd] = useState(false);
+
     const globalDispatch = useGlobalDispatch();
     const globalState = useGlobalState();
 
@@ -51,13 +50,13 @@ export const ProfileMessages = ({ paddingTop }: { paddingTop: number }) => {
     const scrollViewRef = useRef(null);
 
     useEffect(() => {
-        if (!profileScreenState.hasScrolledToEnd && scrollViewRef.current) {
+        if (!hasScrolledToEnd && scrollViewRef.current) {
             (scrollViewRef.current as ScrollView).scrollToEnd({
                 animated: false,
             });
-            profileDispatch({ type: "HAS_SCROLLED_TO_END" });
+            setHasScrolledToEnd(true);
         }
-    }, [profileScreenState.hasScrolledToEnd]);
+    }, [hasScrolledToEnd]);
 
     useEffect(() => {
         globalDispatch({
@@ -96,7 +95,7 @@ export const ProfileMessages = ({ paddingTop }: { paddingTop: number }) => {
             if (from.id === peerId) {
                 globalDispatch({
                     type: "USER_READ_DISCUSSION_ACTION",
-                    discussionId: peerId as string,
+                    discussionId: peerId,
                 });
             }
         };

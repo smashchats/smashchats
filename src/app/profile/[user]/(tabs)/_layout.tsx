@@ -14,7 +14,6 @@ import * as ImagePicker from "expo-image-picker";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { ProfileScreenProvider } from "@/src/context/ProfileScreenContext.js";
 import { Colors } from "@/src/constants/Colors.js";
 import ProfileMessages from "@/src/app/profile/[user]/(tabs)/messages.jsx";
 import {
@@ -41,14 +40,6 @@ export type ProfileStackParamList = {
 };
 
 export const ProfileScreen = () => {
-    return (
-        <ProfileScreenProvider>
-            <ProfileScreenWithoutProvider />
-        </ProfileScreenProvider>
-    );
-};
-
-const ProfileScreenWithoutProvider = () => {
     const { user } = useLocalSearchParams();
     const router = useRouter();
     const [newMessage, setNewMessage] = useState("");

@@ -17,7 +17,6 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
         // if the file exists, we won't remove extension, and we'll fall back to normal resolution.
         // this rule specifically exists for .tsx? files that are imported as .jsx? files.
         if (!fs.existsSync(moduleFilePath)) {
-            // console.log(moduleName, moduleName.replace(/\.[^/.]+$/, ''));
             return context.resolveRequest(
                 context,
                 moduleName.replace(/\.[^/.]+$/, ""),
