@@ -72,7 +72,6 @@ export const userReducer = (
         }
         return state;
     };
-    // let out = { ...state };
 
     switch (action.type) {
         case "USER_READ_DISCUSSION_ACTION":
@@ -81,7 +80,7 @@ export const userReducer = (
         case "USER_OPEN_DISCUSSION_ACTION":
             return getUserOrCreateIfItDoesNotExist(state, action.discussionId);
 
-        case "USER_RECEIVE_MESSAGE_ACTION":
+        case "USER_RECEIVE_MESSAGE_ACTION": {
             const out = getUserOrCreateIfItDoesNotExist(state, action.from.id);
 
             out[action.from.id].recentMessages = [
@@ -89,6 +88,7 @@ export const userReducer = (
                 SmashMessageToMessage(action.message, action.from),
             ];
             return out;
+        }
 
         case "USER_SEND_MESSAGE_ACTION": {
             const out = getUserOrCreateIfItDoesNotExist(

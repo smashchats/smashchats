@@ -17,8 +17,7 @@ export async function resetIdentity(
     for (const table of tables) {
         try {
             console.debug("Dropping table", table);
-
-            await db.run(sql`DROP TABLE IF EXISTS ${sql.identifier(table)}`);
+            db.run(sql`DROP TABLE IF EXISTS ${sql.identifier(table)}`);
         } catch (error) {
             console.error("Error resetting database", error);
         }

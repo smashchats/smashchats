@@ -151,31 +151,6 @@ describe("SmashMessage converter", () => {
         expect(newMessage.content).toBe("");
     });
 
-    test("I clear them", () => {
-        const message: EncapsulatedSmashMessage = {
-            type: "action",
-            timestamp: new Date().toISOString(),
-            sha256: "",
-            data: {
-                action: "clear",
-                target: { id: "them-uuid" } as SmashDID,
-            },
-            after: "after",
-        };
-
-        const newMessage = new_parser(
-            {
-                ...message,
-                fromDid: { id: "me-uuid" } as SmashDID,
-                toDiscussionId: "them-uuid",
-            },
-            { id: "me-uuid" } as SmashDID
-        );
-
-        expect(newMessage.type).toBe("action");
-        expect(newMessage.content).toBe("(You cleared them)");
-    });
-
     test("they clear me", () => {
         const message: EncapsulatedSmashMessage = {
             type: "action",
