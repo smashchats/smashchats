@@ -24,6 +24,7 @@ export type Message = {
     content: string;
     sha256: string;
     from: string;
+    fromMe: boolean;
     type: string;
     date: Date;
 };
@@ -45,6 +46,7 @@ export const ProfileMessages = ({ paddingTop }: { paddingTop: number }) => {
     );
 
     const [messages, setMessages] = useState<Message[]>([]);
+    const [myDID, setMyDID] = useState<string | null>(null);
 
     const scrollViewRef = useRef(null);
 
@@ -78,10 +80,11 @@ export const ProfileMessages = ({ paddingTop }: { paddingTop: number }) => {
                     date: new Date(m.date_delivered ?? m.created_at),
                     content: m.data,
                     from: m.from_did_id,
+                    fromMe: m.from_did_id === myDID,
                 }))
             )
         );
-    }, [db_messages]);
+    }, [db_messages, myDID]);
 
     useEffect(() => {
         const callback = (
@@ -97,10 +100,23 @@ export const ProfileMessages = ({ paddingTop }: { paddingTop: number }) => {
             }
         };
         globalState.selfSmashUser.on("data", callback);
+        globalState.selfSmashUser.getDID().then((did) => setMyDID(did?.id));
         return () => {
             globalState.selfSmashUser.removeListener("data", callback);
         };
     }, [globalState.selfSmashUser]);
+
+    useEffect(() => {
+        if (scrollViewRef.current && myDID !== null) {
+            (scrollViewRef.current as ScrollView).scrollToEnd({
+                animated: false,
+            });
+        }
+    }, [myDID]);
+
+    if (myDID === null) {
+        return <View />;
+    }
 
     return (
         <Box flex={1} bg={Colors.background} h="100%">
