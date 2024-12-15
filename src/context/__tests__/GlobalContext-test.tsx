@@ -154,61 +154,41 @@ describe("user meta context", () => {
 });
 
 describe("app workflow reducer", () => {
-    const initialState = "LOADING" as AppWorkflow;
-
-    it("should set app workflow to REGISTERING if app workflow is LOADING", () => {
-        const newState = appWorkflowReducer(initialState, {
-            type: "SET_APP_WORKFLOW_ACTION",
-            appWorkflow: "REGISTERING",
+    [
+        ["LOADING", "REGISTERING"],
+        ["REGISTERING", "REGISTERED"],
+        ["REGISTERED", "CONNECTED"],
+        ["LOADING", "CONNECTING"],
+        ["CONNECTING", "CONNECTED"],
+        ["CONNECTED", "CONNECTING"],
+    ].forEach(([currentState, newState]) => {
+        it(`should set app workflow to ${newState} if app workflow is ${currentState}`, () => {
+            const result = appWorkflowReducer(currentState as AppWorkflow, {
+                type: "SET_APP_WORKFLOW_ACTION",
+                appWorkflow: newState as AppWorkflow,
+            });
+            expect(result).toEqual(newState);
         });
-        expect(newState).toEqual("REGISTERING");
     });
 
-    it("should set app workflow to REGISTERED if app workflow is REGISTERING", () => {
-        const newState = appWorkflowReducer("REGISTERING", {
+    it("should NOT set app workflow if app workflow is not valid", () => {
+        const result = appWorkflowReducer("LOADING", {
             type: "SET_APP_WORKFLOW_ACTION",
-            appWorkflow: "REGISTERED",
+            appWorkflow: "INVALID" as AppWorkflow,
         });
-        expect(newState).toEqual("REGISTERED");
+        expect(result).toEqual("LOADING");
     });
 
-    it("should set app workflow to CONNECTING if app workflow is LOADING", () => {
-        const newState = appWorkflowReducer(initialState, {
-            type: "SET_APP_WORKFLOW_ACTION",
-            appWorkflow: "CONNECTING",
+    [
+        ["REGISTERED", "REGISTERING"],
+        ["CONNECTED", "LOADING"],
+    ].forEach(([currentState, newState]) => {
+        it(`should NOT set app workflow to ${newState} if app workflow is ${currentState}`, () => {
+            const result = appWorkflowReducer(currentState as AppWorkflow, {
+                type: "SET_APP_WORKFLOW_ACTION",
+                appWorkflow: newState as AppWorkflow,
+            });
+            expect(result).toEqual(currentState);
         });
-        expect(newState).toEqual("CONNECTING");
-    });
-
-    it("should set app workflow to CONNECTED if app workflow is CONNECTING", () => {
-        const newState = appWorkflowReducer("CONNECTING", {
-            type: "SET_APP_WORKFLOW_ACTION",
-            appWorkflow: "CONNECTED",
-        });
-        expect(newState).toEqual("CONNECTED");
-    });
-
-    it("should NOT set app workflow to LOADING if app workflow is CONNECTED", () => {
-        const newState = appWorkflowReducer("CONNECTED", {
-            type: "SET_APP_WORKFLOW_ACTION",
-            appWorkflow: "LOADING",
-        });
-        expect(newState).toEqual("CONNECTED");
-    });
-
-    it("should NOT set app workflow to REGISTERING if app workflow is REGISTERED", () => {
-        const newState = appWorkflowReducer("REGISTERED", {
-            type: "SET_APP_WORKFLOW_ACTION",
-            appWorkflow: "REGISTERING",
-        });
-        expect(newState).toEqual("REGISTERED");
-    });
-
-    it("should set app workflow to CONNECTING if app workflow is CONNECTED", () => {
-        const newState = appWorkflowReducer("CONNECTED", {
-            type: "SET_APP_WORKFLOW_ACTION",
-            appWorkflow: "CONNECTING",
-        });
-        expect(newState).toEqual("CONNECTING");
     });
 });
