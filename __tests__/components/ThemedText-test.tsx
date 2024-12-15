@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { render } from '@testing-library/react-native';
 
-import { ThemedText } from '../ThemedText';
+import { ThemedText } from '@/src/components/ThemedText';
 
 it(`renders correctly`, () => {
   const tree = render(<ThemedText>Snapshot test!</ThemedText>).toJSON();
