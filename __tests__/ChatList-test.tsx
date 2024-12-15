@@ -10,9 +10,15 @@ import {
     INITIAL_GLOBAL_STATE,
 } from "@/src/context/GlobalContext.jsx";
 import { ChatListView } from "@/src/db/schema";
-import { UserDisplayData } from "@/src/events/UserDisplayDataReducer.jsx";
 import { fireEvent, render } from "@testing-library/react-native";
 import { EncapsulatedSmashMessage, SmashDID } from "@smashchats/library";
+
+jest.mock('@react-native-async-storage/async-storage', () => ({
+  setItem: jest.fn(() => Promise.resolve()),
+  getItem: jest.fn(() => Promise.resolve(null)),
+  removeItem: jest.fn(() => Promise.resolve()),
+  clear: jest.fn(() => Promise.resolve()),
+}));
 
 const DEFAULT_VALUES: Partial<ChatListView> = {
     most_recent_message: "string",

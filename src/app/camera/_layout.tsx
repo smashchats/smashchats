@@ -8,8 +8,8 @@ import {
     View,
 } from "react-native";
 import {
-    PinchGestureHandlerGestureEvent,
-    PinchGestureHandler,
+    Gesture,
+    GestureDetector,
     TapGestureHandler,
 } from "react-native-gesture-handler";
 
@@ -28,7 +28,7 @@ import {
 import Reanimated, {
     Extrapolation,
     interpolate,
-    useAnimatedGestureHandler,
+    runOnJS,
     useAnimatedProps,
     useSharedValue,
 } from "react-native-reanimated";
@@ -153,44 +153,43 @@ export default function CameraLayout() {
     //#endregion
 
     //#region Pinch to Zoom Gesture
+    const [startZoom, setStartZoom] = useState(zoom.value);
     // The gesture handler maps the linear pinch gesture (0 - 1) to an exponential curve since a camera's zoom
     // function does not appear linear to the user. (aka zoom 0.1 -> 0.2 does not look equal in difference as 0.8 -> 0.9)
-    const onPinchGesture = useAnimatedGestureHandler<
-        PinchGestureHandlerGestureEvent,
-        { startZoom?: number }
-    >({
-        onStart: (_, context) => {
-            console.debug("onStart", zoom.value);
-            context.startZoom = zoom.value;
-        },
-        onActive: (event, context) => {
-            console.debug("onActive", event.scale);
-            // we're trying to map the scale gesture to a linear zoom here
-            const startZoom = context.startZoom ?? 0;
+    const onPinchGestureChange = (eventScale: number) => {
+        // we're trying to map the scale gesture to a linear zoom here
 
-            // TODO: if available, switch to fisheye mode using something like this:
-            if (startZoom === 1 && event.scale < 1) {
-                zoom.value = 0.5;
-            } else if (startZoom === 0.5 && event.scale > 1) {
-                zoom.value = 1;
-            } else if (startZoom === 0.5 && event.scale < 1) {
-                // do nothing
-            } else {
-                const scale = interpolate(
-                    event.scale,
-                    [1 - 1 / SCALE_FULL_ZOOM, 1, SCALE_FULL_ZOOM],
-                    [-1, 0, 1],
-                    Extrapolation.CLAMP
-                );
-                zoom.value = interpolate(
-                    scale,
-                    [-1, 0, 1],
-                    [minZoom, startZoom, maxZoom],
-                    Extrapolation.CLAMP
-                );
-            }
-        },
-    });
+        // TODO: if available, switch to fisheye mode using something like this:
+        if (startZoom === 1 && eventScale < 1) {
+            zoom.value = 0.5;
+        } else if (startZoom === 0.5 && eventScale > 1) {
+            zoom.value = 1;
+        } else if (startZoom === 0.5 && eventScale < 1) {
+            // do nothing
+        } else {
+            const scale = interpolate(
+                eventScale,
+                [1 - 1 / SCALE_FULL_ZOOM, 1, SCALE_FULL_ZOOM],
+                [-1, 0, 1],
+                Extrapolation.CLAMP
+            );
+            zoom.value = interpolate(
+                scale,
+                [-1, 0, 1],
+                [minZoom, startZoom, maxZoom],
+                Extrapolation.CLAMP
+            );
+        }
+    };
+    const pinchGesture = Gesture.Pinch()
+        .onStart(() => {
+            console.debug("onStart", zoom.value);
+            runOnJS(setStartZoom)(zoom.value);
+        })
+        .onChange((event) => {
+            console.debug("onChange", event.scale);
+            runOnJS(onPinchGestureChange)(event.scale);
+        });
     //#endregion
 
     useEffect(() => {
@@ -210,10 +209,7 @@ export default function CameraLayout() {
     return (
         <View style={styles.container}>
             {device != null ? (
-                <PinchGestureHandler
-                    onGestureEvent={onPinchGesture}
-                    enabled={isActive}
-                >
+                <GestureDetector gesture={pinchGesture}>
                     <Reanimated.View
                         onTouchEnd={onFocusTap}
                         style={StyleSheet.absoluteFill}
@@ -274,7 +270,7 @@ export default function CameraLayout() {
                             />
                         </TapGestureHandler>
                     </Reanimated.View>
-                </PinchGestureHandler>
+                </GestureDetector>
             ) : (
                 <View style={styles.emptyContainer}>
                     <Text style={styles.text}>
