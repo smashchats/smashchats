@@ -18,6 +18,7 @@ import { addSystemDateMessages } from "@/src/Utils.js";
 import { drizzle_db } from "@/src/db/database";
 import { useLiveTablesQuery } from "@/src/hooks/useLiveQuery";
 import { messages as MessagesSchema } from "@/src/db/schema";
+import { markAllMessagesInDiscussionAsRead } from "@/src/models/Messages";
 
 export type Message = {
     content: string;
@@ -64,14 +65,11 @@ export const ProfileMessages = ({ paddingTop }: { paddingTop: number }) => {
             discussionId: peerId as string,
         });
 
-        const timeout = setTimeout(() => {
-            globalDispatch({
-                type: "USER_READ_DISCUSSION_ACTION",
-                discussionId: peerId as string,
-            });
-        }, 200);
-
-        return () => clearTimeout(timeout);
+        markAllMessagesInDiscussionAsRead(peerId as string).then(() => {
+            console.debug(
+                `messages::useEffect::Marked all messages in discussion ${peerId} as read`
+            );
+        });
     }, []);
 
     useEffect(() => {
@@ -93,9 +91,10 @@ export const ProfileMessages = ({ paddingTop }: { paddingTop: number }) => {
             from: SmashDID
         ) => {
             if (from.id === peerId) {
-                globalDispatch({
-                    type: "USER_READ_DISCUSSION_ACTION",
-                    discussionId: peerId,
+                markAllMessagesInDiscussionAsRead(peerId).then(() => {
+                    console.debug(
+                        `messages::onNewMessages::Marked received messages in discussion ${peerId} as read`
+                    );
                 });
             }
         };

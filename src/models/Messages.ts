@@ -1,4 +1,10 @@
-import { InferSelectModel, InferInsertModel, eq } from "drizzle-orm";
+import {
+    InferSelectModel,
+    InferInsertModel,
+    eq,
+    isNull,
+    and,
+} from "drizzle-orm";
 
 import { EncapsulatedSmashMessage, SmashDID } from "@smashchats/library";
 
@@ -70,9 +76,16 @@ export const parseDataInMessage = async (message: EnrichedSmashMessage) => {
     }
 };
 
-export const markMessageAsRead = async (messageId: string) => {
+export const markAllMessagesInDiscussionAsRead = async (
+    discussionId: string
+) => {
     await drizzle_db
         .update(messages)
         .set({ date_read: new Date() })
-        .where(eq(messages.sha256, messageId));
+        .where(
+            and(
+                eq(messages.discussion_id, discussionId),
+                isNull(messages.date_read)
+            )
+        );
 };

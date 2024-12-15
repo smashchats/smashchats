@@ -7,11 +7,6 @@ import {
 import { EncapsulatedSmashMessage, SmashDID } from "@smashchats/library";
 import { SmashMessageToMessage } from "@/src/context/ChatListContext.js";
 
-interface UserReadDiscussionAction extends GlobalActionBase {
-    type: `USER_READ_DISCUSSION_ACTION`;
-    discussionId: string;
-}
-
 interface UserOpenDiscussionAction extends GlobalActionBase {
     type: `USER_OPEN_DISCUSSION_ACTION`;
     discussionId: string;
@@ -31,7 +26,6 @@ interface UserSendMessageAction extends GlobalActionBase {
 }
 
 export type UserAction =
-    | UserReadDiscussionAction
     | UserOpenDiscussionAction
     | UserReceiveMessageAction
     | UserSendMessageAction;
@@ -74,9 +68,6 @@ export const userReducer = (
     };
 
     switch (action.type) {
-        case "USER_READ_DISCUSSION_ACTION":
-            return state;
-
         case "USER_OPEN_DISCUSSION_ACTION":
             return getUserOrCreateIfItDoesNotExist(state, action.discussionId);
 
