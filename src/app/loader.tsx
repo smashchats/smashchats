@@ -170,6 +170,11 @@ export default function LoaderScreen() {
                             name="settings"
                             options={{ title: "Settings" }}
                         />
+
+                        <Stack.Screen
+                            name="camera"
+                            options={{ title: "Camera" }}
+                        />
                         <Stack.Screen name="+not-found" />
                     </Stack>
                 </PostHogProvider>

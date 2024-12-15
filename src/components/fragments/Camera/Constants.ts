@@ -1,4 +1,5 @@
 import { Dimensions, Platform } from "react-native";
+import { initialWindowMetrics } from "react-native-safe-area-context";
 import StaticSafeAreaInsets from "react-native-static-safe-area-insets";
 
 export const CONTENT_SPACING = 15;
@@ -10,7 +11,7 @@ const SAFE_BOTTOM =
 
 export const SAFE_AREA_PADDING = {
     paddingLeft: StaticSafeAreaInsets.safeAreaInsetsLeft + CONTENT_SPACING,
-    paddingTop: StaticSafeAreaInsets.safeAreaInsetsTop + CONTENT_SPACING,
+    paddingTop: Math.max(StaticSafeAreaInsets.safeAreaInsetsTop, initialWindowMetrics?.insets?.top ?? 0) + CONTENT_SPACING, // https://github.com/th3rdwave/react-native-safe-area-context/issues/124#issuecomment-1018323396
     paddingRight: StaticSafeAreaInsets.safeAreaInsetsRight + CONTENT_SPACING,
     paddingBottom: SAFE_BOTTOM + CONTENT_SPACING,
 };

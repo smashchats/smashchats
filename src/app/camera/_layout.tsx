@@ -23,6 +23,7 @@ import {
     useCameraFormat,
     useLocationPermission,
     useMicrophonePermission,
+    useCameraDevices,
 } from "react-native-vision-camera";
 
 import Reanimated, {
@@ -46,6 +47,8 @@ import {
 import { useIsForeground } from "@/src/components/fragments/Camera/hooks/useIsForeground";
 import { StatusBarBlurBackground } from "@/src/components/fragments/Camera/views/StatusBarBlurBackground";
 import { CaptureButton } from "@/src/components/fragments/Camera/views/CaptureButton";
+import StaticSafeAreaInsets from "react-native-static-safe-area-insets";
+import {initialWindowMetrics} from 'react-native-safe-area-context';
 
 const ReanimatedCamera = Reanimated.createAnimatedComponent(Camera);
 Reanimated.addWhitelistedNativeProps({
@@ -54,16 +57,7 @@ Reanimated.addWhitelistedNativeProps({
 
 const SCALE_FULL_ZOOM = 3;
 
-interface CameraPageProps {
-    callback: (arg: {
-        media: PhotoFile | VideoFile;
-        type: "photo" | "video";
-    }) => void;
-}
-
-export function CameraPage({
-    callback,
-}: Readonly<CameraPageProps>): React.ReactElement {
+export default function CameraLayout() {
     const camera = useRef<Camera>(null);
     const [isCameraInitialized, setIsCameraInitialized] = useState(false);
     const microphone = useMicrophonePermission();
@@ -126,9 +120,9 @@ export function CameraPage({
     const onMediaCaptured = useCallback(
         (media: PhotoFile | VideoFile, type: "photo" | "video") => {
             console.info(`Media captured! ${JSON.stringify(media)}`);
-            callback({ media, type });
+            // TODO: navigate to results page
         },
-        [callback]
+        []
     );
     const onFlipCameraPressed = useCallback(() => {
         setCameraPosition((p) => (p === "back" ? "front" : "back"));
@@ -177,18 +171,27 @@ export function CameraPage({
             // we're trying to map the scale gesture to a linear zoom here
             const startZoom = context.startZoom ?? 0;
 
-            const scale = interpolate(
-                event.scale,
-                [1 - 1 / SCALE_FULL_ZOOM, 1, SCALE_FULL_ZOOM],
-                [-1, 0, 1],
-                Extrapolation.CLAMP
-            );
-            zoom.value = interpolate(
-                scale,
-                [-1, 0, 1],
-                [minZoom, startZoom, maxZoom],
-                Extrapolation.CLAMP
-            );
+            // TODO: if available, switch to fisheye mode using something like this:
+            if (startZoom === 1 && event.scale < 1) {
+                zoom.value = 0.5;
+            } else if (startZoom === 0.5 && event.scale > 1) {
+                zoom.value = 1;
+            } else if (startZoom === 0.5 && event.scale < 1) {
+                // do nothing
+            } else {
+                const scale = interpolate(
+                    event.scale,
+                    [1 - 1 / SCALE_FULL_ZOOM, 1, SCALE_FULL_ZOOM],
+                    [-1, 0, 1],
+                    Extrapolation.CLAMP
+                );
+                zoom.value = interpolate(
+                    scale,
+                    [-1, 0, 1],
+                    [minZoom, startZoom, maxZoom],
+                    Extrapolation.CLAMP
+                );
+            }
         },
     });
     //#endregion

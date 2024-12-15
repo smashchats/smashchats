@@ -16,10 +16,12 @@ import {
     useGlobalState,
 } from "@/src/context/GlobalContext.js";
 import { getEnrichedMessage } from "@/src/IdentityUtils";
+import { useRouter } from "expo-router";
 
 export function Home() {
     const dispatch = useGlobalDispatch();
     const globalState = useGlobalState();
+    const router = useRouter();
     const {
         hasPermission: hasCameraPermission,
         requestPermission: requestCameraPermission,
@@ -74,16 +76,25 @@ export function Home() {
             cameraPermissionStatus = Camera.getCameraPermissionStatus();
             microphonePermissionStatus = Camera.getMicrophonePermissionStatus();
 
+            let errors = 0;
             if (cameraPermissionStatus === "denied") {
+                errors++;
                 alert(
                     "You need to grant camera permission to use this feature. Please go to settings and grant permission."
                 );
             }
             if (microphonePermissionStatus === "denied") {
+                errors++;
                 alert(
                     "You need to grant microphone permission to use this feature. Please go to settings and grant permission."
                 );
             }
+
+            if (errors > 0) {
+                return;
+            }
+
+            return router.push("/camera");
         } catch (error) {
             console.error(error);
         }

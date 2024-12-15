@@ -11,7 +11,7 @@ PODS:
   - EXJSONUtils (0.13.1)
   - EXManifests (0.14.3):
     - ExpoModulesCore
-  - Expo (51.0.38):
+  - Expo (51.0.39):
     - ExpoModulesCore
   - expo-dev-client (4.0.29):
     - EXManifests
@@ -228,7 +228,7 @@ PODS:
     - ExpoModulesCore
   - ExpoFont (12.0.10):
     - ExpoModulesCore
-  - ExpoHead (3.5.23):
+  - ExpoHead (3.5.24):
     - ExpoModulesCore
   - ExpoImage (1.12.13):
     - ExpoModulesCore
@@ -298,7 +298,7 @@ PODS:
     - ExpoModulesCore
   - ExpoWebBrowser (13.0.3):
     - ExpoModulesCore
-  - EXSplashScreen (0.27.5):
+  - EXSplashScreen (0.27.7):
     - DoubleConversion
     - ExpoModulesCore
     - glog
@@ -1994,7 +1994,7 @@ SPEC CHECKSUMS:
   EXImageLoader: ab589d67d6c5f2c33572afea9917304418566334
   EXJSONUtils: 30c17fd9cc364d722c0946a550dfbf1be92ef6a4
   EXManifests: c1fab4c3237675e7b0299ea8df0bcb14baca4f42
-  Expo: 9b6666ef2fedcfc89c5b9be2aa1ce12b81f9e7f5
+  Expo: 8c995afb875c15bf8439af0b20bcb9ed8f90d0bd
   expo-dev-client: 0cec8ec81fd01c10d9afcd9f6de3768b10644aee
   expo-dev-launcher: c510982f3437742353389750748520580af0ee43
   expo-dev-menu: 12b319a9bc73d76a1ed47ce52055b5356edb971d
@@ -2003,7 +2003,7 @@ SPEC CHECKSUMS:
   ExpoDevice: fc94f0e42ecdfd897e7590f2874fc64dfa7e9b1c
   ExpoFileSystem: 80bfe850b1f9922c16905822ecbf97acd711dc51
   ExpoFont: 00756e6c796d8f7ee8d211e29c8b619e75cbf238
-  ExpoHead: fcb28a68ed4ba28f177394d2dfb8a0a8824cd103
+  ExpoHead: a79e263b73039b41940c220dd67b83572e7cac09
   ExpoImage: cbe7617b4e0e7ba064cc4caa51bfc96262e51ef3
   ExpoImagePicker: 12a420923383ae38dccb069847218f27a3b87816
   ExpoKeepAwake: 3b8815d9dd1d419ee474df004021c69fdd316d08
@@ -2013,7 +2013,7 @@ SPEC CHECKSUMS:
   ExpoSQLite: ef3beaedbf5ea4573892f0099ef5514796db6066
   ExpoSystemUI: d4f065a016cae6721b324eb659cdee4d4cf0cb26
   ExpoWebBrowser: 7595ccac6938eb65b076385fd23d035db9ecdc8e
-  EXSplashScreen: fbf0ec78e9cee911df188bf17b4fe51d15a84b87
+  EXSplashScreen: 3cad09949c2ca6730cbb2801b8c51cb87692425a
   EXUpdatesInterface: 996527fd7d1a5d271eb523258d603f8f92038f24
   FBLazyVector: 7e977dd099937dc5458851233141583abba49ff2
   fmt: 4c2741a687cc09f0634a2e2c72a838b99f1ff120
