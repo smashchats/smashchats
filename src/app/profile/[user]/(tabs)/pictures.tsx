@@ -11,28 +11,6 @@ export const ProfilePictures = () => {
     // how to find profileId --> const { user: profileId } = useLocalSearchParams();
     // how to find profile --> const profile = data.find((d) => d.id === profileId);
 
-    const pics = [0, 1, 2, 3, 4];
-
-    function handleImagePress(p: number): void {
-        ScreenOrientation.unlockAsync().then(() => setImageViewIndex(p));
-    }
-
-    const images =
-        //pics.map(p => ({ uri: profile?.imageBase64, id: p }))
-        [
-            {
-                uri: "https://images.unsplash.com/photo-1571501679680-de32f1e7aad4",
-            },
-            {
-                uri: "https://images.unsplash.com/photo-1573273787173-0eb81a833b34",
-            },
-            {
-                uri: "https://images.unsplash.com/photo-1569569970363-df7b6160d111",
-            },
-        ];
-
-    const [imageViewIndex, setImageViewIndex] = useState(-1);
-
     return (
         <Box flex={1} bg={Colors.background} h="100%">
             {/* Doesn't support Landscape Orientation, see: https://github.com/jobtoday/react-native-image-viewing/blob/master/src/ImageViewing.tsx#L102*/}
@@ -56,7 +34,7 @@ export const ProfilePictures = () => {
                             display="flex"
                             flexDirection="row"
                         >
-                            {pics.map((p) => (
+                            {[].map((p) => (
                                 <TouchableOpacity
                                     key={p}
                                     style={{
@@ -64,7 +42,7 @@ export const ProfilePictures = () => {
                                         height: 120,
                                         aspectRatio: 1,
                                     }}
-                                    onPress={() => handleImagePress(p)}
+                                    onPress={() => {}}
                                 >
                                     <Image
                                         contentFit="cover"
