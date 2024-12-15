@@ -3,17 +3,16 @@ import { View } from "react-native";
 import { SplashScreen, Stack } from "expo-router";
 import { PostHogProvider } from "posthog-react-native";
 
-import { SmashUser } from "@smashchats/library";
+import { SmashProfileMeta, SmashUser } from "@smashchats/library";
 
 import { handleUserMessages, loadIdentity } from "@/src/IdentityUtils";
 import {
     Action,
-    DEFAULT_SETTINGS,
     Settings,
     useGlobalDispatch,
     useGlobalState,
 } from "@/src/context/GlobalContext";
-import { getData, saveData } from "@/src/StorageUtils";
+import { getData } from "@/src/StorageUtils";
 import { ThemedText } from "@/src/components/ThemedText";
 import { dev_nab_join_action } from "@/data/dev";
 import { createTrustRelation } from "@/src/models/TrustRelation";
@@ -37,23 +36,18 @@ export default function LoaderScreen() {
 
     const initializeApp = async (
         dispatch: Dispatch<Action>,
-        settings: Settings | null
+        newUser: boolean
     ) => {
         await SplashScreen.hideAsync();
 
-        if (settings === null) {
+        if (newUser) {
             await handleNewUser(dispatch);
         } else {
-            await handleExistingUser(dispatch, settings);
+            await handleExistingUser(dispatch);
         }
     };
 
     const handleNewUser = async (dispatch: Dispatch<Action>) => {
-        await saveData<Settings>("settings.settings", DEFAULT_SETTINGS);
-        dispatch({
-            type: "SET_SETTINGS_ACTION",
-            settings: DEFAULT_SETTINGS,
-        });
         dispatch({
             type: "SET_APP_WORKFLOW_ACTION",
             appWorkflow: "REGISTERING",
@@ -68,14 +62,7 @@ export default function LoaderScreen() {
         await finalizeSetup(dispatch, user);
     };
 
-    const handleExistingUser = async (
-        dispatch: Dispatch<Action>,
-        settings: Settings
-    ) => {
-        dispatch({
-            type: "SET_SETTINGS_ACTION",
-            settings,
-        });
+    const handleExistingUser = async (dispatch: Dispatch<Action>) => {
         dispatch({
             type: "SET_APP_WORKFLOW_ACTION",
             appWorkflow: "CONNECTING",
@@ -113,10 +100,20 @@ export default function LoaderScreen() {
         });
 
         (async () => {
-            const [settings] = await Promise.all([
+            const [settings, meta] = await Promise.all([
                 getData<Settings>("settings.settings"),
+                getData<SmashProfileMeta>("settings.user_meta"),
             ]);
-            await initializeApp(dispatch, settings);
+            const newUser = settings === null;
+            dispatch({
+                type: "SET_SETTINGS_ACTION",
+                settings,
+            });
+            dispatch({
+                type: "SET_SETTINGS_USER_META_ACTION",
+                userMeta: meta,
+            });
+            await initializeApp(dispatch, newUser);
         })();
     }, []);
 

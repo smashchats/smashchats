@@ -3,90 +3,47 @@ import { Button, View, TextInput, Switch } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { SmashProfileMeta } from "@smashchats/library";
-
 import { ThemedText } from "@/src/components/ThemedText";
 import { Avatar } from "@/src/components/Avatar";
 import { TrustedContact } from "@/src/models/Contacts";
-import { getData, saveData } from "@/src/StorageUtils";
-import {
-    DEFAULT_SETTINGS,
-    useGlobalState,
-    Settings,
-} from "@/src/context/GlobalContext";
+import { useGlobalState, useGlobalDispatch } from "@/src/context/GlobalContext";
 import { Colors } from "@/src/constants/Colors";
 import { convertImageToBase64, resizeImage } from "@/src/Utils";
 import { useThemeColor } from "@/src/hooks/useThemeColor";
 
 export default function ProfileLayout() {
-    const [loaded, setLoaded] = useState(false);
-    const [meta, setMeta] = useState<{
-        title: string;
-        description: string;
-        picture: string;
-    }>({
-        title: "",
-        description: "",
-        picture: "",
-    });
-
-    const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
+    const dispatch = useGlobalDispatch();
+    const state = useGlobalState();
 
     // Local state for input values
-    const [inputTitle, setInputTitle] = useState(meta.title);
-    const [inputDescription, setInputDescription] = useState(meta.description);
-
-    const { selfSmashUser: user } = useGlobalState();
-
-    useEffect(() => {
-        (async () => {
-            const [userMeta, settings] = await Promise.all([
-                getData<SmashProfileMeta>("settings.user_meta"),
-                getData<Settings>("settings.settings"),
-            ]);
-            setInputTitle(userMeta?.title?.trim() ?? "");
-            setInputDescription(userMeta?.description?.trim() ?? "");
-            const meta = {
-                title: userMeta?.title?.trim() ?? "",
-                description: userMeta?.description?.trim() ?? "",
-                picture: userMeta?.picture?.trim() ?? "",
-            };
-            setMeta(meta);
-            setSettings({ ...(settings ?? DEFAULT_SETTINGS) });
-            setLoaded(true);
-        })();
-    }, []);
+    const [inputTitle, setInputTitle] = useState(state.userMeta.title);
+    const [inputDescription, setInputDescription] = useState(
+        state.userMeta.description
+    );
 
     useEffect(() => {
-        if (loaded) {
-            (async () => {
-                await saveData<Settings>("settings.settings", settings);
-            })();
-        }
-    }, [settings]);
-
-    useEffect(() => {
-        if (user && loaded) {
-            (async () => {
-                await user.updateMeta({
-                    title: meta.title.trim(),
-                    description: meta.description.trim(),
-                    picture: meta.picture.trim(),
-                });
-                await saveData<SmashProfileMeta>("settings.user_meta", meta);
-            })();
-        }
-    }, [user, meta, loaded]);
+        setInputTitle(state.userMeta.title);
+        setInputDescription(state.userMeta.description);
+    }, [state.userMeta]);
 
     const handleInputTitleToMeta = () => {
-        setMeta((prev) => ({ ...prev, title: inputTitle.trim() }));
+        dispatch({
+            type: "SET_SETTINGS_USER_META_ACTION",
+            userMeta: {
+                ...state.userMeta,
+                title: inputTitle.trim(),
+            },
+        });
     };
 
     const handleInputDescriptionToMeta = () => {
-        setMeta((prev) => ({
-            ...prev,
-            description: inputDescription.trim(),
-        }));
+        dispatch({
+            type: "SET_SETTINGS_USER_META_ACTION",
+            userMeta: {
+                ...state.userMeta,
+                description: inputDescription.trim(),
+            },
+        });
     };
 
     const pickImage = async () => {
@@ -107,10 +64,13 @@ export default function ProfileLayout() {
                 });
                 const base64 = await convertImageToBase64(resizedImage.uri);
                 if (base64) {
-                    setMeta((prev) => ({
-                        ...prev,
-                        picture: `data:image/jpeg;base64,${base64}`,
-                    }));
+                    dispatch({
+                        type: "SET_SETTINGS_USER_META_ACTION",
+                        userMeta: {
+                            ...state.userMeta,
+                            picture: `data:image/jpeg;base64,${base64}`,
+                        },
+                    });
                 }
             }
         } catch (error) {
@@ -131,7 +91,9 @@ export default function ProfileLayout() {
                 >
                     <Avatar
                         contact={
-                            { meta_picture: meta.picture } as TrustedContact
+                            {
+                                meta_picture: state.userMeta.picture,
+                            } as TrustedContact
                         }
                         variant="xlarge"
                     />
@@ -214,12 +176,15 @@ export default function ProfileLayout() {
                     >
                         <ThemedText>Enable Analytics</ThemedText>
                         <Switch
-                            value={settings.telemetryEnabled}
+                            value={state.settings?.telemetryEnabled ?? false}
                             onValueChange={(value) => {
-                                setSettings((old) => ({
-                                    ...old,
-                                    telemetryEnabled: value,
-                                }));
+                                dispatch({
+                                    type: "SET_SETTINGS_ACTION",
+                                    settings: {
+                                        ...state.settings,
+                                        telemetryEnabled: value,
+                                    },
+                                });
                             }}
                         />
                     </View>

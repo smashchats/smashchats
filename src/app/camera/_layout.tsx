@@ -23,7 +23,6 @@ import {
     useCameraFormat,
     useLocationPermission,
     useMicrophonePermission,
-    useCameraDevices,
 } from "react-native-vision-camera";
 
 import Reanimated, {
@@ -47,8 +46,6 @@ import {
 import { useIsForeground } from "@/src/components/fragments/Camera/hooks/useIsForeground";
 import { StatusBarBlurBackground } from "@/src/components/fragments/Camera/views/StatusBarBlurBackground";
 import { CaptureButton } from "@/src/components/fragments/Camera/views/CaptureButton";
-import StaticSafeAreaInsets from "react-native-static-safe-area-insets";
-import {initialWindowMetrics} from 'react-native-safe-area-context';
 
 const ReanimatedCamera = Reanimated.createAnimatedComponent(Camera);
 Reanimated.addWhitelistedNativeProps({

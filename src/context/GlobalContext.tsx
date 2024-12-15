@@ -12,7 +12,8 @@ import {
     userReducer,
     UserState,
 } from "@/src/context/UsersContext.js";
-import { SmashUser } from "@smashchats/library";
+import { SmashProfileMeta, SmashUser } from "@smashchats/library";
+import { saveData } from "@/src/StorageUtils";
 
 export interface Settings {
     telemetryEnabled: boolean;
@@ -34,7 +35,12 @@ export interface LatestMessageIdInDiscussionAction extends GlobalActionBase {
 
 export interface SetSettingsAction extends GlobalActionBase {
     type: "SET_SETTINGS_ACTION";
-    settings: Settings;
+    settings: Settings | null;
+}
+
+export interface SetSettingsUserMetaAction extends GlobalActionBase {
+    type: "SET_SETTINGS_USER_META_ACTION";
+    userMeta: SmashProfileMeta | null;
 }
 
 export interface SetUserAction extends GlobalActionBase {
@@ -58,6 +64,7 @@ export type Action =
     | LatestMessageIdInDiscussionAction
     | SetAppWorkflowAction
     | SetSettingsAction
+    | SetSettingsUserMetaAction
     | SetUserAction;
 
 type AppWorkflow =
@@ -73,6 +80,7 @@ export type GlobalParams = {
     latestMessageIdInDiscussion: Record<string, string>;
     selfSmashUser: SmashUser;
     settings: Settings;
+    userMeta: SmashProfileMeta;
     appWorkflow: AppWorkflow;
 };
 
@@ -82,6 +90,11 @@ export const INITIAL_GLOBAL_STATE: GlobalParams = {
     latestMessageIdInDiscussion: {},
     selfSmashUser: null as unknown as SmashUser,
     settings: DEFAULT_SETTINGS,
+    userMeta: {
+        title: "",
+        description: "",
+        picture: "",
+    },
     appWorkflow: "LOADING",
 };
 
@@ -114,6 +127,7 @@ export const rootReducer = (
         users: userReducer(state.users, action),
         appWorkflow: appWorkflowReducer(state.appWorkflow, action),
         settings: settingsReducer(state.settings, action),
+        userMeta: userMetaReducer(state.userMeta, action),
         selfSmashUser: selfSmashUserReducer(state.selfSmashUser, action),
     };
 };
@@ -174,6 +188,18 @@ export const GlobalProvider: React.FC<{
         ...initialState,
     });
 
+    React.useEffect(() => {
+        if (state.settings) {
+            saveData("settings.settings", state.settings);
+        }
+    }, [state.settings]);
+
+    React.useEffect(() => {
+        if (state.userMeta) {
+            saveData("settings.user_meta", state.userMeta);
+        }
+    }, [state.userMeta]);
+
     return (
         <GlobalStateContext.Provider value={state}>
             <GlobalDispatchContext.Provider value={dispatch}>
@@ -222,7 +248,17 @@ function settingsReducer(settings: Settings, action: Action): Settings {
     if (action.type !== "SET_SETTINGS_ACTION") {
         return settings;
     }
-    return action.settings;
+    return action.settings ?? DEFAULT_SETTINGS;
+}
+
+function userMetaReducer(
+    userMeta: SmashProfileMeta,
+    action: Action
+): SmashProfileMeta {
+    if (action.type !== "SET_SETTINGS_USER_META_ACTION") {
+        return userMeta;
+    }
+    return action.userMeta ?? { title: "", description: "", picture: "" };
 }
 
 function selfSmashUserReducer(

@@ -7,13 +7,11 @@ import { SmashProfileMeta } from "@smashchats/library";
 import { handleUserMessages, loadIdentity } from "@/src/IdentityUtils";
 import {
     DEFAULT_SETTINGS,
-    Settings,
     useGlobalDispatch,
     useGlobalState,
 } from "@/src/context/GlobalContext";
 import { ThemedText } from "@/src/components/ThemedText";
 import { Colors } from "@/src/constants/Colors";
-import { saveData } from "../StorageUtils";
 import { Avatar } from "../components/Avatar";
 import { TrustedContact } from "../models/Contacts";
 import { convertImageToBase64, resizeImage } from "@/src/Utils";
@@ -55,12 +53,13 @@ export default function Wizard() {
                 description: identityMeta.description.trim(),
                 picture: (identityMeta.picture ?? "").trim(),
             };
-            await saveData<SmashProfileMeta>("settings.user_meta", meta);
-            await saveData<Settings>("settings.settings", DEFAULT_SETTINGS);
-
             dispatch({
                 type: "SET_SETTINGS_ACTION",
                 settings: DEFAULT_SETTINGS,
+            });
+            dispatch({
+                type: "SET_SETTINGS_USER_META_ACTION",
+                userMeta: meta,
             });
 
             dispatch({
