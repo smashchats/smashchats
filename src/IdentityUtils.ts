@@ -22,7 +22,6 @@ import {
 } from "@/src/models/Contacts";
 
 const getOrCreateIdentity = async (): Promise<Identity> => {
-    // TODO: replace with hardware-backed crypto storage
     let savedIdentity: IJsonIdentity | null = await getData<IJsonIdentity>(
         "identity"
     );
@@ -66,7 +65,6 @@ export const loadIdentity = async (
             contacts.map((c) => {
                 return {
                     with: MapContactToDid(c),
-                    // TODO: get last message timestamp from db
                     lastMessageTimestamp: new Date().toISOString(),
                 };
             })
