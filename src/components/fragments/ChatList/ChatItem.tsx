@@ -56,8 +56,6 @@ function getExcerpt(rawMessage: string, messageType: string): string {
     } else if (messageType === "empty") {
         return "(new contact)";
     }
-    // TODO: add support for other message types
-
     return "unsupported message";
 }
 

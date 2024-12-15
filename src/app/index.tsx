@@ -34,7 +34,6 @@ export function Home() {
     const user = globalState.selfSmashUser;
     useEffect(() => {
         if (user) {
-            // TODO: do not listen to this, only for testing
             const listener = async (
                 message: EncapsulatedSmashMessage,
                 senderDid: SmashDID

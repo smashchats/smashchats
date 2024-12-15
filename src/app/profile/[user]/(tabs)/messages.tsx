@@ -28,8 +28,6 @@ export type Message = {
     date: Date;
 };
 
-// TODO: at some point use something similar to https://github.com/expo/react-native-invertible-scroll-view
-
 export const ProfileMessages = ({ paddingTop }: { paddingTop: number }) => {
     const { user: peerId } = useLocalSearchParams();
 
@@ -104,8 +102,6 @@ export const ProfileMessages = ({ paddingTop }: { paddingTop: number }) => {
         };
     }, [globalState.selfSmashUser]);
 
-    // TODO load more messages on scroll upwards
-
     return (
         <Box flex={1} bg={Colors.background} h="100%">
             <ScrollView
@@ -147,7 +143,6 @@ export const ProfileMessages = ({ paddingTop }: { paddingTop: number }) => {
                                     );
                                 case "profile":
                                     return <View key={`${m.type}-${id}`} />;
-                                // TODO: improve UI
                                 case "profiles":
                                     return (
                                         <ProfileMessagesScreenText

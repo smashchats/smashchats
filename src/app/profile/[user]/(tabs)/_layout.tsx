@@ -153,8 +153,6 @@ export const ProfileScreen = () => {
         if (canceled) {
             return;
         }
-
-        // TODO send to peer when library will allow us to do that
         console.info("assets", assets);
     };
 

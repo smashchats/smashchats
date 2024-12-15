@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { ScrollView, TouchableOpacity } from "react-native";
 
 import { Image } from "expo-image";
-import * as ScreenOrientation from "expo-screen-orientation";
 
 import { Colors } from "@/src/constants/Colors.js";
 import { Box } from "@/src/components/design-system/Box.jsx";

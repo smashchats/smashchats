@@ -116,8 +116,7 @@ export default function CameraLayout() {
     }, []);
     const onMediaCaptured = useCallback(
         (media: PhotoFile | VideoFile, type: "photo" | "video") => {
-            console.info(`Media captured! ${JSON.stringify(media)}`);
-            // TODO: navigate to results page
+            console.info(`Media (${type}) captured! ${JSON.stringify(media)}`);
         },
         []
     );
@@ -159,7 +158,6 @@ export default function CameraLayout() {
     const onPinchGestureChange = (eventScale: number) => {
         // we're trying to map the scale gesture to a linear zoom here
 
-        // TODO: if available, switch to fisheye mode using something like this:
         if (startZoom === 1 && eventScale < 1) {
             zoom.value = 0.5;
         } else if (startZoom === 0.5 && eventScale > 1) {
