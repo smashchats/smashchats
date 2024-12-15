@@ -244,14 +244,14 @@ function latestMessageIdInDiscussionReducer(
     };
 }
 
-function settingsReducer(settings: Settings, action: Action): Settings {
+export function settingsReducer(settings: Settings, action: Action): Settings {
     if (action.type !== "SET_SETTINGS_ACTION") {
         return settings;
     }
     return action.settings ?? DEFAULT_SETTINGS;
 }
 
-function userMetaReducer(
+export function userMetaReducer(
     userMeta: SmashProfileMeta,
     action: Action
 ): SmashProfileMeta {
