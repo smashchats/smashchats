@@ -7,9 +7,6 @@ import { EncapsulatedSmashMessage, SmashDID } from "@smashchats/library";
 
 import { Colors } from "@/src/constants/Colors.js";
 import { Box } from "@/src/components/design-system/Box.jsx";
-import ProfileMessagesScreenText from "@/src/components/ProfileMessagesScreenText.jsx";
-import ProfileMessagesScreenDate from "@/src/components/ProfileMessagesScreenDate.jsx";
-import ProfileMessagesScreenMetadata from "@/src/components/ProfileMessagesScreenMetadata.jsx";
 import {
     useGlobalDispatch,
     useGlobalState,
@@ -19,6 +16,7 @@ import { drizzle_db } from "@/src/db/database";
 import { useLiveTablesQuery } from "@/src/hooks/useLiveQuery";
 import { messages as MessagesSchema } from "@/src/db/schema";
 import { markAllMessagesInDiscussionAsRead } from "@/src/models/Messages";
+import { MessagesList } from "@/src/components/fragments/MessagesList";
 
 export type Message = {
     content: string;
@@ -126,58 +124,7 @@ export const ProfileMessages = ({ paddingTop }: { paddingTop: number }) => {
                 stickyHeaderIndices={[1]}
                 contentContainerStyle={{ justifyContent: "flex-start" }}
             >
-                <Box marginHorizontal={10} paddingTop={paddingTop}>
-                    <Box
-                        width={"100%"}
-                        bg={Colors.background}
-                        paddingBottom={40}
-                    >
-                        {messages.map((m, idx) => {
-                            let id = m.sha256 ?? `index-${idx}`;
-
-                            switch (m.type) {
-                                case "text":
-                                    return (
-                                        <ProfileMessagesScreenText
-                                            key={`${m.type}-${id}`}
-                                            message={m}
-                                        />
-                                    );
-                                case "system-date":
-                                    return (
-                                        <ProfileMessagesScreenDate
-                                            key={`${m.type}-${id}-index-${idx}`}
-                                            date={m.date}
-                                        />
-                                    );
-                                case "metadata":
-                                    return (
-                                        <ProfileMessagesScreenMetadata
-                                            key={`${m.type}-${id}`}
-                                            message={m}
-                                        />
-                                    );
-                                case "profile":
-                                    return <View key={`${m.type}-${id}`} />;
-                                case "profiles":
-                                    return (
-                                        <ProfileMessagesScreenText
-                                            key={`${m.type}-${id}`}
-                                            message={{
-                                                ...m,
-                                                content:
-                                                    "Several profiles [...]",
-                                            }}
-                                        />
-                                    );
-                                default:
-                                    return (
-                                        <Box key={`${m.type}-index-${idx}`} />
-                                    );
-                            }
-                        })}
-                    </Box>
-                </Box>
+                <MessagesList messages={messages} paddingTop={paddingTop} />
             </ScrollView>
         </Box>
     );

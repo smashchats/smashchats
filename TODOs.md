@@ -7,7 +7,7 @@
 - [x] show all discovered profiles in chat list
 - [x] show discovered profiles as (some text TBD) so that we can identify them
 - [ ] fix chat list ordering
-- [ ] mark messages as read
+- [x] mark messages as read
 - [ ] mark messages as received
 - [ ] hide user "self" in chat list (even in db?)
 - [ ] send media messages

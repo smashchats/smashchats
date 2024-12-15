@@ -1,0 +1,66 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MessagesList renders correctly 1`] = `
+<View
+  style={
+    {
+      "backgroundColor": undefined,
+      "height": undefined,
+      "marginHorizontal": 10,
+      "paddingTop": 0,
+    }
+  }
+>
+  <View
+    style={
+      {
+        "backgroundColor": "#222222",
+        "height": undefined,
+        "paddingBottom": 40,
+        "width": "100%",
+      }
+    }
+  />
+</View>
+`;
+
+exports[`MessagesList renders messages 1`] = `
+<View
+  style={
+    {
+      "backgroundColor": undefined,
+      "height": undefined,
+      "marginHorizontal": 10,
+      "paddingTop": 0,
+    }
+  }
+>
+  <View
+    style={
+      {
+        "backgroundColor": "#222222",
+        "height": undefined,
+        "paddingBottom": 40,
+        "width": "100%",
+      }
+    }
+  >
+    <View
+      style={
+        {
+          "backgroundColor": undefined,
+          "height": undefined,
+        }
+      }
+    />
+    <View
+      style={
+        {
+          "backgroundColor": undefined,
+          "height": undefined,
+        }
+      }
+    />
+  </View>
+</View>
+`;
