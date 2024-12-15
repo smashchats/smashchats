@@ -48,14 +48,16 @@ export interface SetUserAction extends GlobalActionBase {
     user: SmashUser;
 }
 
+export type AppWorkflow =
+    | "LOADING"
+    | "REGISTERING"
+    | "REGISTERED"
+    | "CONNECTING"
+    | "CONNECTED";
+
 export interface SetAppWorkflowAction extends GlobalActionBase {
     type: "SET_APP_WORKFLOW_ACTION";
-    appWorkflow:
-        | "LOADING"
-        | "REGISTERING"
-        | "REGISTERED"
-        | "CONNECTING"
-        | "CONNECTED";
+    appWorkflow: AppWorkflow;
 }
 
 export type Action =
@@ -66,13 +68,6 @@ export type Action =
     | SetSettingsAction
     | SetSettingsUserMetaAction
     | SetUserAction;
-
-type AppWorkflow =
-    | "LOADING"
-    | "REGISTERING"
-    | "REGISTERED"
-    | "CONNECTING"
-    | "CONNECTED";
 
 export type GlobalParams = {
     chatList: ChatListParams;
@@ -132,7 +127,7 @@ export const rootReducer = (
     };
 };
 
-function appWorkflowReducer(
+export function appWorkflowReducer(
     appWorkflow: AppWorkflow,
     action: SetAppWorkflowAction | Action
 ): AppWorkflow {
