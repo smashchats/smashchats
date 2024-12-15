@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AvatarFallbackText Renders correctly 1`] = `
+<View
+  style={
+    {
+      "alignItems": "center",
+      "height": "100%",
+      "justifyContent": "center",
+      "width": "100%",
+    }
+  }
+>
+  <Text
+    style={
+      {
+        "color": "white",
+        "fontSize": 24,
+        "fontWeight": "bold",
+      }
+    }
+  >
+    T
+  </Text>
+</View>
+`;

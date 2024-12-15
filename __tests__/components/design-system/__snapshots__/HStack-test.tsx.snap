@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HStack Renders correctly 1`] = `
+<View
+  style={
+    {
+      "alignContent": undefined,
+      "alignItems": undefined,
+      "backgroundColor": undefined,
+      "flex": undefined,
+      "flexDirection": "row",
+      "gap": undefined,
+      "height": undefined,
+      "justifyContent": undefined,
+      "marginBottom": undefined,
+      "marginHorizontal": undefined,
+      "marginVertical": undefined,
+    }
+  }
+>
+  <View />
+</View>
+`;

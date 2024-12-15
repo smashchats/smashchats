@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SerifHeading Renders correctly 1`] = `
+<View
+  style={
+    {
+      "backgroundColor": undefined,
+      "flex": undefined,
+      "height": undefined,
+      "marginBottom": undefined,
+    }
+  }
+>
+  <Text
+    style={
+      {
+        "color": "white",
+        "fontFamily": "Didot",
+        "fontSize": 20,
+        "fontWeight": undefined,
+        "marginVertical": 4,
+      }
+    }
+  >
+    Hello
+  </Text>
+</View>
+`;

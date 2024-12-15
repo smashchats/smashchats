@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Box Renders correctly 1`] = `
+<View
+  style={
+    {
+      "backgroundColor": undefined,
+      "height": undefined,
+    }
+  }
+>
+  <View
+    style={
+      {
+        "backgroundColor": undefined,
+        "flex": undefined,
+        "height": undefined,
+      }
+    }
+  >
+    <Text
+      style={
+        {
+          "color": "white",
+          "fontFamily": "Cairo, apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif",
+          "fontSize": 12,
+          "textTransform": "uppercase",
+        }
+      }
+    >
+      Hello
+    </Text>
+  </View>
+</View>
+`;

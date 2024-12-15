@@ -1,0 +1,139 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Badge Renders correctly 1`] = `
+<View
+  style={
+    {
+      "alignItems": "center",
+      "backgroundColor": "#222222",
+      "borderColor": "#64189b",
+      "borderRadius": 16,
+      "borderWidth": 2,
+      "flex": undefined,
+      "flexDirection": "row",
+      "height": undefined,
+      "justifyContent": "center",
+      "marginHorizontal": undefined,
+      "marginRight": undefined,
+      "paddingHorizontal": 8,
+      "paddingVertical": 1,
+      "width": undefined,
+    }
+  }
+>
+  <View
+    style={
+      {
+        "backgroundColor": undefined,
+        "flex": undefined,
+        "height": undefined,
+      }
+    }
+  >
+    <Text
+      style={
+        {
+          "color": "white",
+          "fontFamily": "Cairo, apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif",
+          "fontSize": 12,
+          "textTransform": "uppercase",
+        }
+      }
+    >
+      Hello
+    </Text>
+  </View>
+</View>
+`;
+
+exports[`Badge Renders correctly with type smashed 1`] = `
+<View
+  style={
+    {
+      "alignItems": "center",
+      "backgroundColor": "#64189b",
+      "borderColor": "#64189b",
+      "borderRadius": 16,
+      "borderWidth": 2,
+      "flex": undefined,
+      "flexDirection": "row",
+      "height": undefined,
+      "justifyContent": "center",
+      "marginHorizontal": undefined,
+      "marginRight": undefined,
+      "paddingHorizontal": 8,
+      "paddingVertical": 1,
+      "width": undefined,
+    }
+  }
+>
+  <View
+    style={
+      {
+        "backgroundColor": undefined,
+        "flex": undefined,
+        "height": undefined,
+      }
+    }
+  >
+    <Text
+      style={
+        {
+          "color": "white",
+          "fontFamily": "Cairo, apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif",
+          "fontSize": 12,
+          "textTransform": "uppercase",
+        }
+      }
+    >
+      Hello
+    </Text>
+  </View>
+</View>
+`;
+
+exports[`Badge Renders correctly with type trusted 1`] = `
+<View
+  style={
+    {
+      "alignItems": "center",
+      "backgroundColor": "#3f3f3f",
+      "borderColor": "#3f3f3f",
+      "borderRadius": 16,
+      "borderWidth": 2,
+      "flex": undefined,
+      "flexDirection": "row",
+      "height": undefined,
+      "justifyContent": "center",
+      "marginHorizontal": undefined,
+      "marginRight": undefined,
+      "paddingHorizontal": 8,
+      "paddingVertical": 1,
+      "width": undefined,
+    }
+  }
+>
+  <View
+    style={
+      {
+        "backgroundColor": undefined,
+        "flex": undefined,
+        "height": undefined,
+      }
+    }
+  >
+    <Text
+      style={
+        {
+          "color": "white",
+          "fontFamily": "Cairo, apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif",
+          "fontSize": 12,
+          "textTransform": "uppercase",
+        }
+      }
+    >
+      Hello
+    </Text>
+  </View>
+</View>
+`;
