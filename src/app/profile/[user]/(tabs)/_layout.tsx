@@ -16,10 +16,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Colors } from "@/src/constants/Colors.js";
 import ProfileMessages from "@/src/app/profile/[user]/(tabs)/messages.jsx";
-import {
-    useGlobalDispatch,
-    useGlobalState,
-} from "@/src/context/GlobalContext.js";
+import { useGlobalState } from "@/src/context/GlobalContext.js";
 import {
     MapContactToDid,
     TrustedContact,
@@ -45,7 +42,6 @@ export const ProfileScreen = () => {
     const [newMessage, setNewMessage] = useState("");
     const [shouldShowSendIcon, setShouldShowSendIcon] = useState(true);
     const inputFieldRef = useRef<TextInput>(null);
-    const globalDispatch = useGlobalDispatch();
     const globalState = useGlobalState();
 
     const [peer, setPeer] = useState<TrustedContact | null>(null);

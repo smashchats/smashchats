@@ -7,10 +7,7 @@ import { EncapsulatedSmashMessage, SmashDID } from "@smashchats/library";
 
 import { Colors } from "@/src/constants/Colors.js";
 import { Box } from "@/src/components/design-system/Box.jsx";
-import {
-    useGlobalDispatch,
-    useGlobalState,
-} from "@/src/context/GlobalContext.js";
+import { useGlobalState } from "@/src/context/GlobalContext.js";
 import { addSystemDateMessages } from "@/src/Utils.js";
 import { drizzle_db } from "@/src/db/database";
 import { useLiveTablesQuery } from "@/src/hooks/useLiveQuery";
@@ -32,7 +29,6 @@ export const ProfileMessages = ({ paddingTop }: { paddingTop: number }) => {
 
     const [hasScrolledToEnd, setHasScrolledToEnd] = useState(false);
 
-    const globalDispatch = useGlobalDispatch();
     const globalState = useGlobalState();
 
     const { data: db_messages } = useLiveTablesQuery(
