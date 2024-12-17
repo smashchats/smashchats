@@ -94,6 +94,7 @@ export const addSystemDateMessages = (messages: Message[]): Message[] => {
                 content: msgDate,
                 sha256: message.date.toISOString(),
                 from: "system",
+                fromMe: false,
             });
             previousDate = message.date;
         }

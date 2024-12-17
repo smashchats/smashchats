@@ -60,7 +60,7 @@ export const Avatar = ({ contact, variant = "small" }: AvatarProps) => {
                         contact.trusted_name ??
                         contact.meta_title ??
                         "unnamed contact"
-                    }'s profile picture'`}
+                    }'s avatar'`}
                     borderRadius={radiusDimensions[variant]}
                     size={avatarSize}
                     source={contact.meta_picture}

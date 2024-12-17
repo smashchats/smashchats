@@ -58,11 +58,6 @@ export const ProfileMessages = ({ paddingTop }: { paddingTop: number }) => {
     }, [hasScrolledToEnd]);
 
     useEffect(() => {
-        globalDispatch({
-            type: "USER_OPEN_DISCUSSION_ACTION",
-            discussionId: peerId as string,
-        });
-
         markAllMessagesInDiscussionAsRead(peerId as string).then(() => {
             console.debug(
                 `messages::useEffect::Marked all messages in discussion ${peerId} as read`

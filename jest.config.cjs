@@ -5,6 +5,8 @@ module.exports = {
     collectCoverageFrom: [
         "**/*.{ts,tsx,js,jsx}",
         "!**/coverage/**",
+        "!**/android/**",
+        "!**/ios/**",
         "!**/node_modules/**",
         "!**/babel.config.js",
         "!**/expo-env.d.ts",

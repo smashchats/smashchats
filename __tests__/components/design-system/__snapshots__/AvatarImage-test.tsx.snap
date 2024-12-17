@@ -2,7 +2,55 @@
 
 exports[`AvatarImage Renders correctly 1`] = `
 <ViewManagerAdapter_ExpoImage
-  accessibilityLabel="contact name's profile picture"
+  accessibilityLabel="contact name's avatar"
+  containerViewRef={"[React.ref]"}
+  contentFit="contain"
+  contentPosition={
+    {
+      "left": "50%",
+      "top": "50%",
+    }
+  }
+  height={64}
+  maxHeight={64}
+  maxWidth={64}
+  minHeight={64}
+  minWidth={64}
+  nativeViewRef={"[React.ref]"}
+  onError={[Function]}
+  onLoad={[Function]}
+  onLoadStart={[Function]}
+  onProgress={[Function]}
+  placeholder={[]}
+  source={
+    [
+      {
+        "uri": "data:base64,image",
+      },
+    ]
+  }
+  style={
+    {
+      "height": 64,
+      "maxHeight": 64,
+      "maxWidth": 64,
+      "minHeight": 64,
+      "minWidth": 64,
+      "width": 64,
+    }
+  }
+  transition={
+    {
+      "duration": 1000,
+    }
+  }
+  width={64}
+/>
+`;
+
+exports[`AvatarImage Renders correctly with no defined size --> default size 1`] = `
+<ViewManagerAdapter_ExpoImage
+  accessibilityLabel="contact name's avatar"
   containerViewRef={"[React.ref]"}
   contentFit="contain"
   contentPosition={

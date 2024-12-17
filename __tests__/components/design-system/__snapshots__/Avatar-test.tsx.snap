@@ -79,7 +79,7 @@ exports[`Avatar Renders correctly with image 1`] = `
   }
 >
   <ViewManagerAdapter_ExpoImage
-    accessibilityLabel="contact name's profile picture"
+    accessibilityLabel="contact name's avatar"
     containerViewRef={"[React.ref]"}
     contentFit="contain"
     contentPosition={

@@ -23,7 +23,7 @@ export function SmashOrPass({ onSmash, onPass }: Readonly<Props>): JSX.Element {
             borderColor={Colors.purple}
             borderWidth={3.5}
         >
-            <Pressable onPress={onSmash}>
+            <Pressable testID="SmashOrPass::Smash" onPress={onSmash}>
                 <NeonText text="Smash" />
             </Pressable>
             <Box width={25} />
@@ -39,7 +39,7 @@ export function SmashOrPass({ onSmash, onPass }: Readonly<Props>): JSX.Element {
                 alt="Lightning bolt"
                 source={Lightning}
             />
-            <Pressable onPress={onPass}>
+            <Pressable testID="SmashOrPass::Pass" onPress={onPass}>
                 <NeonText text="pass" />
             </Pressable>
         </Badge>

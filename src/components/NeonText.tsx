@@ -1,7 +1,7 @@
 import React from "react";
 import { View } from "react-native";
 import { Colors } from "@/src/constants/Colors.js";
-import Text from "@/src/components/design-system/Text.js";
+import { Text } from "@/src/components/design-system/Text.jsx";
 
 // Text stroke using this technique: https://stackoverflow.com/a/60469925
 

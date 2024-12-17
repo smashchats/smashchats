@@ -4,7 +4,7 @@ import { Dimensions, TouchableOpacity } from "react-native";
 import { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
 
 import { HStack } from "@/src/components/design-system/HStack.jsx";
-import Text from "@/src/components/design-system/Text.jsx";
+import { Text } from "@/src/components/design-system/Text.jsx";
 import { Box } from "@/src/components/design-system/Box.jsx";
 import { BadgeText } from "@/src/components/design-system/BadgeText.jsx";
 import { Badge } from "@/src/components/design-system/Badge.jsx";

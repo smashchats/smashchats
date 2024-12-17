@@ -4,7 +4,7 @@ import { Pressable, View, Alert } from "react-native";
 import { useRouter } from "expo-router";
 import { Image } from "expo-image";
 
-import Text from "@/src/components/design-system/Text.jsx";
+import { Text } from "@/src/components/design-system/Text.jsx";
 import { TrustedContact } from "@/src/models/Contacts";
 import { Avatar } from "@/src/components/Avatar";
 import { SmashOrPass } from "@/src/components/SmashOrPass";

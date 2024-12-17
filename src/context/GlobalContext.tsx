@@ -7,11 +7,6 @@ import {
     chatListReducer,
     INITIAL_CHAT_LIST_STATE,
 } from "@/src/context/ChatListContext.js";
-import {
-    UserAction,
-    userReducer,
-    UserState,
-} from "@/src/context/UsersContext.js";
 import { SmashProfileMeta, SmashUser } from "@smashchats/library";
 import { saveData } from "@/src/StorageUtils";
 
@@ -62,7 +57,6 @@ export interface SetAppWorkflowAction extends GlobalActionBase {
 
 export type Action =
     | ChatListAction
-    | UserAction
     | LatestMessageIdInDiscussionAction
     | SetAppWorkflowAction
     | SetSettingsAction
@@ -71,7 +65,6 @@ export type Action =
 
 export type GlobalParams = {
     chatList: ChatListParams;
-    users: Record<string, UserState>;
     latestMessageIdInDiscussion: Record<string, string>;
     selfSmashUser: SmashUser;
     settings: Settings;
@@ -81,7 +74,6 @@ export type GlobalParams = {
 
 export const INITIAL_GLOBAL_STATE: GlobalParams = {
     chatList: INITIAL_CHAT_LIST_STATE,
-    users: {},
     latestMessageIdInDiscussion: {},
     selfSmashUser: null as unknown as SmashUser,
     settings: DEFAULT_SETTINGS,
@@ -119,7 +111,6 @@ export const rootReducer = (
             state.latestMessageIdInDiscussion,
             action
         ),
-        users: userReducer(state.users, action),
         appWorkflow: appWorkflowReducer(state.appWorkflow, action),
         settings: settingsReducer(state.settings, action),
         userMeta: userMetaReducer(state.userMeta, action),

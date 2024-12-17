@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Box Renders correctly 1`] = `
+<View
+  style={
+    {
+      "backgroundColor": undefined,
+      "flex": undefined,
+      "flexDirection": undefined,
+      "height": undefined,
+      "marginHorizontal": undefined,
+      "marginLeft": undefined,
+      "paddingHorizontal": undefined,
+      "paddingVertical": undefined,
+      "position": undefined,
+      "width": undefined,
+    }
+  }
+>
+  <Text
+    style={
+      {
+        "color": "white",
+        "textShadowColor": undefined,
+        "textShadowOffset": undefined,
+        "textShadowRadius": undefined,
+        "textTransform": undefined,
+      }
+    }
+  >
+    Hello
+  </Text>
+</View>
+`;

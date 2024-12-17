@@ -8,7 +8,7 @@ type Props = PropsWithChildren<
     } & TextStyle
 >;
 
-export default function Text({
+export function Text({
     children,
     flex,
     bg,

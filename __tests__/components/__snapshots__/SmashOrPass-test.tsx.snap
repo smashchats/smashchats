@@ -1,0 +1,431 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SmashOrPass Renders correctly 1`] = `
+<View
+  style={
+    {
+      "alignItems": "center",
+      "backgroundColor": "#222222",
+      "borderColor": "#64189b",
+      "borderRadius": 16,
+      "borderWidth": 3.5,
+      "flex": undefined,
+      "flexDirection": "row",
+      "height": undefined,
+      "justifyContent": "center",
+      "marginHorizontal": undefined,
+      "marginRight": undefined,
+      "paddingHorizontal": 8,
+      "paddingVertical": 1,
+      "width": undefined,
+    }
+  }
+>
+  <View
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": undefined,
+        "expanded": undefined,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    testID="SmashOrPass::Smash"
+  >
+    <View>
+      <View
+        style={
+          {
+            "backgroundColor": undefined,
+            "flex": undefined,
+            "flexDirection": undefined,
+            "height": undefined,
+            "marginHorizontal": 0,
+            "marginLeft": undefined,
+            "paddingHorizontal": undefined,
+            "paddingVertical": undefined,
+            "position": undefined,
+            "width": undefined,
+          }
+        }
+      >
+        <Text
+          style={
+            {
+              "color": "white",
+              "fontSize": 14,
+              "textShadowColor": "#64189b",
+              "textShadowOffset": {
+                "height": 1.1,
+                "width": 1.1,
+              },
+              "textShadowRadius": 1,
+              "textTransform": "uppercase",
+            }
+          }
+        >
+          Smash
+        </Text>
+      </View>
+      <View
+        style={
+          {
+            "backgroundColor": undefined,
+            "flex": undefined,
+            "flexDirection": undefined,
+            "height": undefined,
+            "marginHorizontal": undefined,
+            "marginLeft": 0,
+            "paddingHorizontal": undefined,
+            "paddingVertical": undefined,
+            "position": "absolute",
+            "width": undefined,
+          }
+        }
+      >
+        <Text
+          style={
+            {
+              "color": "white",
+              "fontSize": 14,
+              "textShadowColor": "#64189b",
+              "textShadowOffset": {
+                "height": -1.1,
+                "width": -1.1,
+              },
+              "textShadowRadius": 1,
+              "textTransform": "uppercase",
+            }
+          }
+        >
+          Smash
+        </Text>
+      </View>
+      <View
+        style={
+          {
+            "backgroundColor": undefined,
+            "flex": undefined,
+            "flexDirection": undefined,
+            "height": undefined,
+            "marginHorizontal": undefined,
+            "marginLeft": 0,
+            "paddingHorizontal": undefined,
+            "paddingVertical": undefined,
+            "position": "absolute",
+            "width": undefined,
+          }
+        }
+      >
+        <Text
+          style={
+            {
+              "color": "white",
+              "fontSize": 14,
+              "textShadowColor": "#64189b",
+              "textShadowOffset": {
+                "height": 1.1,
+                "width": -1.1,
+              },
+              "textShadowRadius": 1,
+              "textTransform": "uppercase",
+            }
+          }
+        >
+          Smash
+        </Text>
+      </View>
+      <View
+        style={
+          {
+            "backgroundColor": undefined,
+            "flex": undefined,
+            "flexDirection": undefined,
+            "height": undefined,
+            "marginHorizontal": undefined,
+            "marginLeft": 0,
+            "paddingHorizontal": undefined,
+            "paddingVertical": undefined,
+            "position": "absolute",
+            "width": undefined,
+          }
+        }
+      >
+        <Text
+          style={
+            {
+              "color": "white",
+              "fontSize": 14,
+              "textShadowColor": "#64189b",
+              "textShadowOffset": {
+                "height": -1.1,
+                "width": 1.1,
+              },
+              "textShadowRadius": 1,
+              "textTransform": "uppercase",
+            }
+          }
+        >
+          Smash
+        </Text>
+      </View>
+    </View>
+  </View>
+  <View
+    style={
+      {
+        "backgroundColor": undefined,
+        "height": undefined,
+        "width": 25,
+      }
+    }
+  />
+  <ViewManagerAdapter_ExpoImage
+    accessibilityLabel="Lightning bolt"
+    containerViewRef={"[React.ref]"}
+    contentFit="cover"
+    contentPosition={
+      {
+        "left": "50%",
+        "top": "50%",
+      }
+    }
+    height={50}
+    left={57}
+    nativeViewRef={"[React.ref]"}
+    onError={[Function]}
+    onLoad={[Function]}
+    onLoadStart={[Function]}
+    onProgress={[Function]}
+    overflow="visible"
+    placeholder={[]}
+    position="absolute"
+    source={
+      [
+        {
+          "__packager_asset": true,
+          "height": 1,
+          "scale": 1,
+          "uri": "file://assets/full/path/to/directory/name.type",
+          "width": 1,
+        },
+      ]
+    }
+    style={
+      {
+        "height": 50,
+        "left": 57,
+        "overflow": "visible",
+        "position": "absolute",
+        "transform": [
+          {
+            "scale": 0.8,
+          },
+        ],
+        "width": 25,
+      }
+    }
+    transform={
+      [
+        {
+          "scale": 0.8,
+        },
+      ]
+    }
+    transition={null}
+    width={25}
+  />
+  <View
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": undefined,
+        "expanded": undefined,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    testID="SmashOrPass::Pass"
+  >
+    <View>
+      <View
+        style={
+          {
+            "backgroundColor": undefined,
+            "flex": undefined,
+            "flexDirection": undefined,
+            "height": undefined,
+            "marginHorizontal": 0,
+            "marginLeft": undefined,
+            "paddingHorizontal": undefined,
+            "paddingVertical": undefined,
+            "position": undefined,
+            "width": undefined,
+          }
+        }
+      >
+        <Text
+          style={
+            {
+              "color": "white",
+              "fontSize": 14,
+              "textShadowColor": "#64189b",
+              "textShadowOffset": {
+                "height": 1.1,
+                "width": 1.1,
+              },
+              "textShadowRadius": 1,
+              "textTransform": "uppercase",
+            }
+          }
+        >
+          pass
+        </Text>
+      </View>
+      <View
+        style={
+          {
+            "backgroundColor": undefined,
+            "flex": undefined,
+            "flexDirection": undefined,
+            "height": undefined,
+            "marginHorizontal": undefined,
+            "marginLeft": 0,
+            "paddingHorizontal": undefined,
+            "paddingVertical": undefined,
+            "position": "absolute",
+            "width": undefined,
+          }
+        }
+      >
+        <Text
+          style={
+            {
+              "color": "white",
+              "fontSize": 14,
+              "textShadowColor": "#64189b",
+              "textShadowOffset": {
+                "height": -1.1,
+                "width": -1.1,
+              },
+              "textShadowRadius": 1,
+              "textTransform": "uppercase",
+            }
+          }
+        >
+          pass
+        </Text>
+      </View>
+      <View
+        style={
+          {
+            "backgroundColor": undefined,
+            "flex": undefined,
+            "flexDirection": undefined,
+            "height": undefined,
+            "marginHorizontal": undefined,
+            "marginLeft": 0,
+            "paddingHorizontal": undefined,
+            "paddingVertical": undefined,
+            "position": "absolute",
+            "width": undefined,
+          }
+        }
+      >
+        <Text
+          style={
+            {
+              "color": "white",
+              "fontSize": 14,
+              "textShadowColor": "#64189b",
+              "textShadowOffset": {
+                "height": 1.1,
+                "width": -1.1,
+              },
+              "textShadowRadius": 1,
+              "textTransform": "uppercase",
+            }
+          }
+        >
+          pass
+        </Text>
+      </View>
+      <View
+        style={
+          {
+            "backgroundColor": undefined,
+            "flex": undefined,
+            "flexDirection": undefined,
+            "height": undefined,
+            "marginHorizontal": undefined,
+            "marginLeft": 0,
+            "paddingHorizontal": undefined,
+            "paddingVertical": undefined,
+            "position": "absolute",
+            "width": undefined,
+          }
+        }
+      >
+        <Text
+          style={
+            {
+              "color": "white",
+              "fontSize": 14,
+              "textShadowColor": "#64189b",
+              "textShadowOffset": {
+                "height": -1.1,
+                "width": 1.1,
+              },
+              "textShadowRadius": 1,
+              "textTransform": "uppercase",
+            }
+          }
+        >
+          pass
+        </Text>
+      </View>
+    </View>
+  </View>
+</View>
+`;

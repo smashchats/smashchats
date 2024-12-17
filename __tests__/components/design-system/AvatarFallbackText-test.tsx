@@ -7,4 +7,10 @@ describe("AvatarFallbackText", () => {
 
         expect(tree).toMatchSnapshot();
     });
+
+    test("Renders correctly with no name", () => {
+        const tree = render(<AvatarFallbackText name={undefined as unknown as string} />).toJSON();
+
+        expect(tree).toMatchSnapshot();
+    });
 });

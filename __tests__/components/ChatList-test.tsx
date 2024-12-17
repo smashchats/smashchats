@@ -2,7 +2,6 @@ import { ChatListFilters } from "@/src/components/fragments/ChatList/ChatListFil
 import {
     filterChatsBasedOnFilters,
     INITIAL_CHAT_LIST_STATE,
-    SmashMessageToMessage,
 } from "@/src/context/ChatListContext.js";
 import {
     GlobalParams,
@@ -11,7 +10,6 @@ import {
 } from "@/src/context/GlobalContext.jsx";
 import { ChatListView } from "@/src/db/schema";
 import { fireEvent, render } from "@testing-library/react-native";
-import { EncapsulatedSmashMessage, SmashDID } from "@smashchats/library";
 
 const DEFAULT_VALUES: Partial<ChatListView> = {
     most_recent_message: "string",
@@ -135,112 +133,5 @@ describe("ui", () => {
         fireEvent.press(filter);
 
         expect(toJSON()).toMatchSnapshot();
-    });
-});
-
-describe("SmashMessage converter", () => {
-    test("converts a profile message", () => {
-        const message: EncapsulatedSmashMessage = {
-            type: "profile",
-            timestamp: new Date("2024-01-01").toISOString(),
-            sha256: "sha256",
-            data: {
-                displayName: "New username",
-            },
-            after: "after",
-        };
-
-        const result = SmashMessageToMessage(message, { id: "id" } as SmashDID);
-        expect(result.type).toBe("metadata");
-        expect(result.date).toStrictEqual(new Date(message.timestamp));
-        expect(result.content).toBe("Sent you their? profile");
-        expect(result.from).toBe("id");
-    });
-
-    test("converts a join message", () => {
-        const message: EncapsulatedSmashMessage = {
-            type: "join",
-            timestamp: new Date("2024-01-01").toISOString(),
-            sha256: "sha256",
-            data: {
-                displayName: "New user",
-            },
-            after: "after",
-        };
-        const result = SmashMessageToMessage(message, { id: "id" } as SmashDID);
-        expect(result.type).toBe("metadata");
-        expect(result.date).toStrictEqual(new Date(message.timestamp));
-        expect(result.content).toBe("Joined the neighbourhood");
-        expect(result.from).toBe("id");
-    });
-
-    test("converts a discover message", () => {
-        const message: EncapsulatedSmashMessage = {
-            type: "discover",
-            timestamp: new Date("2024-01-01").toISOString(),
-            sha256: "sha256",
-            data: {
-                displayName: "username1234",
-            },
-            after: "after",
-        };
-        const result = SmashMessageToMessage(message, { id: "id" } as SmashDID);
-        expect(result.type).toBe("metadata");
-        expect(result.date).toStrictEqual(new Date(message.timestamp));
-        expect(result.content).toBe("Discovered username1234");
-        expect(result.from).toBe("id");
-    });
-
-    test("converts a text message", () => {
-        const message: EncapsulatedSmashMessage = {
-            type: "text",
-            timestamp: new Date("2024-01-01").toISOString(),
-            sha256: "sha256",
-            data: "Hello world",
-            after: "after",
-        };
-        const result = SmashMessageToMessage(message, { id: "id" } as SmashDID);
-        expect(result.type).toBe("text");
-        expect(result.date).toStrictEqual(new Date(message.timestamp));
-        expect(result.content).toBe("Hello world");
-        expect(result.from).toBe("id");
-    });
-
-    test("converts a profiles message", () => {
-        const message: EncapsulatedSmashMessage = {
-            type: "profiles",
-            timestamp: new Date("2024-01-01").toISOString(),
-            sha256: "sha256",
-            data: {
-                profiles: [
-                    { displayName: "User 1" },
-                    { displayName: "User 2" },
-                ],
-            },
-            after: "after",
-        };
-        const result = SmashMessageToMessage(message, { id: "id" } as SmashDID);
-        expect(result.type).toBe("metadata");
-        expect(result.date).toStrictEqual(new Date(message.timestamp));
-        expect(result.content).toBe("Sent you a list of profiles");
-        expect(result.from).toBe("id");
-    });
-
-    test("converts an action message", () => {
-        const message: EncapsulatedSmashMessage = {
-            type: "action",
-            timestamp: new Date("2024-01-01").toISOString(),
-            sha256: "sha256",
-            data: {
-                action: "someAction",
-                payload: { key: "value" },
-            },
-            after: "after",
-        };
-        const result = SmashMessageToMessage(message, { id: "id" } as SmashDID);
-        expect(result.type).toBe("metadata");
-        expect(result.date).toStrictEqual(new Date(message.timestamp));
-        expect(result.content).toBe("Sent you an action");
-        expect(result.from).toBe("id");
     });
 });

@@ -11,7 +11,6 @@ import { useGlobalState } from "@/src/context/GlobalContext.jsx";
 import { drizzle_db } from "@/src/db/database";
 import { ChatListView, chatListView } from "@/src/db/schema.js";
 import { getShownChats } from "@/src/context/ChatListContext";
-
 import { useLiveTablesQuery } from "@/src/hooks/useLiveQuery";
 
 export function ChatList() {

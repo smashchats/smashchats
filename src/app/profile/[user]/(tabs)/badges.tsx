@@ -4,7 +4,7 @@ import { useLocalSearchParams } from "expo-router";
 
 import { Colors } from "@/src/constants/Colors.js";
 import { Box } from "@/src/components/design-system/Box.jsx";
-import Text from "@/src/components/design-system/Text.jsx";
+import { Text } from "@/src/components/design-system/Text.jsx";
 
 export const ProfileBadges = () => {
     const { user: profileId } = useLocalSearchParams();

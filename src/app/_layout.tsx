@@ -1,6 +1,7 @@
 import "@/src/polyfills";
 // ================================
 import { useEffect } from "react";
+import { View } from "react-native";
 import {
     DarkTheme,
     DefaultTheme,
@@ -21,9 +22,9 @@ import migrations from "@/drizzle/migrations.js";
 import { GlobalProvider } from "@/src/context/GlobalContext.js";
 import { useColorScheme } from "@/src/hooks/useColorScheme.js";
 
-
 import { drizzle_db, expo_db } from "@/src/db/database";
 import LoaderScreen from "@/src/app/loader";
+import { ThemedText } from "@/src/components/ThemedText";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -48,11 +49,7 @@ export default function RootLayout() {
     success = _success;
     error = _error;
 
-    useEffect(() => {
-        if (fontsLoaded && success) {
-            SmashMessaging.setCrypto(window.crypto);
-        }
-    }, [fontsLoaded, success]);
+    SmashMessaging.setCrypto(window.crypto);
 
     useEffect(() => {
         if (error) {
@@ -60,6 +57,14 @@ export default function RootLayout() {
         }
     }, [error]);
 
+    if (error && !success) {
+        SplashScreen.hideAsync();
+        return (
+            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                <ThemedText>{__DEV__ ? error?.message ?? "Unknown error" : "Unknown error"}</ThemedText>
+            </View>
+        );
+    }
     if (!fontsLoaded) {
         return null;
     }

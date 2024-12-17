@@ -1,8 +1,4 @@
-import { EncapsulatedSmashMessage, SmashDID } from "@smashchats/library";
-
-import { UserDisplayData } from "@/src/events/UserDisplayDataReducer.js";
 import { Action, GlobalActionBase } from "@/src/context/GlobalContext.jsx";
-import { Message } from "@/src/app/profile/[user]/(tabs)/messages";
 import { ChatListView } from "@/src/db/schema";
 
 export const filterChatsBasedOnFilters = (
@@ -76,74 +72,5 @@ export const chatListReducer = (
     return {
         ...state,
         selectedFilters,
-    };
-};
-
-export const SmashMessageToMessage = (
-    message: EncapsulatedSmashMessage,
-    from: SmashDID
-): Message => {
-    let content: string = "";
-    let type: string = "";
-
-    switch (message.type) {
-        case "join": {
-            content = `Joined the neighbourhood`;
-            type = "metadata";
-            break;
-        }
-        case "discover": {
-            content = `Discovered ${
-                (message.data as { displayName: string }).displayName
-            }`;
-            type = "metadata";
-            break;
-        }
-        case "text": {
-            content = message.data as string;
-            type = "text";
-            break;
-        }
-        case "profile": {
-            content = `Sent you their? profile`; // TODO adapt to situation
-            type = "metadata";
-            break;
-        }
-        case "profiles": {
-            content = `Sent you a list of profiles`;
-            type = "metadata";
-            break;
-        }
-        case "action": {
-            content = `Sent you an action`;
-            type = "metadata";
-            break;
-        }
-    }
-
-    return {
-        date: new Date(message.timestamp),
-        content,
-        sha256: message.sha256,
-        from: from.id,
-        type,
-    };
-};
-
-export const MessageToUserDisplayData = (
-    originalData: UserDisplayData,
-    message: Message
-): UserDisplayData => {
-    return {
-        ...originalData,
-        lastUpdatedTimestamp: {
-            ...originalData.lastUpdatedTimestamp,
-            [message.type]: message.date,
-        },
-        avatar: originalData.avatar,
-        excerpt: message.content,
-        messageTimestamp: message.date,
-        unreadMessages: true,
-        unreadMessagesAmount: originalData.unreadMessagesAmount + 1,
     };
 };

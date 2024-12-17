@@ -126,19 +126,6 @@ export const ProfileScreen = () => {
                 date_read: new Date(),
             }
         );
-
-        globalDispatch({
-            type: "USER_SEND_MESSAGE_ACTION",
-            message: {
-                content: dataToSend,
-                type: "text",
-                date: new Date(),
-                sha256: data?.sha256,
-                from: selfDid?.id ?? "0",
-            },
-            from: selfDid,
-            discussionId: peerId,
-        });
     };
 
     const handleSendMedia = async () => {

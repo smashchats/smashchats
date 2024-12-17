@@ -15,7 +15,7 @@ describe("Avatar", () => {
         const tree = render(
             <Avatar bgColor={Colors.purple}>
                 <AvatarImage
-                    alt={`contact name's profile picture`}
+                    alt={`contact name's avatar`}
                     borderRadius={16}
                     size={64}
                     source={"data:base64,image"}
