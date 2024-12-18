@@ -3,7 +3,7 @@ import { ScrollView, View } from "react-native";
 
 import { useLocalSearchParams } from "expo-router";
 import { eq } from "drizzle-orm";
-import { EncapsulatedSmashMessage, SmashDID } from "@smashchats/library";
+import { EncapsulatedIMProtoMessage, DIDString } from "@smashchats/library";
 
 import { Colors } from "@/src/constants/Colors.js";
 import { Box } from "@/src/components/design-system/Box.jsx";
@@ -77,10 +77,10 @@ export const ProfileMessages = ({ paddingTop }: { paddingTop: number }) => {
 
     useEffect(() => {
         const callback = (
-            _message: EncapsulatedSmashMessage,
-            from: SmashDID
+            _message: EncapsulatedIMProtoMessage,
+            from: DIDString
         ) => {
-            if (from.id === peerId) {
+            if (from === peerId) {
                 markAllMessagesInDiscussionAsRead(peerId).then(() => {
                     console.debug(
                         `messages::onNewMessages::Marked received messages in discussion ${peerId} as read`

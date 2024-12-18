@@ -48,7 +48,7 @@ classDiagram
 
         +String? meta_title
         +String? meta_description
-        +String? meta_picture
+        +String? meta_avatar
     }
 
     Contact "1" -- "0..1" TrustRelation

@@ -68,7 +68,7 @@ function ChatItem({
     most_recent_message_type,
     most_recent_message_date,
     smashed,
-    meta_picture,
+    meta_avatar,
 }: ChatItemProps): React.JSX.Element {
     const date = dateToShowableString(new Date(most_recent_message_date));
 
@@ -85,7 +85,7 @@ function ChatItem({
                         {
                             did_id,
                             meta_title,
-                            meta_picture,
+                            meta_avatar,
                             trusted_name,
                         } as TrustedContact
                     }

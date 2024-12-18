@@ -1,11 +1,11 @@
-import { JoinAction } from "@smashchats/library";
+import { DIDDocument, SMASH_NBH_JOIN, SmashActionJson, DIDString } from "@smashchats/library";
 
 // sme.dev.smashchats.com
 
-export const dev_nab_join_action: JoinAction = {
-    action: "join",
+export const dev_nab_join_action: SmashActionJson = {
+    action: SMASH_NBH_JOIN,
     did: {
-        id: "4TuFHgRIGyVnUpyzzGBavr/y1B4U4+Dafpk2JXC/CcU=",
+        id: "did:key:4TuFHgRIGyVnUpyzzGBavr/y1B4U4+Dafpk2JXC/CcU=",
         ik: "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEy7VvSuWTLgBgezLOO9z0ERYEt0IJXhEFizv7W8SgcXVr9tUpGmgjnYexHEj/vuMnrr8W4kGJXrHpjxdUgZ9Zyw==",
         ek: "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEwS45QAbB5UY6God+zv1UubpGz7lMzO2MqzpwRjnlEYXooeYBE1o4GGZ+D6RmDtobYgLrFLtjIW1kNpUVdUnqag==",
         signature:
@@ -37,3 +37,5 @@ export const dev_nab_join_action: JoinAction = {
         ],
     },
 };
+
+export const didId = (dev_nab_join_action.did as DIDDocument).id as DIDString;

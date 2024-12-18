@@ -68,7 +68,7 @@ export default function ProfileLayout() {
                         type: "SET_SETTINGS_USER_META_ACTION",
                         userMeta: {
                             ...state.userMeta,
-                            picture: `data:image/jpeg;base64,${base64}`,
+                            avatar: `data:image/jpeg;base64,${base64}`,
                         },
                     });
                 }
@@ -92,7 +92,7 @@ export default function ProfileLayout() {
                     <Avatar
                         contact={
                             {
-                                meta_picture: state.userMeta.picture,
+                                meta_avatar: state.userMeta.avatar,
                             } as TrustedContact
                         }
                         variant="xlarge"

@@ -1,6 +1,7 @@
 import * as FileSystem from "expo-file-system";
 import ImageResizer from "@bam.tech/react-native-image-resizer";
-import { SmashDID } from "@smashchats/library";
+
+import { DIDDocument } from "@smashchats/library";
 
 import { Message } from "@/src/app/profile/[user]/(tabs)/messages.js";
 
@@ -20,9 +21,9 @@ export const getTxtRecord = (domain: string): Promise<DNSoverHttpsResponse> => {
     return getDnsRecord(domain, "TXT");
 };
 
-export const getDidFromDomain = async (domain: string): Promise<SmashDID> => {
+export const getDidFromDomain = async (domain: string): Promise<DIDDocument> => {
     const r = await getTxtRecord(`_smash.${domain}`);
-    return r.Answer![0].data as unknown as SmashDID;
+    return r.Answer![0].data as unknown as DIDDocument;
 };
 
 // Quicktyped from data available here: https://developers.google.com/speed/public-dns/docs/doh/

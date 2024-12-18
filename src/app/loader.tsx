@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { SplashScreen, Stack } from "expo-router";
 import { PostHogProvider } from "posthog-react-native";
 
-import { SmashProfileMeta, SmashUser } from "@smashchats/library";
+import { SmashUser, IMProfile } from "@smashchats/library";
 
 import { handleUserMessages, loadIdentity } from "@/src/IdentityUtils";
 import {
@@ -14,7 +14,7 @@ import {
 } from "@/src/context/GlobalContext";
 import { getData } from "@/src/StorageUtils";
 import { ThemedText } from "@/src/components/ThemedText";
-import { dev_nab_join_action } from "@/data/dev";
+import { dev_nab_join_action, didId } from "@/data/dev";
 import { createTrustRelation } from "@/src/models/TrustRelation";
 
 export default function LoaderScreen() {
@@ -24,7 +24,7 @@ export default function LoaderScreen() {
     const initializeUserAndDiscoverNetwork = async (user: SmashUser) => {
         try {
             await Promise.all([
-                createTrustRelation(dev_nab_join_action.did.id),
+                createTrustRelation(didId),
                 user.join(dev_nab_join_action),
                 new Promise((resolve) => setTimeout(() => resolve, 1000)),
             ]);
@@ -102,7 +102,7 @@ export default function LoaderScreen() {
         (async () => {
             const [settings, meta] = await Promise.all([
                 getData<Settings>("settings.settings"),
-                getData<SmashProfileMeta>("settings.user_meta"),
+                getData<IMProfile>("settings.user_meta"),
             ]);
             const newUser = settings === null;
             dispatch({

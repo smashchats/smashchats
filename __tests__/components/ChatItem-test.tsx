@@ -16,7 +16,7 @@ describe(`chat item`, () => {
                 most_recent_message="excerpt"
                 most_recent_message_type="message_type"
                 trusted_name="trusted_name"
-                meta_picture="avatar"
+                meta_avatar="avatar"
                 smashed={false}
                 created_at={new Date()}
             />

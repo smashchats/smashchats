@@ -7,7 +7,7 @@ import {
     chatListReducer,
     INITIAL_CHAT_LIST_STATE,
 } from "@/src/context/ChatListContext.js";
-import { SmashProfileMeta, SmashUser } from "@smashchats/library";
+import { IMProfile, SmashUser } from "@smashchats/library";
 import { saveData } from "@/src/StorageUtils";
 
 export interface Settings {
@@ -35,7 +35,7 @@ export interface SetSettingsAction extends GlobalActionBase {
 
 export interface SetSettingsUserMetaAction extends GlobalActionBase {
     type: "SET_SETTINGS_USER_META_ACTION";
-    userMeta: SmashProfileMeta | null;
+    userMeta: IMProfile | null;
 }
 
 export interface SetUserAction extends GlobalActionBase {
@@ -68,7 +68,7 @@ export type GlobalParams = {
     latestMessageIdInDiscussion: Record<string, string>;
     selfSmashUser: SmashUser;
     settings: Settings;
-    userMeta: SmashProfileMeta;
+    userMeta: IMProfile;
     appWorkflow: AppWorkflow;
 };
 
@@ -238,13 +238,16 @@ export function settingsReducer(settings: Settings, action: Action): Settings {
 }
 
 export function userMetaReducer(
-    userMeta: SmashProfileMeta,
+    userMeta: IMProfile,
     action: Action
-): SmashProfileMeta {
+): IMProfile {
     if (action.type !== "SET_SETTINGS_USER_META_ACTION") {
         return userMeta;
     }
-    return action.userMeta ?? { title: "", description: "", picture: "" };
+    return (
+        action.userMeta ??
+        ({ title: "", description: "", avatar: "" } as IMProfile)
+    );
 }
 
 function selfSmashUserReducer(

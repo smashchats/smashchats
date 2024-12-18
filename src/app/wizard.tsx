@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Button, TextInput, View } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 
-import { SmashProfileMeta } from "@smashchats/library";
+import { IMProfile } from "@smashchats/library";
 
 import { handleUserMessages, loadIdentity } from "@/src/IdentityUtils";
 import {
@@ -24,10 +24,10 @@ export default function Wizard() {
 
     const router = useRouter();
 
-    const [identityMeta, setIdentityMeta] = useState<SmashProfileMeta>({
+    const [identityMeta, setIdentityMeta] = useState<IMProfile>({
         title: "",
         description: "",
-        picture: "",
+        avatar: "",
     });
 
     const [progress, setProgress] = useState("name");
@@ -51,7 +51,7 @@ export default function Wizard() {
             const meta = {
                 title: identityMeta.title.trim(),
                 description: identityMeta.description.trim(),
-                picture: (identityMeta.picture ?? "").trim(),
+                avatar: (identityMeta.avatar ?? "").trim(),
             };
             dispatch({
                 type: "SET_SETTINGS_ACTION",
@@ -92,7 +92,7 @@ export default function Wizard() {
                 if (base64) {
                     setIdentityMeta((prev) => ({
                         ...prev,
-                        picture: `data:image/jpeg;base64,${base64}`,
+                        avatar: `data:image/jpeg;base64,${base64}`,
                     }));
                 }
             }
@@ -187,12 +187,12 @@ export default function Wizard() {
                     />
                 </View>
             )}
-            {progress === "picture" && (
+            {progress === "avatar" && (
                 <View style={{ width: "100%" }}>
                     <View
                         style={{ flexDirection: "row", alignItems: "center" }}
                     >
-                        <ThemedText>upload a picture</ThemedText>
+                        <ThemedText>upload an avatar</ThemedText>
                         <ThemedText
                             style={{
                                 fontSize: 12,
@@ -215,7 +215,7 @@ export default function Wizard() {
                                 {
                                     meta_title: identityMeta.title,
                                     meta_description: identityMeta.description,
-                                    meta_picture: identityMeta.picture,
+                                    meta_avatar: identityMeta.avatar,
                                 } as TrustedContact
                             }
                             variant="xlarge"
@@ -234,8 +234,8 @@ export default function Wizard() {
                         if (progress === "name") {
                             setProgress("desc");
                         } else if (progress === "desc") {
-                            setProgress("picture");
-                        } else if (progress === "picture") {
+                            setProgress("avatar");
+                        } else if (progress === "avatar") {
                             handleCreateProfile();
                         }
                     }}

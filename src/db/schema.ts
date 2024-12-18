@@ -22,15 +22,15 @@ const boolean = (fieldName: string, defaultValue: boolean = false) =>
 
 export const contacts = sqliteTable("contacts", {
     did_id: text("did_id", { mode: "text" }).primaryKey(),
-    did_ik: text("did_ik", { mode: "text" }).notNull(),
-    did_ek: text("did_ek", { mode: "text" }).notNull(),
-    did_signature: text("did_signature", { mode: "text" }).notNull(),
-    did_endpoints: text("did_endpoints", { mode: "json" }).notNull(),
+    did_ik: text("did_ik", { mode: "text" }),
+    did_ek: text("did_ek", { mode: "text" }),
+    did_signature: text("did_signature", { mode: "text" }),
+    did_endpoints: text("did_endpoints", { mode: "json" }),
     is_self: boolean("is_self"),
     notes: text(),
     meta_title: text(),
     meta_description: text(),
-    meta_picture: text(),
+    meta_avatar: text(),
     scores: text("scores", { mode: "json" }),
     smashed: boolean("smashed"),
     blocked: boolean("blocked"),
@@ -89,7 +89,7 @@ export const chatListView = sqliteView("chat_list_view").as((qb) =>
         .select({
             did_id: contacts.did_id,
             meta_title: contacts.meta_title,
-            meta_picture: contacts.meta_picture,
+            meta_avatar: contacts.meta_avatar,
             smashed: contacts.smashed,
             most_recent_message: messages.data,
             most_recent_message_type: messages.type,
@@ -114,7 +114,7 @@ export const chatListView = sqliteView("chat_list_view").as((qb) =>
 export interface ChatListView {
     did_id: Contact["did_id"];
     meta_title: Contact["meta_title"];
-    meta_picture: Contact["meta_picture"];
+    meta_avatar: Contact["meta_avatar"];
     smashed: Contact["smashed"];
     created_at: Contact["created_at"];
     most_recent_message: Message["data"];

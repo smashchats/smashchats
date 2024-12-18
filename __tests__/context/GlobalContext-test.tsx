@@ -11,7 +11,7 @@ import GlobalContext, {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { View } from "react-native";
 import { useEffect } from "react";
-import { SmashProfileMeta } from "@smashchats/library";
+import { IMProfile } from "@smashchats/library";
 
 afterEach(() => {
     jest.clearAllMocks();
@@ -86,7 +86,7 @@ describe("settings context", () => {
 
 describe("user meta context", () => {
     describe("user meta reducer", () => {
-        const initialState = {} as SmashProfileMeta;
+        const initialState = {} as IMProfile;
 
         it("should set default user meta if no user meta is provided", () => {
             const newState = userMetaReducer(initialState, {
@@ -97,7 +97,7 @@ describe("user meta context", () => {
                 expect.objectContaining({
                     title: "",
                     description: "",
-                    picture: "",
+                    avatar: "",
                 })
             );
         });
@@ -108,14 +108,14 @@ describe("user meta context", () => {
                 userMeta: {
                     title: "test",
                     description: "test",
-                    picture: "test",
+                    avatar: "test",
                 },
             });
             expect(newState).toEqual(
                 expect.objectContaining({
                     title: "test",
                     description: "test",
-                    picture: "test",
+                    avatar: "test",
                 })
             );
         });
@@ -131,7 +131,7 @@ describe("user meta context", () => {
                         userMeta: {
                             title: "test",
                             description: "test",
-                            picture: "test",
+                            avatar: "test",
                         },
                     });
 
@@ -147,7 +147,7 @@ describe("user meta context", () => {
             JSON.stringify({
                 title: "test",
                 description: "test",
-                picture: "test",
+                avatar: "test",
             })
         );
     });

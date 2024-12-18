@@ -6,7 +6,9 @@ import {
     useMicrophonePermission,
     Camera,
 } from "react-native-vision-camera";
-import { EncapsulatedSmashMessage, SmashDID } from "@smashchats/library";
+import { useRouter } from "expo-router";
+
+import { EncapsulatedIMProtoMessage, DIDString } from "@smashchats/library";
 
 import { Colors } from "@/src/constants/Colors.js";
 import { ChatList } from "@/src/components/fragments/ChatList/ChatList.jsx";
@@ -15,8 +17,6 @@ import {
     useGlobalDispatch,
     useGlobalState,
 } from "@/src/context/GlobalContext.js";
-import { getEnrichedMessage } from "@/src/IdentityUtils";
-import { useRouter } from "expo-router";
 
 export function Home() {
     const dispatch = useGlobalDispatch();
@@ -35,14 +35,13 @@ export function Home() {
     useEffect(() => {
         if (user) {
             const listener = async (
-                message: EncapsulatedSmashMessage,
-                senderDid: SmashDID
+                message: EncapsulatedIMProtoMessage,
+                senderDid: DIDString
             ) => {
-                const m = getEnrichedMessage(message, senderDid);
                 dispatch({
                     type: "LATEST_MESSAGE_ID_IN_DISCUSSION_ACTION",
-                    discussionId: senderDid.id,
-                    messageId: m.sha256,
+                    discussionId: senderDid,
+                    messageId: message.sha256,
                 });
             };
             user.on("data", listener);

@@ -24,6 +24,7 @@ import {
 } from "@/src/models/Contacts";
 import { EnrichedSmashMessage, saveMessageToDb } from "@/src/models/Messages";
 import { ProfileHeader } from "@/src/components/fragments/ProfileHeader";
+import { DIDString } from "@smashchats/library";
 
 export type ProfileIdType = {
     profileId: string;
@@ -115,8 +116,8 @@ export const ProfileScreen = () => {
         saveMessageToDb(
             {
                 ...data,
-                fromDid: selfDid,
-                toDiscussionId: peerId,
+                fromDid: selfDid.id,
+                toDiscussionId: peerId as DIDString,
             } satisfies EnrichedSmashMessage,
             {
                 date_read: new Date(),

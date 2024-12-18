@@ -6,7 +6,7 @@ import {
     and,
 } from "drizzle-orm";
 
-import { EncapsulatedSmashMessage, SmashDID } from "@smashchats/library";
+import { EncapsulatedIMProtoMessage, IM_PROFILE, IM_CHAT_TEXT, DIDString } from "@smashchats/library";
 
 import { messages } from "@/src/db/schema.js";
 import { drizzle_db } from "@/src/db/database";
@@ -16,9 +16,9 @@ import {
     updateContact,
 } from "@/src/models/Contacts.js";
 
-export interface EnrichedSmashMessage extends EncapsulatedSmashMessage {
-    fromDid: SmashDID;
-    toDiscussionId: string;
+export interface EnrichedSmashMessage extends EncapsulatedIMProtoMessage {
+    fromDid: DIDString;
+    toDiscussionId: DIDString;
 }
 
 export type Message = InferSelectModel<typeof messages>;
@@ -28,10 +28,10 @@ export const ESMToMessageInsertMapper = (
     esm: EnrichedSmashMessage
 ): MessageInsert => {
     const data =
-        esm.type === "text" ? (esm.data as string) : JSON.stringify(esm.data);
+        esm.type === IM_CHAT_TEXT ? (esm.data as string) : JSON.stringify(esm.data);
     return {
         sha256: esm.sha256,
-        from_did_id: esm.fromDid.id,
+        from_did_id: esm.fromDid,
         discussion_id: esm.toDiscussionId,
         timestamp: new Date(esm.timestamp),
         type: esm.type,
@@ -44,21 +44,17 @@ export const saveMessageToDb = async (
     message: EnrichedSmashMessage,
     extraFields?: Partial<MessageInsert>
 ) => {
-    if (!["text"].includes(message.type)) {
+    if (![IM_CHAT_TEXT].includes(message.type)) {
         return;
     }
     const messageInsert = ESMToMessageInsertMapper(message);
 
-    const contact = await getContactFromDb(message.fromDid.id);
+    const contact = await getContactFromDb(message.fromDid);
 
     if (!contact) {
         console.debug("contact not found, saving");
         await saveContactToDb({
-            did_id: message.fromDid.id,
-            did_ik: message.fromDid.ik,
-            did_ek: message.fromDid.ek,
-            did_signature: message.fromDid.signature,
-            did_endpoints: message.fromDid.endpoints ?? [],
+            did_id: message.fromDid
         });
     }
     const [messageId] = await drizzle_db
@@ -68,11 +64,9 @@ export const saveMessageToDb = async (
     return messageId;
 };
 
-export const parseDataInMessage = async (message: EnrichedSmashMessage) => {
-    if (message.type === "profile") {
+export const parseDataInMessage = async (message: EncapsulatedIMProtoMessage) => {
+    if (message.type === IM_PROFILE) {
         await updateContact(JSON.parse(message.data as string));
-    } else if (message.type === "profiles") {
-        // not parsing profiles because this is done through nbh_profiles
     }
 };
 
