@@ -1,1 +1,0 @@
-ALTER TABLE `contacts` ADD `blocked` integer DEFAULT false;

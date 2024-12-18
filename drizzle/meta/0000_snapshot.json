@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "380759b8-ed53-4fe0-9946-96679520474b",
+  "id": "3b64801f-06f0-4e0b-a1e8-af24a26c637e",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "contacts": {
@@ -18,28 +18,28 @@
           "name": "did_ik",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
         "did_ek": {
           "name": "did_ek",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
         "did_signature": {
           "name": "did_signature",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
         "did_endpoints": {
           "name": "did_endpoints",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
         "is_self": {
@@ -71,8 +71,8 @@
           "notNull": false,
           "autoincrement": false
         },
-        "meta_picture": {
-          "name": "meta_picture",
+        "meta_avatar": {
+          "name": "meta_avatar",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -87,6 +87,14 @@
         },
         "smashed": {
           "name": "smashed",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": false
+        },
+        "blocked": {
+          "name": "blocked",
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
@@ -282,8 +290,8 @@
           "notNull": false,
           "autoincrement": false
         },
-        "meta_picture": {
-          "name": "meta_picture",
+        "meta_avatar": {
+          "name": "meta_avatar",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -317,11 +325,19 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
         }
       },
       "name": "chat_list_view",
       "isExisting": false,
-      "definition": "select \"contacts\".\"did_id\", \"contacts\".\"meta_title\", \"contacts\".\"meta_picture\", \"contacts\".\"smashed\", \"messages\".\"data\", \"messages\".\"type\", \"trust_relations\".\"name\", MAX(\"messages\".\"created_at\") as \"most_recent_message_date\", COUNT(\"messages\".\"sha256\") - COUNT(\"messages\".\"date_read\") as \"unread_count\" from \"contacts\" left join \"messages\" on \"contacts\".\"did_id\" = \"messages\".\"discussion_id\" left join \"trust_relations\" on \"contacts\".\"did_id\" = \"trust_relations\".\"did_id\" group by \"messages\".\"discussion_id\" order by \"messages\".\"created_at\" desc"
+      "definition": "select \"contacts\".\"did_id\", \"contacts\".\"meta_title\", \"contacts\".\"meta_avatar\", \"contacts\".\"smashed\", \"messages\".\"data\", \"messages\".\"type\", \"trust_relations\".\"name\", \"contacts\".\"created_at\", MAX(\"messages\".\"created_at\") as \"most_recent_message_date\", COUNT(\"messages\".\"sha256\") - COUNT(\"messages\".\"date_read\") as \"unread_count\" from \"contacts\" left join \"messages\" on \"contacts\".\"did_id\" = \"messages\".\"discussion_id\" left join \"trust_relations\" on \"contacts\".\"did_id\" = \"trust_relations\".\"did_id\" group by \"contacts\".\"did_id\" order by \"messages\".\"created_at\" desc"
     }
   },
   "enums": {},
