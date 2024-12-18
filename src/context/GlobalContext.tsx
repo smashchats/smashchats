@@ -80,8 +80,8 @@ export const INITIAL_GLOBAL_STATE: GlobalParams = {
     userMeta: {
         title: "",
         description: "",
-        picture: "",
-    },
+        avatar: "",
+    } as IMProfile,
     appWorkflow: "LOADING",
 };
 

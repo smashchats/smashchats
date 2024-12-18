@@ -18,7 +18,7 @@ export const dev_nab_join_action: SmashActionJson = {
                     "jTQk0mz0LzzWCQrhTdCi/ta53JiywIWEkgmVzpydhiAg13LX58FyUL4Fw176xWMds7zKp/mOKWySHJTO/lee+A==",
             },
         ],
-    },
+    } as DIDDocument,
     config: {
         sme: [
             {

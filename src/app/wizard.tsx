@@ -28,7 +28,7 @@ export default function Wizard() {
         title: "",
         description: "",
         avatar: "",
-    });
+    } as IMProfile);
 
     const [progress, setProgress] = useState("name");
 
@@ -59,7 +59,7 @@ export default function Wizard() {
             });
             dispatch({
                 type: "SET_SETTINGS_USER_META_ACTION",
-                userMeta: meta,
+                userMeta: meta as IMProfile,
             });
 
             dispatch({

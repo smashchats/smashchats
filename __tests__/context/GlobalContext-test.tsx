@@ -109,7 +109,7 @@ describe("user meta context", () => {
                     title: "test",
                     description: "test",
                     avatar: "test",
-                },
+                } as IMProfile,
             });
             expect(newState).toEqual(
                 expect.objectContaining({
@@ -132,7 +132,7 @@ describe("user meta context", () => {
                             title: "test",
                             description: "test",
                             avatar: "test",
-                        },
+                        } as IMProfile,
                     });
 
                 useEffect(updateUserMetaToTestValues, [dispatch]);
