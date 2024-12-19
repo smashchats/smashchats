@@ -78,8 +78,6 @@ export default function ProfileLayout() {
         }
     };
 
-    const textColor = useThemeColor({}, "text");
-
     return (
         <SafeAreaView
             edges={["top", "bottom"]}
@@ -102,14 +100,19 @@ export default function ProfileLayout() {
                     </View>
                 </View>
                 <View style={{ marginTop: 20, width: "100%" }}>
-                    <ThemedText style={{ marginBottom: 10 }}>
+                    <ThemedText
+                        style={{
+                            marginBottom: 10,
+                            color: Colors.dark.text,
+                        }}
+                    >
                         Display Name
                     </ThemedText>
                     <TextInput
                         style={{
                             borderWidth: 1,
                             borderColor: Colors.textLightGray,
-                            color: textColor,
+                            color: Colors.dark.text,
                             padding: 10,
                             borderRadius: 5,
                             width: "100%",
@@ -123,14 +126,19 @@ export default function ProfileLayout() {
                     />
                 </View>
                 <View style={{ marginTop: 20, width: "100%" }}>
-                    <ThemedText style={{ marginBottom: 10 }}>
+                    <ThemedText
+                        style={{
+                            marginBottom: 10,
+                            color: Colors.dark.text,
+                        }}
+                    >
                         Description
                     </ThemedText>
                     <TextInput
                         style={{
                             borderWidth: 1,
                             borderColor: Colors.textLightGray,
-                            color: textColor,
+                            color: Colors.dark.text,
                             padding: 10,
                             borderRadius: 5,
                             width: "100%",
@@ -162,6 +170,7 @@ export default function ProfileLayout() {
                         fontSize: 16,
                         fontWeight: "500",
                         marginBottom: 10,
+                        color: Colors.dark.text,
                     }}
                 >
                     Privacy
@@ -174,7 +183,13 @@ export default function ProfileLayout() {
                             justifyContent: "space-between",
                         }}
                     >
-                        <ThemedText>Enable Analytics</ThemedText>
+                        <ThemedText
+                            style={{
+                                color: Colors.dark.text,
+                            }}
+                        >
+                            Enable Analytics
+                        </ThemedText>
                         <Switch
                             value={state.settings?.telemetryEnabled ?? false}
                             onValueChange={(value) => {
