@@ -1,6 +1,7 @@
 import {
     EncapsulatedSmashMessage,
     Identity,
+    Logger,
     SmashDID,
     SmashMessaging,
     SmashProfileMeta,
@@ -20,18 +21,18 @@ import {
     saveContactToDb,
 } from "@/src/models/Contacts";
 
-const getOrCreateIdentity = async (): Promise<Identity> => {
+const getOrCreateIdentity = async (logger: Logger): Promise<Identity> => {
     let savedIdentity: IJsonIdentity | null = await getData<IJsonIdentity>(
         "identity"
     );
 
     let newIdentity: Identity;
     if (!savedIdentity) {
-        console.log("creating new identity");
+        logger.info("creating new identity");
         try {
             newIdentity = await SmashMessaging.generateIdentity(1, 0, true);
         } catch (error) {
-            console.error("getOrCreateIdentity error", error);
+            logger.error("getOrCreateIdentity error", error);
             throw error;
         }
         saveData<IJsonIdentity>(
@@ -39,7 +40,7 @@ const getOrCreateIdentity = async (): Promise<Identity> => {
             await SmashMessaging.serializeIdentity(newIdentity)
         );
     } else {
-        console.log("loading existing identity");
+        logger.info("loading existing identity");
         newIdentity = await SmashMessaging.deserializeIdentity(savedIdentity);
     }
 
@@ -47,10 +48,11 @@ const getOrCreateIdentity = async (): Promise<Identity> => {
 };
 
 export const loadIdentity = async (
+    logger: Logger,
     LOG_LEVEL: "DEBUG" | "INFO" | "WARN" | "ERROR" = "DEBUG"
 ): Promise<SmashUser> => {
     try {
-        const savedIdentity = await getOrCreateIdentity();
+        const savedIdentity = await getOrCreateIdentity(logger);
         const meta = await getData<SmashProfileMeta>("settings.user_meta");
         const user = new SmashUser(
             savedIdentity,
@@ -70,12 +72,15 @@ export const loadIdentity = async (
         );
         return user;
     } catch (error) {
-        console.error("loadIdentity error", error);
+        logger.error("loadIdentity error", error);
         throw error;
     }
 };
 
-export const handleUserMessages = async (user: SmashUser) => {
+export const handleUserMessages = async (
+    user: SmashUser,
+    logger: Logger
+) => {
     const selfDid = await user.getDID();
     user.on(
         "nbh_profiles",
@@ -117,16 +122,16 @@ export const handleUserMessages = async (user: SmashUser) => {
                         "UNIQUE constraint failed: messages.sha256"
                     )
                 ) {
-                    console.debug("message already saved, skipping");
+                    logger.debug("message already saved, skipping");
                 } else {
-                    console.error(
+                    logger.error(
                         "error saving message, error_message:",
                         e.message,
                         message
                     );
                 }
             } else {
-                console.error("error saving message, error_object:", e);
+                logger.error("error saving message, error_object:", e);
             }
         }
     };

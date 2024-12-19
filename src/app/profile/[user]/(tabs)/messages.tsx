@@ -54,7 +54,7 @@ export const ProfileMessages = ({ paddingTop }: { paddingTop: number }) => {
 
     useEffect(() => {
         markAllMessagesInDiscussionAsRead(peerId as string).then(() => {
-            console.debug(
+            globalState.logger.debug(
                 `messages::useEffect::Marked all messages in discussion ${peerId} as read`
             );
         });
@@ -81,7 +81,7 @@ export const ProfileMessages = ({ paddingTop }: { paddingTop: number }) => {
         ) => {
             if (from.id === peerId) {
                 markAllMessagesInDiscussionAsRead(peerId).then(() => {
-                    console.debug(
+                    globalState.logger.debug(
                         `messages::onNewMessages::Marked received messages in discussion ${peerId} as read`
                     );
                 });

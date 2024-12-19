@@ -7,7 +7,12 @@ import {
     chatListReducer,
     INITIAL_CHAT_LIST_STATE,
 } from "@/src/context/ChatListContext.js";
-import { SmashDID, SmashProfileMeta, SmashUser } from "@smashchats/library";
+import {
+    Logger,
+    SmashDID,
+    SmashProfileMeta,
+    SmashUser,
+} from "@smashchats/library";
 import { saveData } from "@/src/StorageUtils";
 
 export interface Settings {
@@ -38,6 +43,11 @@ export interface SetSettingsUserMetaAction extends GlobalActionBase {
     userMeta: SmashProfileMeta | null;
 }
 
+export interface SetLoggerAction extends GlobalActionBase {
+    type: "SET_LOGGER_ACTION";
+    logger: Logger;
+}
+
 export interface SetUserAction extends GlobalActionBase {
     type: "SET_USER_ACTION";
     user: SmashUser;
@@ -66,6 +76,7 @@ export type Action =
     | SetAppWorkflowAction
     | SetSettingsAction
     | SetSettingsUserMetaAction
+    | SetLoggerAction
     | SetUserAction
     | SetSelfDidAction;
 
@@ -77,6 +88,7 @@ export type GlobalParams = {
     settings: Settings;
     userMeta: SmashProfileMeta;
     appWorkflow: AppWorkflow;
+    logger: Logger;
 };
 
 export const INITIAL_GLOBAL_STATE: GlobalParams = {
@@ -91,6 +103,7 @@ export const INITIAL_GLOBAL_STATE: GlobalParams = {
         picture: "",
     },
     appWorkflow: "LOADING",
+    logger: new Logger("device", "WARN"),
 };
 
 type GlobalContextType = [
@@ -124,6 +137,7 @@ export const rootReducer = (
         userMeta: userMetaReducer(state.userMeta, action),
         selfSmashUser: selfSmashUserReducer(state.selfSmashUser, action),
         selfDid: selfDidReducer(state.selfDid, action),
+        logger: loggerReducer(state.logger, action),
     };
 };
 
@@ -273,4 +287,10 @@ export function selfDidReducer(selfDid: SmashDID, action: Action): SmashDID {
         return selfDid;
     }
     return action.selfDid;
+}
+function loggerReducer(logger: Logger, action: Action): Logger {
+    if (action.type !== "SET_LOGGER_ACTION") {
+        return logger;
+    }
+    return action.logger;
 }

@@ -73,7 +73,7 @@ export default function ProfileLayout() {
                 }
             }
         } catch (error) {
-            console.error("Error picking image:", error);
+            state.logger.error("Error picking image:", error);
         }
     };
 

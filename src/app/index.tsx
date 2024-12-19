@@ -95,7 +95,7 @@ export function Home() {
 
             return router.push("/camera");
         } catch (error) {
-            console.error(error);
+            globalState.logger.error(error as string);
         }
     }
 

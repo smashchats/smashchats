@@ -54,14 +54,14 @@ export const ProfileScreen = () => {
                 const userData = await getContactWithTrustRelation(did_id);
 
                 if (!userData) {
-                    console.warn(`User ${user} not found in database`);
+                    globalState.logger.warn(`User ${user} not found in database`);
                     router.back();
                     return;
                 }
 
                 setPeer(userData);
             } catch (error) {
-                console.error("Failed to fetch user:", error);
+                globalState.logger.error("Failed to fetch user:", error);
                 router.back();
             }
         };
@@ -136,7 +136,7 @@ export const ProfileScreen = () => {
         if (canceled) {
             return;
         }
-        console.info("assets", assets);
+        globalState.logger.info("assets", assets);
     };
 
     const headerHeight = 55;

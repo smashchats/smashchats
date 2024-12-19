@@ -37,7 +37,7 @@ export default function Wizard() {
 
     useEffect(() => {
         (async () => {
-            const user = await loadIdentity("WARN");
+            const user = await loadIdentity(globalState.logger, "WARN");
             dispatch({
                 type: "SET_USER_ACTION",
                 user,
@@ -46,7 +46,7 @@ export default function Wizard() {
                 type: "SET_SELF_DID_ACTION",
                 selfDid: await user.getDID(),
             });
-            handleUserMessages(user);
+            handleUserMessages(user, globalState.logger);
         })();
     }, []);
 
@@ -101,7 +101,7 @@ export default function Wizard() {
                 }
             }
         } catch (error) {
-            console.error("Error picking image:", error);
+            globalState.logger.error("Error picking image:", error);
         }
     };
 

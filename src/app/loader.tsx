@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { SplashScreen, Stack } from "expo-router";
 import { PostHogProvider } from "posthog-react-native";
 
-import { SmashProfileMeta, SmashUser } from "@smashchats/library";
+import { Logger, SmashProfileMeta, SmashUser } from "@smashchats/library";
 
 import { handleUserMessages, loadIdentity } from "@/src/IdentityUtils";
 import {
@@ -29,7 +29,7 @@ export default function LoaderScreen() {
             ]);
             await user.discover();
         } catch (error) {
-            console.error("Error creating trust relation", error);
+            state.logger.error("Error creating trust relation", error);
         }
     };
 
@@ -72,7 +72,7 @@ export default function LoaderScreen() {
     };
 
     const setupUser = async (dispatch: Dispatch<Action>) => {
-        const user = await loadIdentity(__DEV__ ? "DEBUG" : "WARN");
+        const user = await loadIdentity(state.logger, __DEV__ ? "DEBUG" : "WARN");
         dispatch({
             type: "SET_USER_ACTION",
             user,
@@ -88,7 +88,7 @@ export default function LoaderScreen() {
         dispatch: Dispatch<Action>,
         user: SmashUser
     ) => {
-        handleUserMessages(user);
+        handleUserMessages(user, state.logger);
         await initializeUserAndDiscoverNetwork(user);
         dispatch({
             type: "SET_APP_WORKFLOW_ACTION",
@@ -115,6 +115,10 @@ export default function LoaderScreen() {
             dispatch({
                 type: "SET_SETTINGS_USER_META_ACTION",
                 userMeta: meta,
+            });
+            dispatch({
+                type: "SET_LOGGER_ACTION",
+                logger: new Logger(meta?.title ?? "device", "DEBUG"),
             });
             await initializeApp(dispatch, newUser);
         })();
