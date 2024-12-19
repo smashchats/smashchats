@@ -26,7 +26,6 @@ export default function LoaderScreen() {
             await Promise.all([
                 createTrustRelation(dev_nab_join_action.did.id),
                 user.join(dev_nab_join_action),
-                new Promise((resolve) => setTimeout(() => resolve, 1000)),
             ]);
             await user.discover();
         } catch (error) {
