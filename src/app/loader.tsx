@@ -77,6 +77,10 @@ export default function LoaderScreen() {
             type: "SET_USER_ACTION",
             user,
         });
+        dispatch({
+            type: "SET_SELF_DID_ACTION",
+            selfDid: await user.getDID(),
+        });
         return user;
     };
 

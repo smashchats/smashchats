@@ -22,7 +22,7 @@ function ChatListHeader(): JSX.Element {
     };
     useEffect(() => {
         const logSelfDid = async () => {
-            const selfDid = await globalState.selfSmashUser.getDID();
+            const selfDid = globalState.selfDid;
 
             generateQrCode(JSON.stringify(selfDid), 300).then(
                 (img: string | undefined) => {

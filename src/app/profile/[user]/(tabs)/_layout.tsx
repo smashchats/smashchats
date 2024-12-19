@@ -110,7 +110,7 @@ export const ProfileScreen = () => {
             dataToSend,
             lastMessageId
         );
-        const selfDid = await globalState.selfSmashUser.getDID();
+        const selfDid = globalState.selfDid;
 
         saveMessageToDb(
             {

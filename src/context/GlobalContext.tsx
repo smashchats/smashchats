@@ -7,7 +7,7 @@ import {
     chatListReducer,
     INITIAL_CHAT_LIST_STATE,
 } from "@/src/context/ChatListContext.js";
-import { SmashProfileMeta, SmashUser } from "@smashchats/library";
+import { SmashDID, SmashProfileMeta, SmashUser } from "@smashchats/library";
 import { saveData } from "@/src/StorageUtils";
 
 export interface Settings {
@@ -43,6 +43,11 @@ export interface SetUserAction extends GlobalActionBase {
     user: SmashUser;
 }
 
+export interface SetSelfDidAction extends GlobalActionBase {
+    type: "SET_SELF_DID_ACTION";
+    selfDid: SmashDID;
+}
+
 export type AppWorkflow =
     | "LOADING"
     | "REGISTERING"
@@ -61,12 +66,14 @@ export type Action =
     | SetAppWorkflowAction
     | SetSettingsAction
     | SetSettingsUserMetaAction
-    | SetUserAction;
+    | SetUserAction
+    | SetSelfDidAction;
 
 export type GlobalParams = {
     chatList: ChatListParams;
     latestMessageIdInDiscussion: Record<string, string>;
     selfSmashUser: SmashUser;
+    selfDid: SmashDID;
     settings: Settings;
     userMeta: SmashProfileMeta;
     appWorkflow: AppWorkflow;
@@ -76,6 +83,7 @@ export const INITIAL_GLOBAL_STATE: GlobalParams = {
     chatList: INITIAL_CHAT_LIST_STATE,
     latestMessageIdInDiscussion: {},
     selfSmashUser: null as unknown as SmashUser,
+    selfDid: null as unknown as SmashDID,
     settings: DEFAULT_SETTINGS,
     userMeta: {
         title: "",
@@ -115,6 +123,7 @@ export const rootReducer = (
         settings: settingsReducer(state.settings, action),
         userMeta: userMetaReducer(state.userMeta, action),
         selfSmashUser: selfSmashUserReducer(state.selfSmashUser, action),
+        selfDid: selfDidReducer(state.selfDid, action),
     };
 };
 
@@ -255,4 +264,13 @@ function selfSmashUserReducer(
         return selfSmashUser;
     }
     return action.user;
+}
+export function selfDidReducer(selfDid: SmashDID, action: Action): SmashDID {
+    if (action.type !== "SET_SELF_DID_ACTION") {
+        return selfDid;
+    }
+    if (!action.selfDid) {
+        return selfDid;
+    }
+    return action.selfDid;
 }

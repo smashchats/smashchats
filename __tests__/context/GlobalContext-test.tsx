@@ -4,6 +4,7 @@ import GlobalContext, {
     GlobalProvider,
     Settings,
     appWorkflowReducer,
+    selfDidReducer,
     settingsReducer,
     useGlobalDispatch,
     userMetaReducer,
@@ -11,7 +12,7 @@ import GlobalContext, {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { View } from "react-native";
 import { useEffect } from "react";
-import { SmashProfileMeta } from "@smashchats/library";
+import { SmashDID, SmashProfileMeta } from "@smashchats/library";
 
 afterEach(() => {
     jest.clearAllMocks();
@@ -190,5 +191,38 @@ describe("app workflow reducer", () => {
             });
             expect(result).toEqual(currentState);
         });
+    });
+});
+
+describe("self did string reducer", () => {
+    const example_DID = {
+        id: "did:smash:test",
+        ik: "ik",
+        ek: "ek",
+        signature: "signature",
+        endpoints: [],
+    } as SmashDID;
+    it("should set self did string to the provided did string", () => {
+        const result = selfDidReducer(null as unknown as SmashDID, {
+            type: "SET_SELF_DID_ACTION",
+            selfDid: example_DID,
+        });
+        expect(result).toEqual(example_DID);
+    });
+
+    it("should not set self did string if the action is not a SET_SELF_DID_ACTION", () => {
+        const result = selfDidReducer(example_DID, {
+            type: "SET_APP_WORKFLOW_ACTION",
+            appWorkflow: "LOADING",
+        });
+        expect(result).toEqual(example_DID);
+    });
+
+    it("should not set self did string to empty string", () => {
+        const result = selfDidReducer(example_DID, {
+            type: "SET_SELF_DID_ACTION",
+            selfDid: null as unknown as SmashDID,
+        });
+        expect(result).toEqual(example_DID);
     });
 });

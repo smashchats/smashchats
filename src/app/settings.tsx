@@ -9,7 +9,6 @@ import { TrustedContact } from "@/src/models/Contacts";
 import { useGlobalState, useGlobalDispatch } from "@/src/context/GlobalContext";
 import { Colors } from "@/src/constants/Colors";
 import { convertImageToBase64, resizeImage } from "@/src/Utils";
-import { useThemeColor } from "@/src/hooks/useThemeColor";
 
 export default function ProfileLayout() {
     const dispatch = useGlobalDispatch();

@@ -42,6 +42,10 @@ export default function Wizard() {
                 type: "SET_USER_ACTION",
                 user,
             });
+            dispatch({
+                type: "SET_SELF_DID_ACTION",
+                selfDid: await user.getDID(),
+            });
             handleUserMessages(user);
         })();
     }, []);

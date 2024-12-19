@@ -40,7 +40,6 @@ export const ProfileMessages = ({ paddingTop }: { paddingTop: number }) => {
     );
 
     const [messages, setMessages] = useState<Message[]>([]);
-    const [myDID, setMyDID] = useState<string | null>(null);
 
     const scrollViewRef = useRef(null);
 
@@ -69,11 +68,11 @@ export const ProfileMessages = ({ paddingTop }: { paddingTop: number }) => {
                     date: new Date(m.date_delivered ?? m.created_at),
                     content: m.data,
                     from: m.from_did_id,
-                    fromMe: m.from_did_id === myDID,
+                    fromMe: m.from_did_id === globalState.selfDid.id,
                 }))
             )
         );
-    }, [db_messages, myDID]);
+    }, [db_messages, globalState.selfDid]);
 
     useEffect(() => {
         const callback = (
@@ -89,21 +88,20 @@ export const ProfileMessages = ({ paddingTop }: { paddingTop: number }) => {
             }
         };
         globalState.selfSmashUser.on("data", callback);
-        globalState.selfSmashUser.getDID().then((did) => setMyDID(did?.id));
         return () => {
             globalState.selfSmashUser.removeListener("data", callback);
         };
     }, [globalState.selfSmashUser]);
 
     useEffect(() => {
-        if (scrollViewRef.current && myDID !== null) {
+        if (scrollViewRef.current && globalState.selfDid !== null) {
             (scrollViewRef.current as ScrollView).scrollToEnd({
                 animated: false,
             });
         }
-    }, [myDID]);
+    }, [globalState.selfDid]);
 
-    if (myDID === null) {
+    if (!globalState.selfDid) {
         return <View />;
     }
 
