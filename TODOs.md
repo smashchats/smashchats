@@ -9,7 +9,7 @@
 - [ ] fix chat list ordering
 - [x] mark messages as read
 - [ ] mark messages as received
-- [ ] hide user "self" in chat list (even in db?)
+- [x] don't save user "self" in db
 - [ ] send media messages
 - [ ] replace routing? https://github.com/expo/router/issues/723
 - [x] disable wizard

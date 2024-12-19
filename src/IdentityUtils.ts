@@ -57,7 +57,7 @@ export const loadIdentity = async (
             savedIdentity,
             meta ?? undefined,
             LOG_LEVEL,
-            Platform.Version === "17.5" ? "simulator" : "device"
+            meta?.title ?? "device"
         );
 
         const contacts = await getContactsFromDb();
@@ -77,6 +77,7 @@ export const loadIdentity = async (
 };
 
 export const handleUserMessages = async (user: SmashUser) => {
+    const selfDid = await user.getDID();
     user.on(
         "nbh_profiles",
         async (
@@ -87,7 +88,7 @@ export const handleUserMessages = async (user: SmashUser) => {
                 scores: { score: number };
             }[]
         ) => {
-            for (const profile of profiles) {
+            for (const profile of profiles.filter((p) => p.did.id !== selfDid.id)) {
                 const contact = {
                     did_id: profile.did.id,
                     did_ik: profile.did.ik,
