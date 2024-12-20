@@ -11,6 +11,7 @@ export const getData = async <T extends {}>(key: string): Promise<T | null> => {
 };
 
 export const saveData = async <T extends {}>(key: string, data: T) => {
+    if (!data) return
     try {
         await AsyncStorage.setItem(key, JSON.stringify(data));
     } catch (e) {
