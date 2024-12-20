@@ -21,7 +21,7 @@
     "@smashchats/library": "^0.0.0-alpha-0a58b74",
     "@ungap/structured-clone": "^1.2.0",
     "drizzle-orm": "^0.36.4",
-    "expo": "~51.0.21",
+    "expo": "~52.0.21",
     "expo-application": "~5.9.1",
     "expo-blur": "~13.0.2",
     "expo-constants": "~16.0.2",
