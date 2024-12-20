@@ -3,16 +3,20 @@ import { ScrollView, View } from "react-native";
 
 import { useLocalSearchParams } from "expo-router";
 import { eq } from "drizzle-orm";
-import { EncapsulatedSmashMessage, SmashDID } from "@smashchats/library";
+import {
+    EncapsulatedIMProtoMessage,
+    DIDString,
+    IM_CHAT_TEXT,
+} from "@smashchats/library";
 
 import { Colors } from "@/src/constants/Colors.js";
 import { Box } from "@/src/components/design-system/Box.jsx";
 import { useGlobalState } from "@/src/context/GlobalContext.js";
-import { addSystemDateMessages } from "@/src/Utils.js";
+import { addSystemDateMessages } from "@/src/utils/Utils.js";
 import { drizzle_db } from "@/src/db/database";
 import { useLiveTablesQuery } from "@/src/hooks/useLiveQuery";
 import { messages as MessagesSchema } from "@/src/db/schema";
-import { markAllMessagesInDiscussionAsRead } from "@/src/models/Messages";
+import { markAllMessagesInDiscussionAsRead } from "@/src/db/models/Messages";
 import { MessagesList } from "@/src/components/fragments/MessagesList";
 
 export type Message = {
@@ -76,10 +80,10 @@ export const ProfileMessages = ({ paddingTop }: { paddingTop: number }) => {
 
     useEffect(() => {
         const callback = (
-            _message: EncapsulatedSmashMessage,
-            from: SmashDID
+            senderId: DIDString,
+            message: EncapsulatedIMProtoMessage
         ) => {
-            if (from.id === peerId) {
+            if (senderId === peerId && message.type === IM_CHAT_TEXT) {
                 markAllMessagesInDiscussionAsRead(peerId).then(() => {
                     globalState.logger.debug(
                         `messages::onNewMessages::Marked received messages in discussion ${peerId} as read`

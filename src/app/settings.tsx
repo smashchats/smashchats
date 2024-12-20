@@ -5,10 +5,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ThemedText } from "@/src/components/ThemedText";
 import { Avatar } from "@/src/components/Avatar";
-import { TrustedContact } from "@/src/models/Contacts";
+import { TrustedContact } from "@/src/db/models/Contacts";
 import { useGlobalState, useGlobalDispatch } from "@/src/context/GlobalContext";
 import { Colors } from "@/src/constants/Colors";
-import { convertImageToBase64, resizeImage } from "@/src/Utils";
+import { convertImageToBase64, resizeImage } from "@/src/utils/Utils";
 
 export default function ProfileLayout() {
     const dispatch = useGlobalDispatch();
@@ -67,7 +67,7 @@ export default function ProfileLayout() {
                         type: "SET_SETTINGS_USER_META_ACTION",
                         userMeta: {
                             ...state.userMeta,
-                            picture: `data:image/jpeg;base64,${base64}`,
+                            avatar: `data:image/jpeg;base64,${base64}`,
                         },
                     });
                 }
@@ -89,7 +89,7 @@ export default function ProfileLayout() {
                     <Avatar
                         contact={
                             {
-                                meta_picture: state.userMeta.picture,
+                                meta_avatar: state.userMeta.avatar,
                             } as TrustedContact
                         }
                         variant="xlarge"

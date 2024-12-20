@@ -7,13 +7,8 @@ import {
     chatListReducer,
     INITIAL_CHAT_LIST_STATE,
 } from "@/src/context/ChatListContext.js";
-import {
-    Logger,
-    SmashDID,
-    SmashProfileMeta,
-    SmashUser,
-} from "@smashchats/library";
-import { saveData } from "@/src/StorageUtils";
+import { Logger, DIDDocument, IMProfile, SmashUser } from "@smashchats/library";
+import { saveData } from "@/src/utils/StorageUtils";
 
 export interface Settings {
     telemetryEnabled: boolean;
@@ -40,7 +35,7 @@ export interface SetSettingsAction extends GlobalActionBase {
 
 export interface SetSettingsUserMetaAction extends GlobalActionBase {
     type: "SET_SETTINGS_USER_META_ACTION";
-    userMeta: SmashProfileMeta | null;
+    userMeta: IMProfile | null;
 }
 
 export interface SetLoggerAction extends GlobalActionBase {
@@ -55,7 +50,7 @@ export interface SetUserAction extends GlobalActionBase {
 
 export interface SetSelfDidAction extends GlobalActionBase {
     type: "SET_SELF_DID_ACTION";
-    selfDid: SmashDID;
+    selfDid: DIDDocument;
 }
 
 export type AppWorkflow =
@@ -84,9 +79,9 @@ export type GlobalParams = {
     chatList: ChatListParams;
     latestMessageIdInDiscussion: Record<string, string>;
     selfSmashUser: SmashUser;
-    selfDid: SmashDID;
+    selfDid: DIDDocument;
     settings: Settings;
-    userMeta: SmashProfileMeta;
+    userMeta: IMProfile;
     appWorkflow: AppWorkflow;
     logger: Logger;
 };
@@ -95,13 +90,13 @@ export const INITIAL_GLOBAL_STATE: GlobalParams = {
     chatList: INITIAL_CHAT_LIST_STATE,
     latestMessageIdInDiscussion: {},
     selfSmashUser: null as unknown as SmashUser,
-    selfDid: null as unknown as SmashDID,
+    selfDid: null as unknown as DIDDocument,
     settings: DEFAULT_SETTINGS,
     userMeta: {
         title: "",
         description: "",
-        picture: "",
-    },
+        avatar: "",
+    } as IMProfile,
     appWorkflow: "LOADING",
     logger: new Logger("device", "WARN"),
 };
@@ -261,13 +256,16 @@ export function settingsReducer(settings: Settings, action: Action): Settings {
 }
 
 export function userMetaReducer(
-    userMeta: SmashProfileMeta,
+    userMeta: IMProfile,
     action: Action
-): SmashProfileMeta {
+): IMProfile {
     if (action.type !== "SET_SETTINGS_USER_META_ACTION") {
         return userMeta;
     }
-    return action.userMeta ?? { title: "", description: "", picture: "" };
+    return (
+        action.userMeta ??
+        ({ title: "", description: "", avatar: "" } as IMProfile)
+    );
 }
 
 function selfSmashUserReducer(
@@ -279,7 +277,10 @@ function selfSmashUserReducer(
     }
     return action.user;
 }
-export function selfDidReducer(selfDid: SmashDID, action: Action): SmashDID {
+export function selfDidReducer(
+    selfDid: DIDDocument,
+    action: Action
+): DIDDocument {
     if (action.type !== "SET_SELF_DID_ACTION") {
         return selfDid;
     }

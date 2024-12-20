@@ -1,8 +1,9 @@
 import { InferInsertModel, InferSelectModel, eq } from "drizzle-orm";
 
+import { IMProfile, SmashEndpoint } from "@smashchats/library";
+
 import { contacts, trustRelations } from "@/src/db/schema.js";
 import { drizzle_db } from "@/src/db/database";
-import { SmashEndpoint, SmashDID, SmashProfile } from "@smashchats/library";
 
 export type Contact = InferSelectModel<typeof contacts>;
 export type TrustedContact = Contact & { trusted_name: string | undefined };
@@ -23,21 +24,11 @@ export const saveContactToDb = async (contact: ContactInsert) => {
                 scores: contact.scores,
                 meta_title: contact.meta_title,
                 meta_description: contact.meta_description,
-                meta_picture: contact.meta_picture,
+                meta_avatar: contact.meta_avatar,
             },
         })
         .returning({ id: contacts.did_id });
     return contactId;
-};
-
-export const getContactFromDb = async (
-    did_id: string
-): Promise<Contact | undefined> => {
-    console.debug("getContactFromDb", did_id);
-    const contact = await drizzle_db.query.contacts.findFirst({
-        where: eq(contacts.did_id, did_id),
-    });
-    return contact;
 };
 
 export const getContactWithTrustRelation = async (
@@ -61,46 +52,44 @@ export const getContactsFromDb = async (): Promise<Contact[]> => {
     return contacts;
 };
 
-export const updateContact = async (profile: SmashProfile) => {
-    const { meta, did, scores } = profile;
-    const [updatedContact] = await drizzle_db
-        .insert(contacts)
-        .values({
+export const updateContact = async (profile: IMProfile) => {
+    const { did, title, description, avatar } = profile;
+
+    let didObject: { did_id: string, did_ik?: string, did_ek?: string, did_signature?: string, did_endpoints?: SmashEndpoint[] };
+
+    if (typeof did === "string") {
+        didObject = {
+            did_id: did,
+        };
+    } else {
+        didObject = {
             did_id: did.id,
-            meta_title: meta?.title,
-            meta_description: meta?.description,
-            meta_picture: meta?.picture,
-            scores: scores,
             did_ik: did.ik,
             did_ek: did.ek,
             did_signature: did.signature,
             did_endpoints: did.endpoints,
+        };
+    }
+
+    const [updatedContact] = await drizzle_db
+        .insert(contacts)
+        .values({
+            ...didObject,
+            meta_title: title,
+            meta_description: description,
+            meta_avatar: avatar,
             updated_at: new Date(),
         })
         .onConflictDoUpdate({
             target: [contacts.did_id],
             set: {
-                meta_title: meta?.title,
-                meta_description: meta?.description,
-                meta_picture: meta?.picture,
-                scores: scores,
+                ...didObject,
+                meta_title: title,
+                meta_description: description,
+                meta_avatar: avatar,
                 updated_at: new Date(),
-                did_ik: did.ik,
-                did_ek: did.ek,
-                did_signature: did.signature,
-                did_endpoints: did.endpoints,
             },
         })
         .returning();
     return updatedContact;
-};
-
-export const MapContactToDid = (c: Contact): SmashDID => {
-    return {
-        id: c.did_id,
-        ik: c.did_ik,
-        ek: c.did_ek,
-        signature: c.did_signature,
-        endpoints: c.did_endpoints as SmashEndpoint[],
-    };
 };

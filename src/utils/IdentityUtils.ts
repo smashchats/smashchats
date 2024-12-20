@@ -1,25 +1,32 @@
 import {
-    EncapsulatedSmashMessage,
+    DIDString,
+    EncapsulatedIMProtoMessage,
+    IMProfile,
+    IM_CHAT_TEXT,
     Identity,
+    ISO8601,
     Logger,
-    SmashDID,
+    SMASH_NBH_PROFILE_LIST,
     SmashMessaging,
-    SmashProfileMeta,
+    SmashProfileList,
     SmashUser,
+    sha256,
+    IM_PROFILE,
+    IM_SESSION_RESET,
 } from "@smashchats/library";
 import { IJsonIdentity } from "2key-ratchet";
 
-import { getData, saveData } from "@/src/StorageUtils.js";
+import { getData, saveData } from "@/src/utils/StorageUtils.js";
 import {
-    EnrichedSmashMessage,
     parseDataInMessage,
     saveMessageToDb,
-} from "@/src/models/Messages";
+} from "@/src/db/models/Messages";
 import {
-    MapContactToDid,
     getContactsFromDb,
     saveContactToDb,
-} from "@/src/models/Contacts";
+} from "@/src/db/models/Contacts";
+import { mapReceivedMessageToEnrichedMessage } from "@/src/utils/mappers/messages";
+import { MapContactToDid, SmashProfileToContactMapper } from "@/src/utils/mappers/contacts";
 
 const getOrCreateIdentity = async (logger: Logger): Promise<Identity> => {
     let savedIdentity: IJsonIdentity | null = await getData<IJsonIdentity>(
@@ -53,7 +60,7 @@ export const loadIdentity = async (
 ): Promise<SmashUser> => {
     try {
         const savedIdentity = await getOrCreateIdentity(logger);
-        const meta = await getData<SmashProfileMeta>("settings.user_meta");
+        const meta = await getData<IMProfile>("settings.user_meta");
         const user = new SmashUser(
             savedIdentity,
             meta ?? undefined,
@@ -77,44 +84,43 @@ export const loadIdentity = async (
     }
 };
 
+
+
 export const handleUserMessages = async (
     user: SmashUser,
     logger: Logger
 ) => {
     const selfDid = await user.getDID();
+    // Handle profile list updates
     user.on(
-        "nbh_profiles",
-        async (
-            _sender: SmashDID,
-            profiles: {
-                meta: SmashProfileMeta;
-                did: SmashDID;
-                scores: { score: number };
-            }[]
-        ) => {
+        SMASH_NBH_PROFILE_LIST,
+        async (_, profiles: SmashProfileList) => {
             for (const profile of profiles.filter((p) => p.did.id !== selfDid.id)) {
-                const contact = {
-                    did_id: profile.did.id,
-                    did_ik: profile.did.ik,
-                    did_ek: profile.did.ek,
-                    did_signature: profile.did.signature,
-                    did_endpoints: profile.did.endpoints ?? [],
-                    meta_title: profile.meta.title,
-                    meta_description: profile.meta.description,
-                    meta_picture: profile.meta.picture,
-                };
+                const contact = SmashProfileToContactMapper(profile);
                 await saveContactToDb(contact);
             }
         }
     );
+
+    const IGNORED_MESSAGE_TYPES = [IM_SESSION_RESET];
+
     const messageListener = async (
-        message: EncapsulatedSmashMessage,
-        senderDid: SmashDID
+        senderDid: DIDString,
+        message: EncapsulatedIMProtoMessage,
+        _sha256: sha256,
+        _timestamp: ISO8601
     ) => {
-        const m = getEnrichedMessage(message, senderDid);
+        logger.debug("message received", message);
         try {
-            await saveMessageToDb(m);
-            await parseDataInMessage(m);
+
+            if (message.type === IM_CHAT_TEXT) {
+                const m = mapReceivedMessageToEnrichedMessage(message, senderDid);
+                await saveMessageToDb(m);
+            }
+            await parseDataInMessage(message, logger);
+            if (![IM_CHAT_TEXT, IM_PROFILE, ...IGNORED_MESSAGE_TYPES].includes(message.type)) {
+                logger.warn("unhandled message type", message.type);
+            }
         } catch (e) {
             if (e instanceof Error) {
                 if (
@@ -139,23 +145,4 @@ export const handleUserMessages = async (
     return () => {
         user.removeListener("data", messageListener);
     };
-};
-
-export const getEnrichedMessage = (
-    message: EncapsulatedSmashMessage,
-    senderDid: SmashDID
-) => {
-    let data;
-    if (typeof message.data === "string") {
-        data = message.data;
-    } else {
-        data = JSON.stringify(message.data);
-    }
-    const m: EnrichedSmashMessage = {
-        ...message,
-        fromDid: senderDid,
-        toDiscussionId: senderDid.id,
-        data,
-    };
-    return m;
 };

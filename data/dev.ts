@@ -1,21 +1,20 @@
-import { JoinAction } from "@smashchats/library";
+import { DIDDocument, SMASH_NBH_JOIN, SmashActionJson, DIDString } from "@smashchats/library";
 
 // sme.dev.smashchats.com
 
-export const dev_nab_join_action: JoinAction = {
-    action: "join",
+export const dev_nab_join_action: SmashActionJson = {
+    action: SMASH_NBH_JOIN,
     did: {
-        id: "4TuFHgRIGyVnUpyzzGBavr/y1B4U4+Dafpk2JXC/CcU=",
-        ik: "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEy7VvSuWTLgBgezLOO9z0ERYEt0IJXhEFizv7W8SgcXVr9tUpGmgjnYexHEj/vuMnrr8W4kGJXrHpjxdUgZ9Zyw==",
-        ek: "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEwS45QAbB5UY6God+zv1UubpGz7lMzO2MqzpwRjnlEYXooeYBE1o4GGZ+D6RmDtobYgLrFLtjIW1kNpUVdUnqag==",
-        signature:
-            "o7wATFmPdlpAuCyV07fDulaUuKEYm/sv5O59P+UxH71fyJXfOX4vW5eFLgQDaO10pIgyY2EXihA2Nwwzxv3j8w==",
+        // @ts-expect-error
+        id: "ZIsYX5VG4YYsRoZHXjqgP6qxiuJPA+2VHDsyaelBgsY=",
+        ik: "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE+xdYcQA4u/V9XNVtcJYRIS81sFmuDFjmJY3wI+Cek6tDwAB3s+SaI+Dt7BYYI0t/5Q/DpyyE3mU/jh+8exXePw==",
+        ek: "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEI2H2O9WR3mFvKKyARRx022LI7XpgjId/xh+YZOq59kQstZMdXQ6BiIMcRgs5ZmPERaB56LBOn4BVOGmDEt1AzA==",
+        signature: "Y5An8lEcc6dgZRD9u4ucFS0jaQ7RuhGQ1OhcRn6idxX5kLyLpp6CtMAvtDwtn1SpCKxD8Ue1qlzuLUMlBaahjw==",
         endpoints: [
             {
                 url: "wss://sme.dev.smashchats.com/",
-                preKey: "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAElaILnj3pFSoqe8oZGc0Jx9pd8l4tBeEydCkMx9GTDxrI4j7R7dDd1PhVBk6YF6T+k8N5e7Es1aW60gzE41MgQQ==",
-                signature:
-                    "jTQk0mz0LzzWCQrhTdCi/ta53JiywIWEkgmVzpydhiAg13LX58FyUL4Fw176xWMds7zKp/mOKWySHJTO/lee+A==",
+                preKey: "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAERLj1hG01chiLksY1iTygZsKXJgr9Ih/V8eiWAWww7RK5sSC7PMRykkoIZ3K6EBPebLSLlXe6HMNNlGdkqvn2Vw==",
+                signature: "DQO+FqS3bDYVKO4KBhIXhAp6e3cXuvUKzLIvvNYi9++P9YiJmmfqqg5CvZcqOqiBnsRnFU9DzEXTMrAdSqkcFQ=="
             },
         ],
     },
@@ -32,8 +31,10 @@ export const dev_nab_join_action: JoinAction = {
                 encryptionAlgorithm: {
                     name: "AES-GCM",
                     length: 256,
-                },
-            },
-        ],
-    },
-};
+                }
+            }
+        ]
+    }
+}
+
+export const didId = (dev_nab_join_action.did as DIDDocument).id as DIDString;

@@ -12,7 +12,7 @@ import GlobalContext, {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { View } from "react-native";
 import { useEffect } from "react";
-import { SmashDID, SmashProfileMeta } from "@smashchats/library";
+import { DIDDocument, IMProfile } from "@smashchats/library";
 
 afterEach(() => {
     jest.clearAllMocks();
@@ -87,7 +87,7 @@ describe("settings context", () => {
 
 describe("user meta context", () => {
     describe("user meta reducer", () => {
-        const initialState = {} as SmashProfileMeta;
+        const initialState = {} as IMProfile;
 
         it("should set default user meta if no user meta is provided", () => {
             const newState = userMetaReducer(initialState, {
@@ -98,7 +98,7 @@ describe("user meta context", () => {
                 expect.objectContaining({
                     title: "",
                     description: "",
-                    picture: "",
+                    avatar: "",
                 })
             );
         });
@@ -109,14 +109,14 @@ describe("user meta context", () => {
                 userMeta: {
                     title: "test",
                     description: "test",
-                    picture: "test",
-                },
+                    avatar: "test",
+                } as IMProfile,
             });
             expect(newState).toEqual(
                 expect.objectContaining({
                     title: "test",
                     description: "test",
-                    picture: "test",
+                    avatar: "test",
                 })
             );
         });
@@ -132,8 +132,8 @@ describe("user meta context", () => {
                         userMeta: {
                             title: "test",
                             description: "test",
-                            picture: "test",
-                        },
+                            avatar: "test",
+                        } as IMProfile,
                     });
 
                 useEffect(updateUserMetaToTestValues, [dispatch]);
@@ -148,7 +148,7 @@ describe("user meta context", () => {
             JSON.stringify({
                 title: "test",
                 description: "test",
-                picture: "test",
+                avatar: "test",
             })
         );
     });
@@ -196,14 +196,14 @@ describe("app workflow reducer", () => {
 
 describe("self did string reducer", () => {
     const example_DID = {
-        id: "did:smash:test",
+        id: "did:key:test",
         ik: "ik",
         ek: "ek",
         signature: "signature",
         endpoints: [],
-    } as SmashDID;
+    } as DIDDocument;
     it("should set self did string to the provided did string", () => {
-        const result = selfDidReducer(null as unknown as SmashDID, {
+        const result = selfDidReducer(null as unknown as DIDDocument, {
             type: "SET_SELF_DID_ACTION",
             selfDid: example_DID,
         });
@@ -221,7 +221,7 @@ describe("self did string reducer", () => {
     it("should not set self did string to empty string", () => {
         const result = selfDidReducer(example_DID, {
             type: "SET_SELF_DID_ACTION",
-            selfDid: null as unknown as SmashDID,
+            selfDid: null as unknown as DIDDocument,
         });
         expect(result).toEqual(example_DID);
     });

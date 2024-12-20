@@ -11,9 +11,10 @@ import { SerifHeading } from "@/src/components/design-system/SerifHeading.jsx";
 import { Heading } from "@/src/components/design-system/Heading.jsx";
 import { Badge } from "@/src/components/design-system/Badge.jsx";
 import { BadgeText } from "@/src/components/design-system/BadgeText.jsx";
-import { daysBetweenTwoDates } from "@/src/Utils.js";
+import { daysBetweenTwoDates } from "@/src/utils/Utils.js";
 import { ChatListView } from "@/src/db/schema.js";
-import { TrustedContact } from "@/src/models/Contacts";
+import { TrustedContact } from "@/src/db/models/Contacts";
+import { IM_CHAT_TEXT } from "@smashchats/library";
 
 type ChatItemProps = PropsWithChildren<ChatListView>;
 
@@ -51,7 +52,7 @@ export function dateToShowableString(date: Date): string {
 }
 
 function getExcerpt(rawMessage: string, messageType: string): string {
-    if (messageType === "text") {
+    if (messageType === IM_CHAT_TEXT) {
         return rawMessage.split(" ").slice(0, 10).join(" ");
     } else if (messageType === "empty") {
         return "(new contact)";
@@ -68,7 +69,7 @@ function ChatItem({
     most_recent_message_type,
     most_recent_message_date,
     smashed,
-    meta_picture,
+    meta_avatar,
 }: ChatItemProps): React.JSX.Element {
     const date = dateToShowableString(new Date(most_recent_message_date));
 
@@ -85,7 +86,7 @@ function ChatItem({
                         {
                             did_id,
                             meta_title,
-                            meta_picture,
+                            meta_avatar,
                             trusted_name,
                         } as TrustedContact
                     }
@@ -93,7 +94,11 @@ function ChatItem({
                 />
                 <VStack flex={1} gap={4} marginBottom={12}>
                     <SerifHeading color="white">
-                        {trusted_name ?? meta_title ?? "unnamed contact"}
+                        {trusted_name ??
+                            meta_title ??
+                            (__DEV__
+                                ? did_id.substring(did_id.length - 4)
+                                : "unnamed contact")}
                         {trusted_name !== undefined && " "}
                         {trusted_name !== undefined && (
                             <MaterialCommunityIcons

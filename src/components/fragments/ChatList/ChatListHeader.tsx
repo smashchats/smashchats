@@ -11,6 +11,7 @@ import { Box } from "@/src/components/design-system/Box.jsx";
 import { HStack } from "@/src/components/design-system/HStack.jsx";
 import { NEIGHBOURHOOD_DOMAIN } from "@/data/neighbourhood.js";
 import { useGlobalState } from "@/src/context/GlobalContext";
+import { ThemedText } from "@/src/components/ThemedText.jsx";
 
 function ChatListHeader(): JSX.Element {
     const globalState = useGlobalState();
@@ -59,10 +60,21 @@ function ChatListHeader(): JSX.Element {
                         style={{
                             width: 40,
                             height: 25,
-                            // backgroundColor: "red",
-                            // display: __DEV__ ? "flex" : "none",
                         }}
-                    />
+                    >
+                        {__DEV__ && (
+                            <ThemedText
+                                style={{
+                                    fontSize: 10,
+                                    color: Colors.dark.text,
+                                }}
+                            >
+                                {globalState?.selfDid?.id?.substring(
+                                    globalState?.selfDid?.id.length - 4
+                                )}
+                            </ThemedText>
+                        )}
+                    </Pressable>
                 </HStack>
 
                 <HStack>

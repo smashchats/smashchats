@@ -1,7 +1,7 @@
 import * as React from "react";
 import { render } from "@testing-library/react-native";
 import ChatItem, { dateToShowableString } from "@/src/components/fragments/ChatList/ChatItem.jsx";
-import { DAY, HOUR } from "@/src/Utils.js";
+import { DAY, HOUR } from "@/src/utils/Utils.js";
 
 describe(`chat item`, () => {
     test("unreadMessagesAmount is shown", () => {
@@ -16,7 +16,7 @@ describe(`chat item`, () => {
                 most_recent_message="excerpt"
                 most_recent_message_type="message_type"
                 trusted_name="trusted_name"
-                meta_picture="avatar"
+                meta_avatar="avatar"
                 smashed={false}
                 created_at={new Date()}
             />

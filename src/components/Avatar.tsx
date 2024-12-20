@@ -2,7 +2,7 @@ import { Colors } from "@/src/constants/Colors";
 import { Avatar as AvatarComponent } from "@/src/components/design-system/Avatar";
 import { AvatarImage } from "@/src/components/design-system/AvatarImage";
 import { AvatarFallbackText } from "@/src/components/design-system/AvatarFallbackText";
-import { Contact } from "@/src/models/Contacts";
+import { Contact } from "@/src/db/models/Contacts";
 
 type AvatarProps = {
     contact: Contact & { trusted_name: string | undefined };
@@ -26,14 +26,14 @@ export const Avatar = ({ contact, variant = "small" }: AvatarProps) => {
     }
 
     const hasImage =
-        contact.meta_picture?.startsWith("data:image/png;base64,") ||
-        contact.meta_picture?.startsWith("data:image/jpeg;base64,") ||
-        contact.meta_picture?.startsWith("https://kinkverse.org") ||
-        contact.meta_picture?.startsWith("https://i.ytimg.com") ||
-        contact.meta_picture?.startsWith("https://upload.wiki") ||
-        contact.meta_picture?.startsWith("file://") ||
-        contact.meta_picture?.startsWith("https://github.com") ||
-        contact.meta_picture?.startsWith(
+        contact.meta_avatar?.startsWith("data:image/png;base64,") ||
+        contact.meta_avatar?.startsWith("data:image/jpeg;base64,") ||
+        contact.meta_avatar?.startsWith("https://kinkverse.org") ||
+        contact.meta_avatar?.startsWith("https://i.ytimg.com") ||
+        contact.meta_avatar?.startsWith("https://upload.wiki") ||
+        contact.meta_avatar?.startsWith("file://") ||
+        contact.meta_avatar?.startsWith("https://github.com") ||
+        contact.meta_avatar?.startsWith(
             "https://unstaticlabs.com/unstatic-logo.svg"
         );
 
@@ -63,7 +63,7 @@ export const Avatar = ({ contact, variant = "small" }: AvatarProps) => {
                     }'s avatar'`}
                     borderRadius={radiusDimensions[variant]}
                     size={avatarSize}
-                    source={contact.meta_picture}
+                    source={contact.meta_avatar}
                 />
             )}
         </AvatarComponent>

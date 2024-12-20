@@ -1,0 +1,37 @@
+diff --git a/node_modules/@smashchats/library/dist/src/signal/SignalSession.js b/node_modules/@smashchats/library/dist/src/signal/SignalSession.js
+index bec9396..e45ed4a 100644
+--- a/node_modules/@smashchats/library/dist/src/signal/SignalSession.js
++++ b/node_modules/@smashchats/library/dist/src/signal/SignalSession.js
+@@ -22,15 +22,15 @@ export class SignalSession {
+         try {
+             const bundle = new PreKeyBundleProtocol();
+             bundle.registrationId = 0; // warning: using fixed value, unsure about usage!
+-            bundle.identity.signingKey = await ECPublicKey.create(await CryptoUtils.singleton.importKey(peerDidDocument.ik));
+-            bundle.identity.exchangeKey = await ECPublicKey.create(await CryptoUtils.singleton.importKey(peerDidDocument.ek));
++            bundle.identity.signingKey = await ECPublicKey.create(await CryptoUtils.singleton.importKey(peerDidDocument.ik, undefined, true));
++            bundle.identity.exchangeKey = await ECPublicKey.create(await CryptoUtils.singleton.importKey(peerDidDocument.ek, undefined, true));
+             bundle.identity.signature = CryptoUtils.singleton.stringToBuffer(peerDidDocument.signature);
+             bundle.preKeySigned.id = 0; // warning: using fixed value, unsure about usage!
+-            bundle.preKeySigned.key = await ECPublicKey.create(await CryptoUtils.singleton.importKey(sme.preKey));
++            bundle.preKeySigned.key = await ECPublicKey.create(await CryptoUtils.singleton.importKey(sme.preKey, undefined, true));
+             bundle.preKeySigned.signature =
+                 CryptoUtils.singleton.stringToBuffer(sme.signature);
+             const protocol = await PreKeyBundleProtocol.importProto(bundle);
+-            const cipher = await AsymmetricRatchet.create(identity, protocol);
++            const cipher = await AsymmetricRatchet.create(identity, protocol, { exportableKeys: true });
+             const sessionId = await CryptoUtils.singleton.keySha256(cipher.currentRatchetKey.publicKey.key);
+             return new SignalSession(sessionId, cipher, peerDidDocument.ik, logger);
+         }
+diff --git a/node_modules/@smashchats/library/dist/src/sme/SMESocketReadWrite.js b/node_modules/@smashchats/library/dist/src/sme/SMESocketReadWrite.js
+index aa626ac..e86cb4d 100644
+--- a/node_modules/@smashchats/library/dist/src/sme/SMESocketReadWrite.js
++++ b/node_modules/@smashchats/library/dist/src/sme/SMESocketReadWrite.js
+@@ -8,7 +8,7 @@ const solveChallenge = async (data, auth, socket, logger) => {
+         const symmetricKey = await CryptoUtils.singleton.deriveKey({
+             ...auth.keyAlgorithm,
+             public: smePublicKey,
+-        }, auth.preKeyPair.privateKey, auth.encryptionAlgorithm, false, ['encrypt', 'decrypt']);
++        }, auth.preKeyPair.privateKey, auth.encryptionAlgorithm, true, ['encrypt', 'decrypt']);
+         const unencryptedChallenge = await CryptoUtils.singleton.decrypt({
+             ...auth.encryptionAlgorithm,
+             iv: ivBuffer,

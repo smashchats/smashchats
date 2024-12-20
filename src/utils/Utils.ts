@@ -1,6 +1,7 @@
 import * as FileSystem from "expo-file-system";
 import ImageResizer from "@bam.tech/react-native-image-resizer";
-import { SmashDID } from "@smashchats/library";
+
+import { DIDDocument } from "@smashchats/library";
 
 import { Message } from "@/src/app/profile/[user]/(tabs)/messages.js";
 
@@ -20,9 +21,9 @@ export const getTxtRecord = (domain: string): Promise<DNSoverHttpsResponse> => {
     return getDnsRecord(domain, "TXT");
 };
 
-export const getDidFromDomain = async (domain: string): Promise<SmashDID> => {
+export const getDidFromDomain = async (domain: string): Promise<DIDDocument> => {
     const r = await getTxtRecord(`_smash.${domain}`);
-    return r.Answer![0].data as unknown as SmashDID;
+    return r.Answer![0].data as unknown as DIDDocument;
 };
 
 // Quicktyped from data available here: https://developers.google.com/speed/public-dns/docs/doh/
@@ -50,23 +51,6 @@ export interface Answer {
 export interface Question {
     name: string;
     type: number;
-}
-
-export type UniqueArray<T> = T[] & { __unique: never };
-
-export function createUniqueArray<T extends { id: number }>(
-    arr: ReadonlyArray<T>
-): UniqueArray<T> {
-    const seenIds = new Set<number>();
-    const uniqueArray = arr.filter((item) => {
-        if (seenIds.has(item.id)) {
-            return false;
-        } else {
-            seenIds.add(item.id);
-            return true;
-        }
-    });
-    return uniqueArray as UniqueArray<T>;
 }
 
 export const SECOND = 1000;
@@ -102,22 +86,6 @@ export const addSystemDateMessages = (messages: Message[]): Message[] => {
     });
     return newMessages;
 };
-
-export function uniqueByKey<T, K extends keyof T>(array: T[], key: K): T[] {
-    const seen = new Set<T[K]>();
-    return array.filter((item) => {
-        const value = item[key];
-        if (seen.has(value)) {
-            return false;
-        }
-        seen.add(value);
-        return true;
-    });
-}
-
-export function uniqueStrings(array: string[]): string[] {
-    return Array.from(new Set(array));
-}
 
 export const convertImageToBase64 = async (fileUri: string) => {
     try {

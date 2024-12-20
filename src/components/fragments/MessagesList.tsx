@@ -7,6 +7,7 @@ import ProfileMessagesScreenText from "@/src/components/ProfileMessagesScreenTex
 import ProfileMessagesScreenDate from "@/src/components/ProfileMessagesScreenDate";
 import ProfileMessagesScreenMetadata from "@/src/components/ProfileMessagesScreenMetadata";
 import { Message } from "@/src/app/profile/[user]/(tabs)/messages";
+import { IM_CHAT_TEXT } from "@smashchats/library";
 
 type MessagesListProps = {
     messages: Message[];
@@ -24,7 +25,7 @@ export const MessagesList = ({
                     let id = m.sha256 ?? `index-${idx}`;
 
                     switch (m.type) {
-                        case "text":
+                        case IM_CHAT_TEXT:
                             return (
                                 <ProfileMessagesScreenText
                                     key={`${m.type}-${id}`}

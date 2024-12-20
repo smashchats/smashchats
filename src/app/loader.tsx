@@ -3,19 +3,21 @@ import { View } from "react-native";
 import { SplashScreen, Stack } from "expo-router";
 import { PostHogProvider } from "posthog-react-native";
 
-import { Logger, SmashProfileMeta, SmashUser } from "@smashchats/library";
+import { Logger, SmashUser, IMProfile, DIDDocument } from "@smashchats/library";
 
-import { handleUserMessages, loadIdentity } from "@/src/IdentityUtils";
+import { handleUserMessages, loadIdentity } from "@/src/utils/IdentityUtils";
 import {
     Action,
     Settings,
     useGlobalDispatch,
     useGlobalState,
 } from "@/src/context/GlobalContext";
-import { getData } from "@/src/StorageUtils";
+import { getData } from "@/src/utils/StorageUtils";
 import { ThemedText } from "@/src/components/ThemedText";
-import { dev_nab_join_action } from "@/data/dev";
-import { createTrustRelation } from "@/src/models/TrustRelation";
+import { dev_nab_join_action, didId } from "@/data/dev";
+import { createTrustRelation } from "@/src/db/models/TrustRelation";
+import { saveContactToDb } from "@/src/db/models/Contacts";
+import { MapDidToContact } from "@/src/utils/mappers/contacts";
 
 export default function LoaderScreen() {
     const dispatch = useGlobalDispatch();
@@ -24,8 +26,12 @@ export default function LoaderScreen() {
     const initializeUserAndDiscoverNetwork = async (user: SmashUser) => {
         try {
             await Promise.all([
-                createTrustRelation(dev_nab_join_action.did.id),
+                createTrustRelation(didId),
                 user.join(dev_nab_join_action),
+                saveContactToDb(
+                    MapDidToContact(dev_nab_join_action.did as DIDDocument)
+                ),
+                new Promise((resolve) => setTimeout(resolve, 5 * 1_000)),
             ]);
             await user.discover();
         } catch (error) {
@@ -105,7 +111,7 @@ export default function LoaderScreen() {
         (async () => {
             const [settings, meta] = await Promise.all([
                 getData<Settings>("settings.settings"),
-                getData<SmashProfileMeta>("settings.user_meta"),
+                getData<IMProfile>("settings.user_meta"),
             ]);
             const newUser = settings === null;
             dispatch({

@@ -18,12 +18,16 @@ import { Colors } from "@/src/constants/Colors.js";
 import ProfileMessages from "@/src/app/profile/[user]/(tabs)/messages.jsx";
 import { useGlobalState } from "@/src/context/GlobalContext.js";
 import {
-    MapContactToDid,
     TrustedContact,
     getContactWithTrustRelation,
-} from "@/src/models/Contacts";
-import { EnrichedSmashMessage, saveMessageToDb } from "@/src/models/Messages";
+} from "@/src/db/models/Contacts";
+import {
+    EnrichedSmashMessage,
+    saveMessageToDb,
+} from "@/src/db/models/Messages";
 import { ProfileHeader } from "@/src/components/fragments/ProfileHeader";
+import { DIDString } from "@smashchats/library";
+import { MapContactToDid } from "@/src/utils/mappers/contacts";
 
 export type ProfileIdType = {
     profileId: string;
@@ -54,7 +58,9 @@ export const ProfileScreen = () => {
                 const userData = await getContactWithTrustRelation(did_id);
 
                 if (!userData) {
-                    globalState.logger.warn(`User ${user} not found in database`);
+                    globalState.logger.warn(
+                        `User ${user} not found in database`
+                    );
                     router.back();
                     return;
                 }
@@ -115,8 +121,8 @@ export const ProfileScreen = () => {
         saveMessageToDb(
             {
                 ...data,
-                fromDid: selfDid,
-                toDiscussionId: peerId,
+                fromDid: selfDid.id,
+                toDiscussionId: peerId as DIDString,
             } satisfies EnrichedSmashMessage,
             {
                 date_read: new Date(),
