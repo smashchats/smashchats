@@ -25,6 +25,7 @@ import { useColorScheme } from "@/src/hooks/useColorScheme.js";
 import { drizzle_db, expo_db } from "@/src/db/database";
 import LoaderScreen from "@/src/app/loader";
 import { ThemedText } from "@/src/components/ThemedText";
+import { Colors } from "@/src/constants/Colors";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -60,8 +61,18 @@ export default function RootLayout() {
     if (error && !success) {
         SplashScreen.hideAsync();
         return (
-            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                <ThemedText>{__DEV__ ? error?.message ?? "Unknown error" : "Unknown error"}</ThemedText>
+            <View
+                style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                }}
+            >
+                <ThemedText>
+                    {__DEV__
+                        ? error?.message ?? "Unknown error"
+                        : "Unknown error"}
+                </ThemedText>
             </View>
         );
     }
@@ -70,7 +81,9 @@ export default function RootLayout() {
     }
 
     return (
-        <GestureHandlerRootView style={{ flex: 1 }}>
+        <GestureHandlerRootView
+            style={{ flex: 1, backgroundColor: Colors.background }}
+        >
             <ThemeProvider
                 value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
             >

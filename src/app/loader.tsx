@@ -31,7 +31,7 @@ export default function LoaderScreen() {
                 saveContactToDb(
                     MapDidToContact(dev_nab_join_action.did as DIDDocument)
                 ),
-                new Promise((resolve) => setTimeout(resolve, 5 * 1_000)),
+                new Promise((resolve) => setTimeout(resolve, 3 * 1_000)),
             ]);
             await user.discover();
         } catch (error) {

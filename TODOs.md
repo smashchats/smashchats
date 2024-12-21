@@ -10,7 +10,21 @@
 - [x] mark messages as read
 - [ ] mark messages as received
 - [x] don't save user "self" in db
+- [ ] Contact notes
+- [ ] did set vs did patch
+- [x] flash when navigating
+- [ ] touchableOpacity
+- [ ] animations?
+- [ ] drafts
+- [ ] delete contacts / discussions
+- [ ] mark as unread
+- [ ] filters based on notes
+- [ ] hide screen on connecting and show connecting status
+- [ ] copy telegram
+- [ ] groups
 - [ ] send media messages
+  - [ ] media organizer à la stash
+- [ ] bio max 140chars
 - [ ] replace routing? https://github.com/expo/router/issues/723
 - [x] disable wizard
 - [x] qr code for DID
