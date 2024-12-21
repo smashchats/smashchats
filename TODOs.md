@@ -2,23 +2,25 @@
 
 ## Pending
 
-- [ ] save "active" contact --> display as purple
-- [ ] fix chat list ordering
-- [ ] mark messages as received
 - [ ] Contact notes
-- [ ] did set vs did patch
+- [ ] drafts
+- [ ] save "active" contact --> display as purple
+- [ ] replace SQLite view with query
+- [ ] fix chat list ordering (see with xsbfh for algorithm?)
+- [ ] DID set (when contact sends profile) vs DID patch (when resolving? & when nab sends profiles)
 - [ ] touchableOpacity
 - [ ] animations?
-- [ ] drafts
 - [ ] delete contacts / discussions
 - [ ] delete own avatar
 - [ ] mark as unread
 - [ ] filters based on notes
 - [ ] hide screen on connecting and show connecting status
-- [ ] copy telegram
-- [ ] groups
+- [ ] copy telegram's fluidity (get inspiration from their animations)
+- [ ] multiple-people discussions (groups)
+- [ ] multiple identities
 - [ ] send media messages
   - [ ] media organizer à la stash
+- [ ] mark messages as received / read (depends on library)
 - [ ] bio max 140chars
 - [ ] replace routing? https://github.com/expo/router/issues/723
 - [ ] fastlane android bump version
