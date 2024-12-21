@@ -131,3 +131,9 @@ export const resizeImage = async (
         }
     );
 };
+
+export const addPrefixToObjectKeys = (obj: Record<string, any>, prefix: string) => {
+    return Object.fromEntries(
+        Object.entries(obj).map(([key, value]) => [prefix + key, value])
+    );
+};

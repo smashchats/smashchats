@@ -1,9 +1,12 @@
 import { InferInsertModel, InferSelectModel, eq } from "drizzle-orm";
 
-import { IMProfile, SmashEndpoint } from "@smashchats/library";
+import { DIDDocument, IMProfile } from "@smashchats/library";
 
 import { contacts, trustRelations } from "@/src/db/schema.js";
 import { drizzle_db } from "@/src/db/database";
+import { SQLiteInsertOnConflictDoUpdateConfig } from "drizzle-orm/sqlite-core";
+import { MapDidDocumentToContactInsert, MapImProfileToPartialDidDocument } from "@/src/utils/mappers/contacts";
+import { PartialWithId } from "@/src/utils/types";
 
 export type Contact = InferSelectModel<typeof contacts>;
 export type TrustedContact = Contact & { trusted_name: string | undefined };
@@ -52,44 +55,53 @@ export const getContactsFromDb = async (): Promise<Contact[]> => {
     return contacts;
 };
 
-export const updateContact = async (profile: IMProfile) => {
-    const { did, title, description, avatar } = profile;
+interface UpdateOptions {
+    onConflictDoNothing?: boolean;
+    onConflictDoUpdate?: Omit<SQLiteInsertOnConflictDoUpdateConfig<any>, "target">;
+}
 
-    let didObject: { did_id: string, did_ik?: string, did_ek?: string, did_signature?: string, did_endpoints?: SmashEndpoint[] };
-
-    if (typeof did === "string") {
-        didObject = {
-            did_id: did,
-        };
-    } else {
-        didObject = {
-            did_id: did.id,
-            did_ik: did.ik,
-            did_ek: did.ek,
-            did_signature: did.signature,
-            did_endpoints: did.endpoints,
-        };
-    }
-
-    const [updatedContact] = await drizzle_db
+const genericUpdateContact = async (did_id: string, updates: Partial<ContactInsert>, options: UpdateOptions = {}) => {
+    let query = drizzle_db
         .insert(contacts)
         .values({
-            ...didObject,
-            meta_title: title,
-            meta_description: description,
-            meta_avatar: avatar,
-            updated_at: new Date(),
-        })
-        .onConflictDoUpdate({
+            ...updates,
+            did_id,
+        });
+
+    if (options.onConflictDoNothing) {
+        query = query.onConflictDoNothing();
+    } else if (options.onConflictDoUpdate) {
+        query = query.onConflictDoUpdate({
+            ...options.onConflictDoUpdate,
             target: [contacts.did_id],
-            set: {
-                ...didObject,
-                meta_title: title,
-                meta_description: description,
-                meta_avatar: avatar,
-                updated_at: new Date(),
-            },
-        })
-        .returning();
+        });
+    }
+
+    const [updatedContact] = await query.returning();
     return updatedContact;
+};
+
+export const patchContact = async (did_id: string, updates: Partial<ContactInsert>) => {
+    return genericUpdateContact(did_id, updates, {
+        onConflictDoUpdate: { set: updates },
+    });
+}
+
+export const updateContact = async (profile: IMProfile) => {
+    const { title, description, avatar } = profile;
+
+    const did: PartialWithId<DIDDocument>
+        = MapImProfileToPartialDidDocument(profile);
+
+    const data = {
+        ...MapDidDocumentToContactInsert(did),
+        meta_title: title,
+        meta_description: description,
+        meta_avatar: avatar,
+        updated_at: new Date(),
+    }
+
+    return genericUpdateContact(did.id, data, {
+        onConflictDoUpdate: { set: data },
+    });
 };

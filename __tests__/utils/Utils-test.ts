@@ -1,5 +1,6 @@
 import { Message } from "@/src/app/profile/[user]/(tabs)/messages";
 import {
+    addPrefixToObjectKeys,
     addSystemDateMessages,
     convertImageToBase64,
     DAY,
@@ -179,4 +180,13 @@ describe("Utils", () => {
 
         })
     })
+
+    describe("addPrefixToObjectKeys", () => {
+        it("adds a prefix to the keys of an object", () => {
+            const obj = { a: 1, b: 2, c: 3 };
+            const prefix = "prefix-";
+            const result = addPrefixToObjectKeys(obj, prefix);
+            expect(result).toEqual({ "prefix-a": 1, "prefix-b": 2, "prefix-c": 3 });
+        });
+    });
 });

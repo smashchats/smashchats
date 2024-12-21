@@ -42,7 +42,7 @@ exports[`FloatingActionButton Renders correctly 1`] = `
       "marginRight": 20,
       "position": "absolute",
       "right": 0,
-      "top": 1264,
+      "top": 1259,
       "width": 50,
       "zIndex": 999,
     }

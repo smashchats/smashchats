@@ -1,6 +1,8 @@
-import { DIDDocument, DIDString, SmashEndpoint, SmashProfileList } from "@smashchats/library";
+import { DIDDocument, DIDString, IMProfile, SmashEndpoint, SmashProfileList } from "@smashchats/library";
 
 import { Contact, ContactInsert } from "@/src/db/models/Contacts";
+import { addPrefixToObjectKeys } from "@/src/utils/Utils";
+import { PartialWithId } from "@/src/utils/types";
 
 export const SmashProfileToContactMapper = (profile: SmashProfileList[0]) => {
     return {
@@ -32,5 +34,32 @@ export const MapDidToContact = (did: DIDDocument): ContactInsert => {
         did_ek: did.ek,
         did_signature: did.signature,
         did_endpoints: did.endpoints,
+    };
+};
+
+export const MapImProfileToPartialDidDocument = (profile: IMProfile): PartialWithId<DIDDocument> => {
+    const { did } = profile;
+
+    let didObject: { id: DIDString, ik?: string, ek?: string, signature?: string, endpoints?: SmashEndpoint[] };
+
+    if (typeof did === "string") {
+        didObject = {
+            id: did,
+        };
+    } else {
+        didObject = {
+            id: did.id,
+            ik: did.ik,
+            ek: did.ek,
+            signature: did.signature,
+            endpoints: did.endpoints,
+        };
+    }
+    return didObject
+};
+
+export const MapDidDocumentToContactInsert = (did: Partial<DIDDocument>): Partial<ContactInsert> => {
+    return {
+        ...addPrefixToObjectKeys(did, "did_"),
     };
 };

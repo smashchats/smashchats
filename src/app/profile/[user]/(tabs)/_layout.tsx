@@ -232,7 +232,12 @@ export const ProfileScreen = () => {
                     )}
                 </View>
             </KeyboardAvoidingView>
-            <ProfileDrawer peer={peer!} bottomSheetRef={bottomSheetRef} />
+            {peer && (
+                <ProfileDrawer
+                    peer={peer}
+                    bottomSheetRef={bottomSheetRef}
+                />
+            )}
         </View>
     );
 };
