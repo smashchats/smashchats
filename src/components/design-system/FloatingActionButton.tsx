@@ -1,9 +1,10 @@
 import React from "react";
-import { Pressable, useWindowDimensions } from "react-native";
+import { Pressable } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { Colors } from "@/src/constants/Colors.js";
 import { MaterialCommunityIcon } from "@/src/components/design-system/MaterialCommunityIconsType.js";
+import { SCREEN_HEIGHT } from "@/src/components/fragments/Camera/Constants";
 
 type Props = {
     icon: MaterialCommunityIcon;
@@ -14,7 +15,6 @@ export function FloatingActionButton({
     icon,
     onPress,
 }: Readonly<Props>): JSX.Element {
-    const { height } = useWindowDimensions();
     return (
         <Pressable
             testID="FloatingActionButton::Pressable"
@@ -24,7 +24,7 @@ export function FloatingActionButton({
                 height: 50,
                 position: "absolute",
                 right: 0,
-                top: height - 70,
+                top: SCREEN_HEIGHT - 75,
                 backgroundColor: Colors.purple,
                 borderRadius: 25,
                 marginRight: 20,

@@ -12,6 +12,7 @@ import { drizzle_db } from "@/src/db/database";
 import { ChatListView, chatListView } from "@/src/db/schema.js";
 import { getShownChats } from "@/src/context/ChatListContext";
 import { useLiveTablesQuery } from "@/src/hooks/useLiveQuery";
+import { SCREEN_HEIGHT } from "@/src/components/fragments/Camera/Constants";
 
 export function ChatList() {
     const { chatList } = useGlobalState();
@@ -44,7 +45,7 @@ export function ChatList() {
     }, [dbData, chatList.selectedFilters]);
 
     return (
-        <Box minHeight={"100%"}>
+        <Box height={SCREEN_HEIGHT}>
             <ChatListHeader />
             <ChatListFilters />
             <ScrollView
@@ -71,6 +72,7 @@ export function ChatList() {
                         </Pressable>
                     </Link>
                 ))}
+                <Box marginHorizontal={128} height={150} />
             </ScrollView>
         </Box>
     );
