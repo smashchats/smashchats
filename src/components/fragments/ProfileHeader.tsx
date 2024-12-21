@@ -42,9 +42,11 @@ import { Colors } from "@/src/constants/Colors";
 export const ProfileHeader = ({
     peer,
     headerHeight,
+    onShowDiscussionDetails,
 }: {
     peer: TrustedContact;
     headerHeight: number;
+    onShowDiscussionDetails: () => void;
 }) => {
     const insets = useSafeAreaInsets();
     const router = useRouter();
@@ -81,25 +83,31 @@ export const ProfileHeader = ({
                             source={require("@/assets/icon_x.png")}
                         />
                     </Pressable>
-                    <View
-                        style={{
-                            flexDirection: "row",
-                            alignItems: "center",
-                            gap: 12,
-                            flex: 1,
-                            paddingHorizontal: 16,
-                        }}
+                    <Pressable
+                        style={{ flex: 1 }}
+                        onPress={onShowDiscussionDetails}
                     >
-                        <Avatar
-                            contact={
-                                peer ?? ({ meta_title: "" } as TrustedContact)
-                            }
-                            variant={"small"}
-                        />
-                        <Text fontWeight="bold" color="white" fontSize={16}>
-                            {peer?.trusted_name ?? peer?.meta_title}
-                        </Text>
-                    </View>
+                        <View
+                            style={{
+                                flexDirection: "row",
+                                alignItems: "center",
+                                gap: 12,
+                                flex: 1,
+                                paddingHorizontal: 16,
+                            }}
+                        >
+                            <Avatar
+                                contact={
+                                    peer ??
+                                    ({ meta_title: "" } as TrustedContact)
+                                }
+                                variant={"small"}
+                            />
+                            <Text fontWeight="bold" color="white" fontSize={16}>
+                                {peer?.trusted_name ?? peer?.meta_title}
+                            </Text>
+                        </View>
+                    </Pressable>
 
                     <View
                         style={{

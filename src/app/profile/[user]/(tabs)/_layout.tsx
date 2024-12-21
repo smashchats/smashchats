@@ -28,6 +28,8 @@ import {
 import { ProfileHeader } from "@/src/components/fragments/ProfileHeader";
 import { DIDString } from "@smashchats/library";
 import { MapContactToDid } from "@/src/utils/mappers/contacts";
+import { ProfileDrawer } from "@/src/components/fragments/ProfileDrawer";
+import BottomSheet from "@gorhom/bottom-sheet";
 
 export type ProfileIdType = {
     profileId: string;
@@ -43,14 +45,13 @@ export type ProfileStackParamList = {
 export const ProfileScreen = () => {
     const { user } = useLocalSearchParams();
     const router = useRouter();
+    const globalState = useGlobalState();
+    const insets = useSafeAreaInsets();
     const [newMessage, setNewMessage] = useState("");
     const [shouldShowSendIcon, setShouldShowSendIcon] = useState(true);
+    const [peer, setPeer] = useState<TrustedContact>();
     const inputFieldRef = useRef<TextInput>(null);
-    const globalState = useGlobalState();
-
-    const [peer, setPeer] = useState<TrustedContact | null>(null);
-
-    const insets = useSafeAreaInsets();
+    const bottomSheetRef = useRef<BottomSheet>(null);
 
     useEffect(() => {
         const fetchUser = async (did_id: string) => {
@@ -152,6 +153,7 @@ export const ProfileScreen = () => {
             <ProfileHeader
                 headerHeight={headerHeight}
                 peer={peer ?? ({} as TrustedContact)}
+                onShowDiscussionDetails={() => bottomSheetRef.current?.expand()}
             />
 
             {/* Chat Area */}
@@ -230,6 +232,7 @@ export const ProfileScreen = () => {
                     )}
                 </View>
             </KeyboardAvoidingView>
+            <ProfileDrawer peer={peer!} bottomSheetRef={bottomSheetRef} />
         </View>
     );
 };
