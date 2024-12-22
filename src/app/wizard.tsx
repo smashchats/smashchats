@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button, TextInput, View } from "react-native";
-import * as ImagePicker from "expo-image-picker";
+import { useRouter } from "expo-router";
 
 import { IMProfile } from "@smashchats/library";
 
@@ -14,8 +14,7 @@ import { ThemedText } from "@/src/components/ThemedText";
 import { Colors } from "@/src/constants/Colors";
 import { Avatar } from "@/src/components/Avatar";
 import { TrustedContact } from "@/src/db/models/Contacts";
-import { convertImageToBase64, resizeImage } from "@/src/utils/Utils";
-import { useRouter } from "expo-router";
+import { PickImage } from "@/src/utils/ImageUtils";
 import { useThemeColor } from "@/src/hooks/useThemeColor";
 
 export default function Wizard() {
@@ -77,28 +76,13 @@ export default function Wizard() {
     }
 
     const pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true, // to allow user cropping it into a square
-            aspect: [1, 1],
-            quality: 0.5,
-        });
-
         try {
-            if (!result.canceled) {
-                const uri = result.assets[0].uri;
-                const resizedImage = await resizeImage(uri, {
-                    quality: 50,
-                    width: 150,
-                    height: 150,
-                });
-                const base64 = await convertImageToBase64(resizedImage.uri);
-                if (base64) {
-                    setIdentityMeta((prev) => ({
-                        ...prev,
-                        avatar: `data:image/jpeg;base64,${base64}`,
-                    }));
-                }
+            const base64 = await PickImage();
+            if (base64) {
+                setIdentityMeta((prev) => ({
+                    ...prev,
+                    avatar: `data:image/jpeg;base64,${base64}`,
+                }));
             }
         } catch (error) {
             globalState.logger.error("Error picking image:", error);

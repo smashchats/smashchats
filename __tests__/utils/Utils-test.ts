@@ -2,7 +2,6 @@ import { Message } from "@/src/app/profile/[user]/(tabs)/messages";
 import {
     addPrefixToObjectKeys,
     addSystemDateMessages,
-    convertImageToBase64,
     DAY,
     daysBetweenTwoDates,
     getDidFromDomain,
@@ -11,20 +10,7 @@ import {
     SECOND
 } from "@/src/utils/Utils";
 
-import * as FileSystem from "expo-file-system";
-import { readAsStringAsync } from "expo-file-system";
 
-jest.mock('expo-file-system', () => ({
-    readAsStringAsync: jest.fn(),
-    EncodingType: {
-        Base64: "base64"
-    }
-}));
-
-beforeEach(() => {
-    (readAsStringAsync as jest.Mock).mockClear();
-
-});
 
 describe("Utils", () => {
     describe("time", () => {
@@ -165,21 +151,7 @@ describe("Utils", () => {
         })
     });
 
-    describe("convertImageToBase64", () => {
-        beforeEach(() => {
-            jest.spyOn(FileSystem, "readAsStringAsync").mockResolvedValue("test-base64-data");
-        });
-        it("returns the base64 data of an image", async () => {
-            const base64Data = await convertImageToBase64("test.png");
 
-            expect(readAsStringAsync).toHaveBeenCalledWith("test.png", {
-                encoding: FileSystem.EncodingType.Base64,
-            });
-
-            expect(base64Data).toBe("test-base64-data");
-
-        })
-    })
 
     describe("addPrefixToObjectKeys", () => {
         it("adds a prefix to the keys of an object", () => {

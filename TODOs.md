@@ -2,7 +2,9 @@
 
 ## Pending
 
-- [ ] Contact notes
+- [~] Contact notes
+  - [ ] dynamically generate filters
+  - [ ] use filters to search in notes & user bio.{title, description}
 - [ ] drafts
 - [ ] save "active" contact --> display as purple
 - [ ] replace SQLite view with query

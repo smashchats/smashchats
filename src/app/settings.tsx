@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Button, View, TextInput, Switch } from "react-native";
-import * as ImagePicker from "expo-image-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ThemedText } from "@/src/components/ThemedText";
@@ -8,7 +7,7 @@ import { Avatar } from "@/src/components/Avatar";
 import { TrustedContact } from "@/src/db/models/Contacts";
 import { useGlobalState, useGlobalDispatch } from "@/src/context/GlobalContext";
 import { Colors } from "@/src/constants/Colors";
-import { convertImageToBase64, resizeImage } from "@/src/utils/Utils";
+import { PickImage } from "@/src/utils/ImageUtils";
 
 export default function ProfileLayout() {
     const dispatch = useGlobalDispatch();
@@ -45,32 +44,17 @@ export default function ProfileLayout() {
         });
     };
 
-    const pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true, // to allow user cropping it into a square
-            aspect: [1, 1],
-            quality: 0.5,
-        });
-
+    const pickAndSetImage = async () => {
         try {
-            if (!result.canceled) {
-                const uri = result.assets[0].uri;
-                const resizedImage = await resizeImage(uri, {
-                    quality: 50,
-                    width: 150,
-                    height: 150,
+            const base64 = await PickImage();
+            if (base64) {
+                dispatch({
+                    type: "SET_SETTINGS_USER_META_ACTION",
+                    userMeta: {
+                        ...state.userMeta,
+                        avatar: `data:image/jpeg;base64,${base64}`,
+                    },
                 });
-                const base64 = await convertImageToBase64(resizedImage.uri);
-                if (base64) {
-                    dispatch({
-                        type: "SET_SETTINGS_USER_META_ACTION",
-                        userMeta: {
-                            ...state.userMeta,
-                            avatar: `data:image/jpeg;base64,${base64}`,
-                        },
-                    });
-                }
             }
         } catch (error) {
             state.logger.error("Error picking image:", error);
@@ -95,7 +79,7 @@ export default function ProfileLayout() {
                         variant="xlarge"
                     />
                     <View style={{ marginTop: 15 }}>
-                        <Button title="Change image" onPress={pickImage} />
+                        <Button title="Change image" onPress={pickAndSetImage} />
                     </View>
                 </View>
                 <View style={{ marginTop: 20, width: "100%" }}>

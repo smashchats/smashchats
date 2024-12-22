@@ -1,6 +1,3 @@
-import * as FileSystem from "expo-file-system";
-import ImageResizer from "@bam.tech/react-native-image-resizer";
-
 import { DIDDocument } from "@smashchats/library";
 
 import { Message } from "@/src/app/profile/[user]/(tabs)/messages.js";
@@ -87,50 +84,7 @@ export const addSystemDateMessages = (messages: Message[]): Message[] => {
     return newMessages;
 };
 
-export const convertImageToBase64 = async (fileUri: string) => {
-    try {
-        const base64Data = await FileSystem.readAsStringAsync(fileUri, {
-            encoding: FileSystem.EncodingType.Base64,
-        });
 
-        return base64Data;
-    } catch (error) {
-        console.error("Error converting image to base64:", error);
-
-        return null;
-    }
-};
-
-export const DEFAULT_RESIZE_OPTIONS = {
-    onlyScaleDown: true,
-    quality: 100,
-    width: 150,
-    height: 150,
-    format: "JPEG" as const,
-};
-
-export const resizeImage = async (
-    path: string,
-    options: Partial<typeof DEFAULT_RESIZE_OPTIONS> = DEFAULT_RESIZE_OPTIONS
-) => {
-    const { onlyScaleDown, quality, width, height, format } = {
-        ...DEFAULT_RESIZE_OPTIONS,
-        ...options,
-    };
-    return ImageResizer.createResizedImage(
-        path,
-        width,
-        height,
-        format,
-        quality,
-        0,
-        null,
-        false,
-        {
-            onlyScaleDown,
-        }
-    );
-};
 
 export const addPrefixToObjectKeys = (obj: Record<string, any>, prefix: string) => {
     return Object.fromEntries(
