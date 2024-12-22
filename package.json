@@ -15,6 +15,7 @@
   "dependencies": {
     "@bam.tech/react-native-image-resizer": "^3.0.11",
     "@expo/vector-icons": "^14.0.2",
+    "@gorhom/bottom-sheet": "^5",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-navigation/material-top-tabs": "^6.6.14",
     "@react-navigation/native": "^6.0.2",
@@ -48,6 +49,7 @@
     "react-dom": "18.2.0",
     "react-native": "0.74.3",
     "react-native-gesture-handler": "~2.16.1",
+    "react-native-navigation-bar-color": "^2.0.2",
     "react-native-pager-view": "6.3.0",
     "react-native-qr": "^1.0.0",
     "react-native-quick-crypto": "^0.7.6",
@@ -58,8 +60,7 @@
     "react-native-vision-camera": "^4.6.3",
     "react-native-web": "~0.19.10",
     "react-native-webview": "^13.12.3",
-    "react-native-webview-crypto": "^0.0.26",
-    "@gorhom/bottom-sheet": "^5"
+    "react-native-webview-crypto": "^0.0.26"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

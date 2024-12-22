@@ -2,6 +2,7 @@ import { Dispatch, useEffect } from "react";
 import { View } from "react-native";
 import { SplashScreen, Stack } from "expo-router";
 import { PostHogProvider } from "posthog-react-native";
+import changeNavigationBarColor from 'react-native-navigation-bar-color';
 
 import { Logger, SmashUser, IMProfile, DIDDocument } from "@smashchats/library";
 
@@ -18,6 +19,7 @@ import { dev_nab_join_action, didId } from "@/data/dev";
 import { createTrustRelation } from "@/src/db/models/TrustRelation";
 import { saveContactToDb } from "@/src/db/models/Contacts";
 import { MapDidToContact } from "@/src/utils/mappers/contacts";
+import { Colors } from "@/src/constants/Colors";
 
 export default function LoaderScreen() {
     const dispatch = useGlobalDispatch();
@@ -44,6 +46,7 @@ export default function LoaderScreen() {
         newUser: boolean
     ) => {
         await SplashScreen.hideAsync();
+        changeNavigationBarColor(Colors.background, false);
 
         if (newUser) {
             await handleNewUser(dispatch);
