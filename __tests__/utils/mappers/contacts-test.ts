@@ -1,6 +1,6 @@
 import { DIDDocument, DIDString, IMProfile, SmashEndpoint, SmashProfileList } from "@smashchats/library";
 import { Contact } from "@/src/db/models/Contacts";
-import { MapContactToDid, MapDidToContact, SmashProfileToContactMapper } from "@/src/utils/mappers/contacts";
+import { MapContactToDid, MapDidDocumentToContactInsert, MapDidToContact, MapImProfileToPartialDidDocument, SmashProfileToContactMapper } from "@/src/utils/mappers/contacts";
 
 describe("contact mappers", () => {
     describe("SmashProfileToContactMapper", () => {
@@ -112,6 +112,36 @@ describe("contact mappers", () => {
                 did_signature: "sig123",
                 did_endpoints: [{ url: "endpoint1" }]
             });
+        });
+    });
+
+    describe("MapImProfileToPartialDidDocument", () => {
+        it("maps IMProfile to Partial<DIDDocument>", () => {
+            const profile: IMProfile = {
+                did: { id: "did:123" as DIDString }
+            } as IMProfile;
+
+            const result = MapImProfileToPartialDidDocument(profile);
+
+            expect(result).toEqual({ id: "did:123" });
+        });
+
+        it("maps IMProfile to Partial<DIDDocument> with did as string", () => {
+            const profile: IMProfile = {
+                did: "did:123" as DIDString
+            } as IMProfile;
+
+            const result = MapImProfileToPartialDidDocument(profile);
+
+            expect(result).toEqual({ id: "did:123" });
+        });
+    });
+
+    describe("MapDidDocumentToContactInsert", () => {
+        it("maps DIDDocument to ContactInsert", () => {
+            const did: Partial<DIDDocument> = { id: "did:123" as DIDString, ik: "ik123", ek: "ek123", signature: "sig123", endpoints: [{ url: "endpoint1" }] as SmashEndpoint[] };
+            const result = MapDidDocumentToContactInsert(did);
+            expect(result).toEqual({ did_id: "did:123", did_ik: "ik123", did_ek: "ek123", did_signature: "sig123", did_endpoints: [{ url: "endpoint1" }] });
         });
     });
 });

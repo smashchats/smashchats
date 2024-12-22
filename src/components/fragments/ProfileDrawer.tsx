@@ -3,7 +3,6 @@ import {
     NativeSyntheticEvent,
     TextInputKeyPressEventData,
     View,
-    TextInputEndEditingEventData,
 } from "react-native";
 
 import BottomSheet, {
@@ -24,13 +23,13 @@ type ProfileDrawerProps = {
 
 export const ProfileDrawer = ({ peer, bottomSheetRef }: ProfileDrawerProps) => {
     const [notes, setNotes] = useState(peer.notes);
-    const { Keyboard, isKeyboardVisible } = useKeyboard();
+    const { Keyboard, keyboardVisible } = useKeyboard();
 
     const handleSheetChanges = useCallback((index: number) => {
         const hasBeenClosed = index === -1;
 
         if (hasBeenClosed) {
-            if (isKeyboardVisible) {
+            if (keyboardVisible) {
                 Keyboard.dismiss();
             }
         }
@@ -55,7 +54,7 @@ export const ProfileDrawer = ({ peer, bottomSheetRef }: ProfileDrawerProps) => {
             onChange={handleSheetChanges}
             index={-1}
             snapPoints={["80%"]}
-            enablePanDownToClose={!isKeyboardVisible}
+            enablePanDownToClose={!keyboardVisible}
             keyboardBlurBehavior="restore"
         >
             <BottomSheetView
