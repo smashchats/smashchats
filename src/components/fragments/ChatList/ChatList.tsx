@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Pressable, ScrollView } from "react-native";
+import { ScrollView, TouchableOpacity } from "react-native";
 
 import { Href, Link } from "expo-router";
 
@@ -67,9 +67,9 @@ export function ChatList() {
                         }
                         asChild
                     >
-                        <Pressable>
+                        <TouchableOpacity activeOpacity={0.8}>
                             <ChatItem {...d} />
-                        </Pressable>
+                        </TouchableOpacity>
                     </Link>
                 ))}
                 <Box marginHorizontal={128} height={150} />

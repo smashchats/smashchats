@@ -73,12 +73,14 @@ function ChatItem({
 }: ChatItemProps): React.JSX.Element {
     const date = dateToShowableString(new Date(most_recent_message_date));
 
+    const VERTICAL_PADDING = 8;
+
     return (
-        <Box flex={1} marginBottom={4} paddingHorizontal={10}>
+        <Box flex={1} paddingHorizontal={10} marginTop={VERTICAL_PADDING}>
             <HStack
                 gap={12}
                 alignItems="center"
-                marginBottom={12}
+                // marginBottom={12}
                 alignContent="flex-start"
             >
                 <Avatar
@@ -144,6 +146,12 @@ function ChatItem({
                     {unread_count === 0 && <Box height={20} />}
                 </VStack>
             </HStack>
+            <Box
+                height={1}
+                backgroundColor={Colors.darkerGray}
+                marginTop={VERTICAL_PADDING}
+                marginRight={-10}
+            />
         </Box>
     );
 }

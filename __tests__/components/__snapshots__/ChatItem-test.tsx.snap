@@ -7,7 +7,7 @@ exports[`chat item unreadMessagesAmount is shown 1`] = `
       "backgroundColor": undefined,
       "flex": 1,
       "height": undefined,
-      "marginBottom": 4,
+      "marginTop": 8,
       "paddingHorizontal": 10,
     }
   }
@@ -23,7 +23,7 @@ exports[`chat item unreadMessagesAmount is shown 1`] = `
         "gap": 12,
         "height": undefined,
         "justifyContent": undefined,
-        "marginBottom": 12,
+        "marginBottom": undefined,
         "marginHorizontal": undefined,
         "marginVertical": undefined,
       }
@@ -219,5 +219,15 @@ exports[`chat item unreadMessagesAmount is shown 1`] = `
       </View>
     </View>
   </View>
+  <View
+    style={
+      {
+        "backgroundColor": "#292929",
+        "height": 1,
+        "marginRight": -10,
+        "marginTop": 8,
+      }
+    }
+  />
 </View>
 `;
