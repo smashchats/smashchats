@@ -23,6 +23,7 @@ import {
     useCameraFormat,
     useLocationPermission,
     useMicrophonePermission,
+    useCameraDevices,
 } from "react-native-vision-camera";
 
 import Reanimated, {
@@ -46,6 +47,8 @@ import {
 import { useIsForeground } from "@/src/components/fragments/Camera/hooks/useIsForeground";
 import { StatusBarBlurBackground } from "@/src/components/fragments/Camera/views/StatusBarBlurBackground";
 import { CaptureButton } from "@/src/components/fragments/Camera/views/CaptureButton";
+import StaticSafeAreaInsets from "react-native-static-safe-area-insets";
+import { initialWindowMetrics } from "react-native-safe-area-context";
 
 const ReanimatedCamera = Reanimated.createAnimatedComponent(Camera);
 Reanimated.addWhitelistedNativeProps({
@@ -61,6 +64,33 @@ export default function CameraLayout() {
     const location = useLocationPermission();
     const zoom = useSharedValue(1);
     const isPressingButton = useSharedValue(false);
+
+    const devices = useCameraDevices();
+    useEffect(() => {
+        console.log(
+            "front",
+            devices
+                .filter((d) => d.position === "front")
+                .map((d) => {
+                    const out: any = { ...d };
+                    delete out.formats;
+                    return out;
+                })
+        );
+        console.log(
+            "back",
+            devices
+                .filter((d) => d.position === "back")
+                .map((d) => {
+                    const out: any = { ...d };
+                    delete out.formats;
+                    return out;
+                })
+        );
+
+        StaticSafeAreaInsets.getSafeAreaInsets(console.log);
+        console.log(initialWindowMetrics?.insets);
+    }, [devices]);
 
     // check if camera page is active
     const isFocussed = useIsFocused();

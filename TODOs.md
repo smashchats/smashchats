@@ -6,6 +6,7 @@
   - [ ] dynamically generate filters
   - [ ] use filters to search in notes & user bio.{title, description}
 - [ ] drafts
+- [ ] implement https://medium.com/@linjunghsuan/implementing-a-collapsible-header-with-react-native-tab-view-24f15a685e07
 - [ ] save "active" contact --> display as purple
 - [ ] replace SQLite view with query
 - [ ] fix chat list ordering (see with xsbfh for algorithm?)
