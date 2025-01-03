@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Dimensions, TouchableOpacity } from "react-native";
 
 import { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
@@ -11,16 +11,25 @@ import { Badge } from "@/src/components/design-system/Badge.jsx";
 
 // At some point, come back here and try to implement this: https://github.com/react-navigation/react-navigation/blob/main/packages/react-native-tab-view/src/TabBarIndicator.tsx
 
+type Props = MaterialTopTabBarProps & {
+    onIndexChange?: (index: number) => void;
+};
+
 export function ProfileTabBar({
     state,
     descriptors,
     navigation,
-    position,
-}: MaterialTopTabBarProps) {
+    onIndexChange,
+}: Props) {
     const { width } = Dimensions.get("window");
 
     const positionsLeft = [-3, width / 2 - 89, undefined];
     const positionsRight = [undefined, undefined, -3];
+    const { index } = state;
+
+    useEffect(() => {
+        onIndexChange?.(index);
+    }, [onIndexChange, index]);
 
     return (
         <Box

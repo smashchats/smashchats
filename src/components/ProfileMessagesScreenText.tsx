@@ -3,10 +3,10 @@ import React from "react";
 import { Colors } from "@/src/constants/Colors.js";
 import { Box } from "@/src/components/design-system/Box.jsx";
 import { Text } from "@/src/components/design-system/Text.jsx";
-import { Message } from "@/src/app/profile/[user]/(tabs)/messages.js";
+import { DisplayableMessage } from "@/src/app/profile/[user]/(tabs)/messages.js";
 
 type Props = {
-    message: Message;
+    message: DisplayableMessage;
 };
 
 export function ProfileMessagesScreenText({

@@ -1,6 +1,6 @@
 import { DIDDocument } from "@smashchats/library";
 
-import { Message } from "@/src/app/profile/[user]/(tabs)/messages.js";
+import { DisplayableMessage } from "@/src/app/profile/[user]/(tabs)/messages.js";
 
 const DOH_SERVERS = ["https://dns.google/resolve"];
 const SERVER = DOH_SERVERS[0];
@@ -62,8 +62,8 @@ export const daysBetweenTwoDates = (dateStart: Date, dateEnd: Date): number => {
     return Math.abs(Math.floor(diff / DAY));
 };
 
-export const addSystemDateMessages = (messages: Message[]): Message[] => {
-    const newMessages: Message[] = [];
+export const addSystemDateMessages = (messages: DisplayableMessage[]): DisplayableMessage[] => {
+    const newMessages: DisplayableMessage[] = [];
     let previousDate = new Date(0);
 
     messages.forEach((message) => {

@@ -1,21 +1,46 @@
-import React, { MutableRefObject, useEffect, useRef, useState } from "react";
+import React, {
+    MutableRefObject,
+    RefObject,
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from "react";
 import {
-    KeyboardAvoidingView,
+    ScrollView,
     Pressable,
     TextInput,
-    Platform,
-    View,
-    ScrollView,
+    StyleSheet,
+    ViewStyle,
+    StyleProp,
+    ViewProps,
+    FlatList,
+    useWindowDimensions,
+    FlatListProps,
 } from "react-native";
 
 import * as ScreenOrientation from "expo-screen-orientation";
 import { Feather } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import {
+    MaterialTopTabBarProps,
+    createMaterialTopTabNavigator,
+} from "@react-navigation/material-top-tabs";
+import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { DIDString } from "@smashchats/library";
+
 import { Colors } from "@/src/constants/Colors.js";
-import ProfileMessages from "@/src/app/profile/[user]/(tabs)/messages.jsx";
+import { Box } from "@/src/components/design-system/Box";
+import { Text } from "@/src/components/design-system/Text";
+import ProfileMessages, {
+    DisplayableMessage,
+} from "@/src/app/profile/[user]/(tabs)/messages.jsx";
+import ProfilePictures from "@/src/app/profile/[user]/(tabs)/pictures.jsx";
+import ProfileBadges from "@/src/app/profile/[user]/(tabs)/badges.jsx";
 import { useGlobalState } from "@/src/context/GlobalContext.js";
 import {
     TrustedContact,
@@ -25,11 +50,22 @@ import {
     EnrichedSmashMessage,
     saveMessageToDb,
 } from "@/src/db/models/Messages";
+import { ProfileTabBar } from "@/src/components/fragments/ProfileTabBar";
 import { ProfileHeader } from "@/src/components/fragments/ProfileHeader";
-import { DIDString } from "@smashchats/library";
 import { MapContactToDid } from "@/src/utils/mappers/contacts";
-import { ProfileDrawer } from "@/src/components/fragments/ProfileDrawer";
-import BottomSheet from "@gorhom/bottom-sheet";
+import { NEIGHBOURHOOD_DOMAIN } from "@/data/neighbourhood";
+import Animated, {
+    useAnimatedStyle,
+    interpolate,
+    useSharedValue,
+    useAnimatedScrollHandler,
+    SharedValue,
+    useDerivedValue,
+    useAnimatedRef,
+    AnimatedRef,
+} from "react-native-reanimated";
+import useScrollSync from "@/src/hooks/useScrollSync";
+import { ThemedText } from "@/src/components/ThemedText";
 
 export type ProfileIdType = {
     profileId: string;
@@ -42,16 +78,45 @@ export type ProfileStackParamList = {
     badges: ProfileIdType;
 };
 
+export type HeaderConfig = {
+    heightExpanded: number;
+    heightCollapsed: number;
+};
+
+export type ScrollPair = {
+    list: RefObject<FlatList> | AnimatedRef<ScrollView>;
+    position: SharedValue<number>;
+};
+
+export enum Visibility {
+    Hidden = 0,
+    Visible = 1,
+}
+
+export type Connection = {
+    photo: string;
+    name: string;
+};
+
+const Tab = createMaterialTopTabNavigator<ProfileStackParamList>();
+
+const TAB_BAR_HEIGHT = 48;
+const HEADER_HEIGHT = 60;
+
+const OVERLAY_VISIBILITY_OFFSET = 32;
+
 export const ProfileScreen = () => {
     const { user } = useLocalSearchParams();
     const router = useRouter();
     const globalState = useGlobalState();
     const insets = useSafeAreaInsets();
+    const footerHeight = 60;
+
     const [newMessage, setNewMessage] = useState("");
     const [shouldShowSendIcon, setShouldShowSendIcon] = useState(true);
     const [peer, setPeer] = useState<TrustedContact>();
+
     const inputFieldRef = useRef<TextInput>(null);
-    const bottomSheetRef = useRef<BottomSheet>(null);
 
     useEffect(() => {
         const fetchUser = async (did_id: string) => {
@@ -88,11 +153,6 @@ export const ProfileScreen = () => {
     useEffect(() => {
         setShouldShowSendIcon(newMessage.length > 0);
     }, [newMessage]);
-
-    if (!user) {
-        router.back();
-        return null;
-    }
 
     const featureFlags = {
         show_pictures_and_badges: false,
@@ -146,34 +206,275 @@ export const ProfileScreen = () => {
         globalState.logger.info("assets", assets);
     };
 
-    const headerHeight = 55;
+    //#region Collapsed header
+    //#region Header
+    const { top, bottom } = useSafeAreaInsets();
+
+    const { height: screenHeight } = useWindowDimensions();
+    const [tabIndex, setTabIndex] = useState(0);
+    const [headerHeight, setHeaderHeight] = useState(0);
+
+    const defaultHeaderHeight = top + HEADER_HEIGHT;
+
+    const headerConfig = useMemo<HeaderConfig>(
+        () => ({
+            heightCollapsed: defaultHeaderHeight,
+            heightExpanded: headerHeight,
+        }),
+        [defaultHeaderHeight, headerHeight]
+    );
+
+    const { heightCollapsed, heightExpanded } = headerConfig;
+
+    const headerDiff = heightExpanded - heightCollapsed;
+
+    const rendered = headerHeight > 0;
+
+    const handleHeaderLayout = useCallback<NonNullable<ViewProps["onLayout"]>>(
+        (event) => {
+            setHeaderHeight(event.nativeEvent.layout.height);
+        },
+        []
+    );
+    //#endregion
+
+    //#region [Tabs] scroll handlers
+    //#region Messages scroll handler
+    const messagesScrollValue = useSharedValue(0);
+    const messagesScrollHandler = useAnimatedScrollHandler((event) => {
+        messagesScrollValue.value = event.contentOffset.y;
+    });
+    const messagesTabRef = useRef<Animated.FlatList<DisplayableMessage>>(null);
+    //#endregion
+
+    //#region Pictures scroll handler
+    const picturesScrollValue = useSharedValue(0);
+    const picturesScrollHandler = useAnimatedScrollHandler((event) => {
+        picturesScrollValue.value = event.contentOffset.y;
+    });
+    const picturesTabRef = useAnimatedRef<ScrollView>();
+    //#endregion
+
+    //#region Badges scroll handler
+    const badgesScrollValue = useSharedValue(0);
+    const badgesScrollHandler = useAnimatedScrollHandler((event) => {
+        badgesScrollValue.value = event.contentOffset.y;
+    });
+    const badgesTabRef = useAnimatedRef<ScrollView>();
+    //#endregion
+    //#endregion
+
+    //#region Scroll sync
+    const scrollPairs = useMemo<ScrollPair[]>(
+        () => [
+            { list: messagesTabRef, position: messagesScrollValue },
+            { list: picturesTabRef, position: picturesScrollValue },
+            { list: badgesTabRef, position: badgesScrollValue },
+        ],
+        [
+            messagesTabRef,
+            messagesScrollValue,
+            picturesTabRef,
+            picturesScrollValue,
+            badgesTabRef,
+            badgesScrollValue,
+        ]
+    );
+
+    const { sync } = useScrollSync(scrollPairs, headerConfig);
+
+    const contentContainerStyle = useMemo<StyleProp<ViewStyle>>(
+        () => ({
+            paddingTop: rendered ? headerHeight + TAB_BAR_HEIGHT : 0,
+            paddingBottom: bottom,
+            minHeight: screenHeight + headerDiff,
+        }),
+        [rendered, headerHeight, bottom, screenHeight, headerDiff]
+    );
+
+    const sharedProps = useMemo<Partial<FlatListProps<DisplayableMessage>>>(
+        () => ({
+            contentContainerStyle,
+            onMomentumScrollEnd: sync,
+            onScrollEndDrag: sync,
+            scrollEventThrottle: 16,
+            scrollIndicatorInsets: { top: heightExpanded },
+        }),
+        [contentContainerStyle, sync, heightExpanded]
+    );
+
+    const сurrentScrollValue = useDerivedValue(
+        () => scrollPairs[tabIndex].position.value,
+        [tabIndex, scrollPairs]
+    );
+
+    const translateY = useDerivedValue(
+        () => -Math.min(сurrentScrollValue.value, headerDiff)
+    );
+
+    const tabBarAnimatedStyle = useAnimatedStyle(() => ({
+        transform: [{ translateY: translateY.value }],
+    }));
+
+    const headerAnimatedStyle = useAnimatedStyle(() => ({
+        transform: [{ translateY: translateY.value }],
+        opacity: interpolate(
+            translateY.value,
+            [-headerDiff, 0],
+            [Visibility.Hidden, Visibility.Visible]
+        ),
+    }));
+
+    const tabBarStyle = useMemo<StyleProp<ViewStyle>>(
+        () => [
+            rendered ? styles.tabBarContainer : undefined,
+            { top: rendered ? headerHeight : undefined },
+            tabBarAnimatedStyle,
+        ],
+        [rendered, headerHeight, tabBarAnimatedStyle]
+    );
+
+    const headerContainerStyle = useMemo<StyleProp<ViewStyle>>(
+        () => [
+            rendered ? styles.headerContainer : undefined,
+            { paddingTop: top },
+            headerAnimatedStyle,
+        ],
+
+        [rendered, top, headerAnimatedStyle]
+    );
+
+    const collapsedOverlayAnimatedStyle = useAnimatedStyle(() => ({
+        opacity: interpolate(
+            translateY.value,
+            [-headerDiff, OVERLAY_VISIBILITY_OFFSET - headerDiff, 0],
+            [Visibility.Visible, Visibility.Hidden, Visibility.Hidden]
+        ),
+    }));
+
+    const collapsedOverlayStyle = useMemo<StyleProp<ViewStyle>>(
+        () => [
+            styles.collapsedOverlay,
+            collapsedOverlayAnimatedStyle,
+            { height: heightCollapsed, paddingTop: top },
+        ],
+        [collapsedOverlayAnimatedStyle, heightCollapsed, top]
+    );
+    //#endregion
+
+    //#region Renderers
+    const renderTabBar = useCallback<
+        (props: MaterialTopTabBarProps) => React.ReactElement
+    >(
+        (props) => (
+            <Animated.View style={tabBarStyle}>
+                <ProfileTabBar onIndexChange={setTabIndex} {...props} />
+            </Animated.View>
+        ),
+        [tabBarStyle]
+    );
+
+    const renderMessages = useCallback(
+        () => (
+            <ProfileMessages
+                ref={messagesTabRef}
+                onScroll={messagesScrollHandler}
+                {...sharedProps}
+            />
+        ),
+        [messagesTabRef, messagesScrollHandler, sharedProps]
+    );
+
+    const renderPictures = useCallback(
+        () => (
+            <ProfilePictures
+                ref={picturesTabRef}
+                onScroll={picturesScrollHandler}
+                {...sharedProps}
+            />
+        ),
+        [picturesTabRef, picturesScrollHandler, sharedProps]
+    );
+
+    const renderBadges = useCallback(
+        () => (
+            <ProfileBadges
+                ref={badgesTabRef}
+                onScroll={badgesScrollHandler}
+                {...sharedProps}
+            />
+        ),
+        [badgesTabRef, badgesScrollHandler, sharedProps]
+    );
+
+    //#endregion
+    //#endregion
+
+    if (!user) {
+        router.back();
+        return null;
+    }
 
     return (
-        <View style={{ flex: 1, backgroundColor: Colors.background }}>
-            <ProfileHeader
-                headerHeight={headerHeight}
-                peer={peer ?? ({} as TrustedContact)}
-                onShowDiscussionDetails={() => bottomSheetRef.current?.expand()}
-            />
+        <Box flex={1} bg={Colors.background} marginTop={insets.top}>
+            {peer && <ProfileHeader peer={peer} headerHeight={60} />}
 
-            {/* Chat Area */}
-            <KeyboardAvoidingView
-                behavior={Platform.OS === "ios" ? "padding" : "height"}
-                style={{
-                    flex: 1,
-                    marginBottom: insets.bottom,
-                    paddingBottom: insets.bottom,
-                }}
+            <Animated.View
+                onLayout={handleHeaderLayout}
+                style={headerContainerStyle}
             >
-                <ProfileMessages paddingTop={headerHeight + insets.top} />
+                {/* <Header
+                    name="Emily Davis"
+                    bio="Let's get started 🚀"
+                    photo={"https://picsum.photos/id/1027/300/300"}
+                /> */}
 
-                <View
+                <Image
                     style={{
-                        borderTopWidth: 1,
-                        borderColor: Colors.darkGray,
-                        padding: 10,
-                        backgroundColor: Colors.background,
+                        width: "100%",
+                        height: 300,
                     }}
+                    alt="Profile picture"
+                    source={peer?.meta_avatar}
+                />
+                <Text color="white" marginBottom={10}>
+                    {peer?.meta_title}
+                </Text>
+                <Text>
+                    {" "}
+                    {`sbfh.${NEIGHBOURHOOD_DOMAIN}, u123.users.smashchats.com, BIG`}
+                </Text>
+            </Animated.View>
+            <Animated.View style={collapsedOverlayStyle}>
+                {/* <HeaderOverlay name="Emily Davis" /> */}
+
+                <ThemedText>
+                    {`sbfh.${NEIGHBOURHOOD_DOMAIN}, u123.users.smashchats.com`}
+                </ThemedText>
+            </Animated.View>
+
+            <Tab.Navigator tabBar={renderTabBar}>
+                <Tab.Screen options={{ title: "Chats" }} name="messages">
+                    {renderMessages}
+                </Tab.Screen>
+                <Tab.Screen options={{ title: "Pictures" }} name="pictures">
+                    {renderPictures}
+                </Tab.Screen>
+                <Tab.Screen options={{ title: "Badges" }} name="badges">
+                    {renderBadges}
+                </Tab.Screen>
+            </Tab.Navigator>
+            <Pressable onPress={() => inputFieldRef.current?.focus()}>
+                <Box
+                    position="absolute"
+                    backgroundColor={Colors.background}
+                    h={2 * footerHeight}
+                    bottom={-footerHeight * 2}
+                    width={"102%"}
+                    left={"-1%"}
+                    borderColor={Colors.darkGray}
+                    borderWidth={3}
+                    borderRadius={20}
                 >
                     <TextInput
                         ref={inputFieldRef}
@@ -186,14 +487,28 @@ export const ProfileScreen = () => {
                             padding: 15,
                             paddingRight: 50,
                         }}
+                        // onFocus={() => {
+                        //     // externalScrollViewRef.current?.scrollToEnd()
+                        //     // dispatch({ type: "SCROLL_TO_END" })
+                        //     setTimeout(() => {
+                        //         externalScrollViewRef.current?.scrollToEnd();
+                        //         // dispatch({ type: "SCROLL_TO_END" });
+                        //     }, 500);
+                        // }}
+                        // onBlur={() => {
+                        //     externalScrollViewRef.current?.scrollToEnd();
+                        //     setTimeout(() => {
+                        //         // dispatch({ type: "SCROLL_TO_END" })
+                        //     }, 100);
+                        // }}
                     />
                     {shouldShowSendIcon && (
                         <Pressable
                             style={{
                                 position: "absolute",
-                                right: 20,
+                                right: 0,
                                 top: "50%",
-                                transform: [{ translateY: -12 }],
+                                padding: 20,
                             }}
                             onPress={handleSendMessage}
                         >
@@ -201,45 +516,69 @@ export const ProfileScreen = () => {
                                 name="chevron-right"
                                 size={24}
                                 color="white"
-                                style={{
-                                    transform: [{ translateY: 10 }],
-                                }}
                             />
                         </Pressable>
                     )}
                     {!shouldShowSendIcon && featureFlags.send_media && (
                         <Pressable
-                            style={{
-                                width: 50,
-                                height: 50,
-                                position: "absolute",
-                                right: 0,
-                                bottom: 0,
-                                top: "50%",
-                                transform: [{ translateY: -45 }],
-                                backgroundColor: Colors.purple,
-                                borderRadius: 25,
-                                marginRight: 20,
-                                marginBottom: 40,
-                                justifyContent: "center",
-                                alignItems: "center",
-                                zIndex: 999,
-                            }}
+                            style={styles.floatingActionButton}
                             onPress={handleSendMedia}
                         >
                             <Feather name="paperclip" size={28} color="white" />
                         </Pressable>
                     )}
-                </View>
-            </KeyboardAvoidingView>
-            {peer && (
-                <ProfileDrawer
-                    peer={peer}
-                    bottomSheetRef={bottomSheetRef}
-                />
-            )}
-        </View>
+                </Box>
+            </Pressable>
+        </Box>
     );
 };
 
 export default ProfileScreen;
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: Colors.background,
+    },
+    floatingActionButton: {
+        width: 50,
+        height: 50,
+        position: "absolute",
+        right: 0,
+        bottom: 0,
+        top: "50%",
+        backgroundColor: Colors.purple,
+        borderRadius: 25,
+        marginRight: 20,
+        marginBottom: 40,
+        transform: [{ translateY: -45 }],
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 999,
+    },
+    tabBarContainer: {
+        top: 0,
+        left: 0,
+        right: 0,
+        position: "absolute",
+        backgroundColor: Colors.background,
+        zIndex: 1,
+    },
+    headerContainer: {
+        top: 0,
+        left: 0,
+        right: 0,
+        position: "absolute",
+        backgroundColor: Colors.background,
+        zIndex: 1,
+    },
+    collapsedOverlay: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        backgroundColor: Colors.background,
+        justifyContent: "center",
+        zIndex: 2,
+    },
+});

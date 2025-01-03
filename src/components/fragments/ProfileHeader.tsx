@@ -1,6 +1,7 @@
 import React, { PropsWithChildren } from "react";
 import { Pressable, View, Alert } from "react-native";
 
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Image } from "expo-image";
 
@@ -27,7 +28,6 @@ export const ProfileHeaderWrapper = ({
                 style={{
                     height: height,
                     maxHeight: height,
-                    backgroundColor: Colors.light.text,
                 }}
             >
                 {children}
@@ -36,17 +36,12 @@ export const ProfileHeaderWrapper = ({
     );
 };
 
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Colors } from "@/src/constants/Colors";
-
 export const ProfileHeader = ({
     peer,
     headerHeight,
-    onShowDiscussionDetails,
 }: {
     peer: TrustedContact;
     headerHeight: number;
-    onShowDiscussionDetails: () => void;
 }) => {
     const insets = useSafeAreaInsets();
     const router = useRouter();
@@ -54,7 +49,7 @@ export const ProfileHeader = ({
     const totalHeight = insets.top + headerHeight;
 
     return (
-        <ProfileHeaderWrapper height={totalHeight}>
+        <ProfileHeaderWrapper height={headerHeight}>
             <View
                 style={{
                     position: "absolute",
@@ -64,7 +59,7 @@ export const ProfileHeader = ({
                     height: totalHeight,
                     maxHeight: totalHeight,
                     zIndex: 10,
-                    paddingTop: insets.top,
+                    paddingTop: 10,
                 }}
             >
                 <View
@@ -76,17 +71,14 @@ export const ProfileHeader = ({
                         paddingVertical: 5,
                     }}
                 >
-                    <Pressable onPress={() => router.back()}>
+                    <Pressable onPress={() => router.dismissAll()}>
                         <Image
                             alt="Close profile"
                             style={{ width: 18, height: 18 }}
                             source={require("@/assets/icon_x.png")}
                         />
                     </Pressable>
-                    <Pressable
-                        style={{ flex: 1 }}
-                        onPress={onShowDiscussionDetails}
-                    >
+                    <Pressable style={{ flex: 1 }}>
                         <View
                             style={{
                                 flexDirection: "row",

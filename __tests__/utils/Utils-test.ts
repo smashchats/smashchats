@@ -1,4 +1,4 @@
-import { Message } from "@/src/app/profile/[user]/(tabs)/messages";
+import { DisplayableMessage } from "@/src/app/profile/[user]/(tabs)/messages";
 import {
     addPrefixToObjectKeys,
     addSystemDateMessages,
@@ -51,26 +51,28 @@ describe("Utils", () => {
     });
 
     describe("getDidFromDomain", () => {
+
         beforeEach(() => {
+            const mockedJson = () =>
+                Promise.resolve({
+                    Status: 0,
+                    Answer: [
+                        {
+                            name: "_smash.smash.chat",
+                            type: 16,
+                            data: {
+                                id: "did:smash:test",
+                                ik: "test-ik",
+                                ek: "test-ek",
+                                signature: "test-signature",
+                                endpoints: []
+                            }
+                        }
+                    ]
+                })
             global.fetch = jest.fn(() =>
                 Promise.resolve({
-                    json: () =>
-                        Promise.resolve({
-                            Status: 0,
-                            Answer: [
-                                {
-                                    name: "_smash.smash.chat",
-                                    type: 16,
-                                    data: {
-                                        id: "did:smash:test",
-                                        ik: "test-ik",
-                                        ek: "test-ek",
-                                        signature: "test-signature",
-                                        endpoints: []
-                                    }
-                                }
-                            ]
-                        })
+                    json: mockedJson
                 })
             ) as jest.Mock;
         });
@@ -97,9 +99,9 @@ describe("Utils", () => {
 
     describe("addSystemDateMessages", () => {
         it("adds system date messages", () => {
-            const message1 = { type: "chat-text 1", date: new Date("2024-01-01T00:00:00.000Z") } as Message;
-            const message2 = { type: "chat-text 2", date: new Date("2024-01-03T00:00:00.000Z") } as Message;
-            const messages: Message[] = [
+            const message1 = { type: "chat-text 1", date: new Date("2024-01-01T00:00:00.000Z") } as DisplayableMessage;
+            const message2 = { type: "chat-text 2", date: new Date("2024-01-03T00:00:00.000Z") } as DisplayableMessage;
+            const messages: DisplayableMessage[] = [
                 message1, message2
             ];
             const result = addSystemDateMessages(messages);
@@ -129,9 +131,9 @@ describe("Utils", () => {
         });
 
         it("adds system dates only when date changes between messages", () => {
-            const message1 = { type: "chat-text 3", date: new Date("2024-01-01T12:00:00.000Z") } as Message;
-            const message2 = { type: "chat-text 4", date: new Date("2024-01-01T13:00:00.000Z") } as Message;
-            const messages: Message[] = [
+            const message1 = { type: "chat-text 3", date: new Date("2024-01-01T12:00:00.000Z") } as DisplayableMessage;
+            const message2 = { type: "chat-text 4", date: new Date("2024-01-01T13:00:00.000Z") } as DisplayableMessage;
+            const messages: DisplayableMessage[] = [
                 message1, message2
             ];
 

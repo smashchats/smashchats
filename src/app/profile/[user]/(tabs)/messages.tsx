@@ -1,5 +1,19 @@
-import React, { useEffect, useRef, useState } from "react";
-import { ScrollView, View } from "react-native";
+import React, {
+    forwardRef,
+    memo,
+    useCallback,
+    useEffect,
+    useRef,
+    useState,
+} from "react";
+import {
+    FlatList,
+    FlatListProps,
+    ListRenderItem,
+    ScrollView,
+    StyleSheet,
+    View,
+} from "react-native";
 
 import { useLocalSearchParams } from "expo-router";
 import { eq } from "drizzle-orm";
@@ -9,17 +23,17 @@ import {
     IM_CHAT_TEXT,
 } from "@smashchats/library";
 
-import { Colors } from "@/src/constants/Colors.js";
-import { Box } from "@/src/components/design-system/Box.jsx";
 import { useGlobalState } from "@/src/context/GlobalContext.js";
 import { addSystemDateMessages } from "@/src/utils/Utils.js";
 import { drizzle_db } from "@/src/db/database";
 import { useLiveTablesQuery } from "@/src/hooks/useLiveQuery";
 import { messages as MessagesSchema } from "@/src/db/schema";
 import { markAllMessagesInDiscussionAsRead } from "@/src/db/models/Messages";
-import { MessagesList } from "@/src/components/fragments/MessagesList";
+import { RenderMessageListItem } from "@/src/components/fragments/MessagesList";
+import Animated from "react-native-reanimated";
+import { Colors } from "@/src/constants/Colors";
 
-export type Message = {
+export type DisplayableMessage = {
     content: string;
     sha256: string;
     from: string;
@@ -28,7 +42,16 @@ export type Message = {
     date: Date;
 };
 
-export const ProfileMessages = ({ paddingTop }: { paddingTop: number }) => {
+type Props = Omit<FlatListProps<DisplayableMessage>, "renderItem" | "data">;
+
+const ProfileMessages = forwardRef<
+    Animated.FlatList<DisplayableMessage>,
+    Props
+>((props, ref) => {
+    const keyExtractor = useCallback(
+        (_: DisplayableMessage, index: number) => index.toString(),
+        []
+    );
     const { user: peerId } = useLocalSearchParams();
 
     const [hasScrolledToEnd, setHasScrolledToEnd] = useState(false);
@@ -43,7 +66,7 @@ export const ProfileMessages = ({ paddingTop }: { paddingTop: number }) => {
         ["messages"]
     );
 
-    const [messages, setMessages] = useState<Message[]>([]);
+    const [messages, setMessages] = useState<DisplayableMessage[]>([]);
 
     const scrollViewRef = useRef(null);
 
@@ -97,30 +120,42 @@ export const ProfileMessages = ({ paddingTop }: { paddingTop: number }) => {
         };
     }, [globalState.selfSmashUser]);
 
-    useEffect(() => {
-        if (scrollViewRef.current && globalState.selfDid !== null) {
-            (scrollViewRef.current as ScrollView).scrollToEnd({
-                animated: false,
-            });
-        }
-    }, [globalState.selfDid]);
+    // useEffect(() => {
+    //     if (scrollViewRef.current && globalState.selfDid !== null) {
+    //         (scrollViewRef.current as ScrollView).scrollToEnd({
+    //             animated: false,
+    //         });
+    //     }
+    // }, [globalState.selfDid]);
+
+    const renderItem = useCallback<ListRenderItem<DisplayableMessage>>(
+        ({ item, index }) => (
+            <RenderMessageListItem message={item} idx={index} />
+        ),
+        []
+    );
 
     if (!globalState.selfDid) {
         return <View />;
     }
 
     return (
-        <Box flex={1} bg={Colors.background} h="100%">
-            <ScrollView
-                ref={scrollViewRef}
-                contentInsetAdjustmentBehavior="automatic"
-                stickyHeaderIndices={[1]}
-                contentContainerStyle={{ justifyContent: "flex-start" }}
-            >
-                <MessagesList messages={messages} paddingTop={paddingTop} />
-            </ScrollView>
-        </Box>
+        <Animated.FlatList
+            ref={ref}
+            style={styles.container}
+            renderItem={renderItem}
+            keyExtractor={keyExtractor}
+            {...props}
+            data={messages}
+        />
     );
-};
+});
 
-export default ProfileMessages;
+const styles = StyleSheet.create({
+    container: {
+        backgroundColor: Colors.background,
+        flex: 1,
+    },
+});
+
+export default memo(ProfileMessages);
