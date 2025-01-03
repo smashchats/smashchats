@@ -18,6 +18,7 @@ import {
     FlatList,
     useWindowDimensions,
     FlatListProps,
+    View,
 } from "react-native";
 
 import * as ScreenOrientation from "expo-screen-orientation";
@@ -30,6 +31,16 @@ import {
 import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Animated, {
+    useAnimatedStyle,
+    interpolate,
+    useSharedValue,
+    useAnimatedScrollHandler,
+    SharedValue,
+    useDerivedValue,
+    useAnimatedRef,
+    AnimatedRef,
+} from "react-native-reanimated";
 
 import { DIDString } from "@smashchats/library";
 
@@ -54,18 +65,8 @@ import { ProfileTabBar } from "@/src/components/fragments/ProfileTabBar";
 import { ProfileHeader } from "@/src/components/fragments/ProfileHeader";
 import { MapContactToDid } from "@/src/utils/mappers/contacts";
 import { NEIGHBOURHOOD_DOMAIN } from "@/data/neighbourhood";
-import Animated, {
-    useAnimatedStyle,
-    interpolate,
-    useSharedValue,
-    useAnimatedScrollHandler,
-    SharedValue,
-    useDerivedValue,
-    useAnimatedRef,
-    AnimatedRef,
-} from "react-native-reanimated";
 import useScrollSync from "@/src/hooks/useScrollSync";
-import { ThemedText } from "@/src/components/ThemedText";
+import { Avatar } from "@/src/components/Avatar";
 
 export type ProfileIdType = {
     profileId: string;
@@ -214,7 +215,7 @@ export const ProfileScreen = () => {
     const [tabIndex, setTabIndex] = useState(0);
     const [headerHeight, setHeaderHeight] = useState(0);
 
-    const defaultHeaderHeight = top + HEADER_HEIGHT;
+    const defaultHeaderHeight = HEADER_HEIGHT;
 
     const headerConfig = useMemo<HeaderConfig>(
         () => ({
@@ -356,9 +357,9 @@ export const ProfileScreen = () => {
         () => [
             styles.collapsedOverlay,
             collapsedOverlayAnimatedStyle,
-            { height: heightCollapsed, paddingTop: top },
+            { height: heightCollapsed },
         ],
-        [collapsedOverlayAnimatedStyle, heightCollapsed, top]
+        [collapsedOverlayAnimatedStyle, heightCollapsed]
     );
     //#endregion
 
@@ -417,8 +418,6 @@ export const ProfileScreen = () => {
 
     return (
         <Box flex={1} bg={Colors.background} marginTop={insets.top}>
-            {peer && <ProfileHeader peer={peer} headerHeight={60} />}
-
             <Animated.View
                 onLayout={handleHeaderLayout}
                 style={headerContainerStyle}
@@ -446,11 +445,29 @@ export const ProfileScreen = () => {
                 </Text>
             </Animated.View>
             <Animated.View style={collapsedOverlayStyle}>
-                {/* <HeaderOverlay name="Emily Davis" /> */}
-
-                <ThemedText>
-                    {`sbfh.${NEIGHBOURHOOD_DOMAIN}, u123.users.smashchats.com`}
-                </ThemedText>
+                <View
+                    style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        gap: 12,
+                        flex: 1,
+                        marginHorizontal: 48,
+                    }}
+                >
+                    <Avatar
+                        contact={peer ?? ({ meta_title: "" } as TrustedContact)}
+                        variant={"small"}
+                    />
+                    <Text
+                        fontWeight="bold"
+                        color="white"
+                        fontSize={16}
+                        zIndex={50}
+                        minHeight={20}
+                    >
+                        {peer?.trusted_name ?? peer?.meta_title}
+                    </Text>
+                </View>
             </Animated.View>
 
             <Tab.Navigator tabBar={renderTabBar}>
@@ -529,6 +546,8 @@ export const ProfileScreen = () => {
                     )}
                 </Box>
             </Pressable>
+
+            <ProfileHeader peer={peer} headerHeight={HEADER_HEIGHT} />
         </Box>
     );
 };
@@ -554,7 +573,7 @@ const styles = StyleSheet.create({
         transform: [{ translateY: -45 }],
         justifyContent: "center",
         alignItems: "center",
-        zIndex: 999,
+        zIndex: 99,
     },
     tabBarContainer: {
         top: 0,
@@ -562,7 +581,7 @@ const styles = StyleSheet.create({
         right: 0,
         position: "absolute",
         backgroundColor: Colors.background,
-        zIndex: 1,
+        zIndex: 150,
     },
     headerContainer: {
         top: 0,

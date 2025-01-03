@@ -19,7 +19,7 @@ export function FloatingActionButton({
         <Pressable
             testID="FloatingActionButton::Pressable"
             style={{
-                zIndex: 999,
+                zIndex: 99,
                 width: 50,
                 height: 50,
                 position: "absolute",

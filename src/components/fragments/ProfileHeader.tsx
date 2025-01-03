@@ -1,13 +1,10 @@
 import React, { PropsWithChildren } from "react";
 import { Pressable, View, Alert } from "react-native";
 
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Image } from "expo-image";
 
-import { Text } from "@/src/components/design-system/Text.jsx";
 import { TrustedContact } from "@/src/db/models/Contacts";
-import { Avatar } from "@/src/components/Avatar";
 import { SmashOrPass } from "@/src/components/SmashOrPass";
 
 export const ProfileHeaderWrapper = ({
@@ -40,13 +37,12 @@ export const ProfileHeader = ({
     peer,
     headerHeight,
 }: {
-    peer: TrustedContact;
+    peer?: TrustedContact;
     headerHeight: number;
 }) => {
-    const insets = useSafeAreaInsets();
     const router = useRouter();
 
-    const totalHeight = insets.top + headerHeight;
+    const totalHeight = headerHeight;
 
     return (
         <ProfileHeaderWrapper height={headerHeight}>
@@ -78,28 +74,6 @@ export const ProfileHeader = ({
                             source={require("@/assets/icon_x.png")}
                         />
                     </Pressable>
-                    <Pressable style={{ flex: 1 }}>
-                        <View
-                            style={{
-                                flexDirection: "row",
-                                alignItems: "center",
-                                gap: 12,
-                                flex: 1,
-                                paddingHorizontal: 16,
-                            }}
-                        >
-                            <Avatar
-                                contact={
-                                    peer ??
-                                    ({ meta_title: "" } as TrustedContact)
-                                }
-                                variant={"small"}
-                            />
-                            <Text fontWeight="bold" color="white" fontSize={16}>
-                                {peer?.trusted_name ?? peer?.meta_title}
-                            </Text>
-                        </View>
-                    </Pressable>
 
                     <View
                         style={{
@@ -127,7 +101,7 @@ export const ProfileHeader = ({
                                         {
                                             text: "Report",
                                             onPress: () =>
-                                                console.log("Report"),
+                                                console.log("Report", peer),
                                         },
                                     ]
                                 );
