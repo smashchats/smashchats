@@ -8,11 +8,10 @@ import { ChatListFilters } from "@/src/components/fragments/ChatList/ChatListFil
 import ChatItem from "@/src/components/fragments/ChatList/ChatItem.jsx";
 import ChatListHeader from "@/src/components/fragments/ChatList/ChatListHeader.jsx";
 import { useGlobalState } from "@/src/context/GlobalContext.jsx";
-import { drizzle_db } from "@/src/db/database";
-import { ChatListView, chatListView } from "@/src/db/schema.js";
 import { getShownChats } from "@/src/context/ChatListContext";
 import { useLiveTablesQuery } from "@/src/hooks/useLiveQuery";
 import { SCREEN_HEIGHT } from "@/src/components/fragments/Camera/Constants";
+import { ChatListView, chatListView } from "@/src/db/queries/ChatListView";
 
 export function ChatList() {
     const { chatList } = useGlobalState();
@@ -21,7 +20,7 @@ export function ChatList() {
     const [dbData, setDbData] = useState<ChatListView[]>([]);
 
     const { data: chat_list_data } = useLiveTablesQuery(
-        drizzle_db.select().from(chatListView),
+        chatListView,
         ["messages", "contacts", "trust_relations"],
         [chatList.selectedFilters]
     );

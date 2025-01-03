@@ -12,7 +12,7 @@ import { Heading } from "@/src/components/design-system/Heading.jsx";
 import { Badge } from "@/src/components/design-system/Badge.jsx";
 import { BadgeText } from "@/src/components/design-system/BadgeText.jsx";
 import { daysBetweenTwoDates } from "@/src/utils/Utils.js";
-import { ChatListView } from "@/src/db/schema.js";
+import { ChatListView } from "@/src/db/queries/ChatListView";
 import { TrustedContact } from "@/src/db/models/Contacts";
 import { IM_CHAT_TEXT } from "@smashchats/library";
 

@@ -8,7 +8,6 @@
 - [ ] drafts
 - [ ] implement https://medium.com/@linjunghsuan/implementing-a-collapsible-header-with-react-native-tab-view-24f15a685e07
 - [ ] save "active" contact --> display as purple
-- [ ] replace SQLite view with query
 - [ ] fix chat list ordering (see with xsbfh for algorithm?)
 - [ ] DID set (when contact sends profile) vs DID patch (when resolving? & when nab sends profiles)
 - [ ] touchableOpacity
@@ -34,6 +33,7 @@
 
 ## Done
 
+- [x] replace SQLite view with query
 - [x] scroll on android in ChatList doesn't work
 - [~] On load, saved filters should be selected
   - [~] On load, selected filters should filter the chat list

@@ -49,12 +49,14 @@ function ChatListHeader(): JSX.Element {
             >
                 <HStack alignItems="center">
                     <NeonBadge title={NEIGHBOURHOOD_DOMAIN} />
-                    <Feather
-                        name="external-link"
-                        size={18}
-                        color={Colors.purple}
-                        style={{ marginLeft: 10 }}
-                    />
+                    <Link href="https://smashchats.com" asChild>
+                        <Feather
+                            name="external-link"
+                            size={18}
+                            color={Colors.purple}
+                            style={{ marginLeft: 10 }}
+                        />
+                    </Link>
                     <Pressable
                         onPress={handlePress}
                         style={{
