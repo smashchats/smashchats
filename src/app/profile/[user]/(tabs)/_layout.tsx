@@ -1,6 +1,5 @@
 import React, {
     MutableRefObject,
-    RefObject,
     useCallback,
     useEffect,
     useMemo,
@@ -15,10 +14,10 @@ import {
     ViewStyle,
     StyleProp,
     ViewProps,
-    FlatList,
     useWindowDimensions,
     FlatListProps,
     View,
+    KeyboardAvoidingView,
 } from "react-native";
 
 import * as ScreenOrientation from "expo-screen-orientation";
@@ -85,7 +84,9 @@ export type HeaderConfig = {
 };
 
 export type ScrollPair = {
-    list: RefObject<FlatList> | AnimatedRef<ScrollView>;
+    list:
+        | AnimatedRef<Animated.FlatList<DisplayableMessage>>
+        | AnimatedRef<Animated.ScrollView>;
     position: SharedValue<number>;
 };
 
@@ -105,6 +106,12 @@ const TAB_BAR_HEIGHT = 48;
 const HEADER_HEIGHT = 60;
 
 const OVERLAY_VISIBILITY_OFFSET = 32;
+
+const FEATURE_FLAGS = {
+    show_pictures_and_badges: false,
+    send_media: false,
+    show_smash_or_pass: false,
+};
 
 export const ProfileScreen = () => {
     const { user } = useLocalSearchParams();
@@ -155,12 +162,6 @@ export const ProfileScreen = () => {
         setShouldShowSendIcon(newMessage.length > 0);
     }, [newMessage]);
 
-    const featureFlags = {
-        show_pictures_and_badges: false,
-        send_media: false,
-        show_smash_or_pass: false,
-    };
-
     let peerId = `${user}`;
 
     const handleSendMessage = async () => {
@@ -193,7 +194,7 @@ export const ProfileScreen = () => {
     };
 
     const handleSendMedia = async () => {
-        if (!featureFlags.send_media) {
+        if (!FEATURE_FLAGS.send_media) {
             return;
         }
 
@@ -245,7 +246,8 @@ export const ProfileScreen = () => {
     const messagesScrollHandler = useAnimatedScrollHandler((event) => {
         messagesScrollValue.value = event.contentOffset.y;
     });
-    const messagesTabRef = useRef<Animated.FlatList<DisplayableMessage>>(null);
+    const messagesTabRef =
+        useAnimatedRef<Animated.FlatList<DisplayableMessage>>();
     //#endregion
 
     //#region Pictures scroll handler
@@ -253,7 +255,7 @@ export const ProfileScreen = () => {
     const picturesScrollHandler = useAnimatedScrollHandler((event) => {
         picturesScrollValue.value = event.contentOffset.y;
     });
-    const picturesTabRef = useAnimatedRef<ScrollView>();
+    const picturesTabRef = useAnimatedRef<Animated.ScrollView>();
     //#endregion
 
     //#region Badges scroll handler
@@ -261,7 +263,7 @@ export const ProfileScreen = () => {
     const badgesScrollHandler = useAnimatedScrollHandler((event) => {
         badgesScrollValue.value = event.contentOffset.y;
     });
-    const badgesTabRef = useAnimatedRef<ScrollView>();
+    const badgesTabRef = useAnimatedRef<Animated.ScrollView>();
     //#endregion
     //#endregion
 
@@ -377,11 +379,74 @@ export const ProfileScreen = () => {
 
     const renderMessages = useCallback(
         () => (
-            <ProfileMessages
-                ref={messagesTabRef}
-                onScroll={messagesScrollHandler}
-                {...sharedProps}
-            />
+            <Box flex={1} backgroundColor={Colors.background}>
+                <ProfileMessages
+                    ref={messagesTabRef}
+                    onScroll={messagesScrollHandler}
+                    {...sharedProps}
+                />
+                <Pressable onPress={() => inputFieldRef.current?.focus()}>
+                    <Box
+                        backgroundColor={Colors.background}
+                        h={footerHeight + insets.bottom + 900}
+                        bottom={-insets.bottom + 30}
+                        width={"102%"}
+                        marginBottom={-900}
+                        left={"-1%"}
+                        position="relative"
+                        borderColor={Colors.darkGray}
+                        borderBottomWidth={0}
+                        borderWidth={3}
+                        borderRadius={20}
+                    >
+                        <TextInput
+                            ref={inputFieldRef}
+                            placeholder="Share something..."
+                            placeholderTextColor={Colors.textGray}
+                            value={newMessage}
+                            onChangeText={setNewMessage}
+                            style={{
+                                color: "white",
+                                padding: 15,
+                                marginRight: 60,
+                            }}
+                        />
+
+                        <Pressable
+                            style={{
+                                position: "absolute",
+                                right: 0,
+                                top: 0,
+                                padding: 20,
+                            }}
+                            onPress={handleSendMessage}
+                        >
+                            <Feather
+                                name="chevron-right"
+                                size={24}
+                                color={
+                                    shouldShowSendIcon
+                                        ? Colors.textWhite
+                                        : Colors.darkGray
+                                }
+                            />
+                        </Pressable>
+
+                        {!shouldShowSendIcon && FEATURE_FLAGS.send_media && (
+                            <Pressable
+                                style={styles.floatingActionButton}
+                                onPress={handleSendMedia}
+                            >
+                                <Feather
+                                    name="paperclip"
+                                    size={28}
+                                    color="white"
+                                />
+                            </Pressable>
+                        )}
+                    </Box>
+                </Pressable>
+            </Box>
         ),
         [messagesTabRef, messagesScrollHandler, sharedProps]
     );
@@ -417,7 +482,15 @@ export const ProfileScreen = () => {
     }
 
     return (
-        <Box flex={1} bg={Colors.background} marginTop={insets.top}>
+        <KeyboardAvoidingView
+            style={{
+                flex: 1,
+                backgroundColor: Colors.background,
+                marginTop: insets.top,
+            }}
+            behavior="height"
+            keyboardVerticalOffset={-insets.bottom}
+        >
             <Animated.View
                 onLayout={handleHeaderLayout}
                 style={headerContainerStyle}
@@ -481,74 +554,9 @@ export const ProfileScreen = () => {
                     {renderBadges}
                 </Tab.Screen>
             </Tab.Navigator>
-            <Pressable onPress={() => inputFieldRef.current?.focus()}>
-                <Box
-                    position="absolute"
-                    backgroundColor={Colors.background}
-                    h={2 * footerHeight}
-                    bottom={-footerHeight * 2}
-                    width={"102%"}
-                    left={"-1%"}
-                    borderColor={Colors.darkGray}
-                    borderWidth={3}
-                    borderRadius={20}
-                >
-                    <TextInput
-                        ref={inputFieldRef}
-                        placeholder="Share something..."
-                        placeholderTextColor={Colors.textGray}
-                        value={newMessage}
-                        onChangeText={setNewMessage}
-                        style={{
-                            color: "white",
-                            padding: 15,
-                            paddingRight: 50,
-                        }}
-                        // onFocus={() => {
-                        //     // externalScrollViewRef.current?.scrollToEnd()
-                        //     // dispatch({ type: "SCROLL_TO_END" })
-                        //     setTimeout(() => {
-                        //         externalScrollViewRef.current?.scrollToEnd();
-                        //         // dispatch({ type: "SCROLL_TO_END" });
-                        //     }, 500);
-                        // }}
-                        // onBlur={() => {
-                        //     externalScrollViewRef.current?.scrollToEnd();
-                        //     setTimeout(() => {
-                        //         // dispatch({ type: "SCROLL_TO_END" })
-                        //     }, 100);
-                        // }}
-                    />
-                    {shouldShowSendIcon && (
-                        <Pressable
-                            style={{
-                                position: "absolute",
-                                right: 0,
-                                top: "50%",
-                                padding: 20,
-                            }}
-                            onPress={handleSendMessage}
-                        >
-                            <Feather
-                                name="chevron-right"
-                                size={24}
-                                color="white"
-                            />
-                        </Pressable>
-                    )}
-                    {!shouldShowSendIcon && featureFlags.send_media && (
-                        <Pressable
-                            style={styles.floatingActionButton}
-                            onPress={handleSendMedia}
-                        >
-                            <Feather name="paperclip" size={28} color="white" />
-                        </Pressable>
-                    )}
-                </Box>
-            </Pressable>
 
             <ProfileHeader peer={peer} headerHeight={HEADER_HEIGHT} />
-        </Box>
+        </KeyboardAvoidingView>
     );
 };
 

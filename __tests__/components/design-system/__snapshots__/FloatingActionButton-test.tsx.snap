@@ -44,7 +44,7 @@ exports[`FloatingActionButton Renders correctly 1`] = `
       "right": 0,
       "top": 1259,
       "width": 50,
-      "zIndex": 999,
+      "zIndex": 99,
     }
   }
   testID="FloatingActionButton::Pressable"

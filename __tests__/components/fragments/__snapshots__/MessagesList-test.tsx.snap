@@ -1,66 +1,110 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`MessagesList renders correctly 1`] = `
+exports[`RenderMessageListItem renders correctly 1`] = `
 <View
   style={
     {
       "backgroundColor": undefined,
       "height": undefined,
-      "marginHorizontal": 10,
-      "paddingTop": 0,
     }
   }
->
-  <View
-    style={
-      {
-        "backgroundColor": "#222222",
-        "height": undefined,
-        "paddingBottom": 40,
-        "width": "100%",
-      }
-    }
-  />
-</View>
+/>
 `;
 
-exports[`MessagesList renders messages 1`] = `
+exports[`RenderMessageListItem renders messages 1`] = `
 <View
   style={
     {
-      "backgroundColor": undefined,
+      "alignItems": "flex-start",
+      "alignSelf": "flex-end",
+      "backgroundColor": "#64189b",
+      "borderRadius": 24,
       "height": undefined,
-      "marginHorizontal": 10,
-      "paddingTop": 0,
+      "marginBottom": 10,
+      "maxWidth": "80%",
+      "paddingHorizontal": 14,
+      "paddingVertical": 10,
     }
   }
 >
   <View
     style={
       {
-        "backgroundColor": "#222222",
+        "backgroundColor": undefined,
+        "flex": undefined,
+        "flexDirection": undefined,
         "height": undefined,
-        "paddingBottom": 40,
-        "width": "100%",
+        "marginHorizontal": undefined,
+        "marginLeft": undefined,
+        "paddingHorizontal": undefined,
+        "paddingVertical": undefined,
+        "position": undefined,
+        "width": undefined,
       }
     }
   >
-    <View
+    <Text
       style={
         {
-          "backgroundColor": undefined,
-          "height": undefined,
+          "color": "white",
+          "textShadowColor": undefined,
+          "textShadowOffset": undefined,
+          "textShadowRadius": undefined,
+          "textTransform": undefined,
         }
       }
-    />
-    <View
+    >
+      Hello, bob!
+    </Text>
+  </View>
+</View>
+`;
+
+exports[`RenderMessageListItem renders messages 2`] = `
+<View
+  style={
+    {
+      "alignItems": "flex-start",
+      "alignSelf": "flex-start",
+      "backgroundColor": "#3F3F3F",
+      "borderRadius": 24,
+      "height": undefined,
+      "marginBottom": 10,
+      "maxWidth": "80%",
+      "paddingHorizontal": 14,
+      "paddingVertical": 10,
+    }
+  }
+>
+  <View
+    style={
+      {
+        "backgroundColor": undefined,
+        "flex": undefined,
+        "flexDirection": undefined,
+        "height": undefined,
+        "marginHorizontal": undefined,
+        "marginLeft": undefined,
+        "paddingHorizontal": undefined,
+        "paddingVertical": undefined,
+        "position": undefined,
+        "width": undefined,
+      }
+    }
+  >
+    <Text
       style={
         {
-          "backgroundColor": undefined,
-          "height": undefined,
+          "color": "white",
+          "textShadowColor": undefined,
+          "textShadowOffset": undefined,
+          "textShadowRadius": undefined,
+          "textTransform": undefined,
         }
       }
-    />
+    >
+      Hello, alice!
+    </Text>
   </View>
 </View>
 `;

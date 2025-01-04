@@ -88,31 +88,6 @@ export const ProfileHeader = ({
                                 onSmash={console.log}
                             />
                         )}
-                        <Pressable
-                            onPress={() => {
-                                Alert.alert(
-                                    "Report and block profile?",
-                                    "This will notify the moderators of all neighborhoods and attach your chats with this profile to the report.",
-                                    [
-                                        {
-                                            text: "Cancel",
-                                            style: "cancel",
-                                        },
-                                        {
-                                            text: "Report",
-                                            onPress: () =>
-                                                console.log("Report", peer),
-                                        },
-                                    ]
-                                );
-                            }}
-                        >
-                            <Image
-                                alt="Report profile"
-                                style={{ width: 18, height: 18 }}
-                                source={require("@/assets/warning.png")}
-                            />
-                        </Pressable>
                     </View>
                 </View>
             </View>
