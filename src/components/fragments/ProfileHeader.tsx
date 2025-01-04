@@ -1,10 +1,9 @@
 import React, { PropsWithChildren } from "react";
-import { Pressable, View, Alert } from "react-native";
+import { Pressable, View } from "react-native";
 
 import { useRouter } from "expo-router";
 import { Image } from "expo-image";
 
-import { TrustedContact } from "@/src/db/models/Contacts";
 import { SmashOrPass } from "@/src/components/SmashOrPass";
 
 export const ProfileHeaderWrapper = ({
@@ -34,11 +33,11 @@ export const ProfileHeaderWrapper = ({
 };
 
 export const ProfileHeader = ({
-    peer,
     headerHeight,
+    onExpand,
 }: {
-    peer?: TrustedContact;
     headerHeight: number;
+    onExpand: () => void;
 }) => {
     const router = useRouter();
 
@@ -67,13 +66,30 @@ export const ProfileHeader = ({
                         paddingVertical: 5,
                     }}
                 >
-                    <Pressable onPress={() => router.dismissAll()}>
+                    <Pressable
+                        onPress={() => router.dismissAll()}
+                        style={{
+                            padding: 20,
+                            marginLeft: -20,
+                            marginVertical: -20,
+                        }}
+                    >
                         <Image
                             alt="Close profile"
                             style={{ width: 18, height: 18 }}
                             source={require("@/assets/icon_x.png")}
                         />
                     </Pressable>
+
+                    <Pressable
+                        onPress={onExpand}
+                        style={{
+                            flex: 1,
+                            height: "100%",
+                            paddingVertical: 20,
+                            marginVertical: -20,
+                        }}
+                    />
 
                     <View
                         style={{

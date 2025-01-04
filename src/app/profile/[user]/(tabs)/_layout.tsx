@@ -18,6 +18,8 @@ import {
     FlatListProps,
     View,
     KeyboardAvoidingView,
+    NativeScrollEvent,
+    NativeSyntheticEvent,
 } from "react-native";
 
 import * as ScreenOrientation from "expo-screen-orientation";
@@ -94,11 +96,6 @@ export enum Visibility {
     Hidden = 0,
     Visible = 1,
 }
-
-export type Connection = {
-    photo: string;
-    name: string;
-};
 
 const Tab = createMaterialTopTabNavigator<ProfileStackParamList>();
 
@@ -301,7 +298,9 @@ export const ProfileScreen = () => {
             onMomentumScrollEnd: sync,
             onScrollEndDrag: sync,
             scrollEventThrottle: 16,
-            scrollIndicatorInsets: { top: heightExpanded },
+            scrollIndicatorInsets: {
+                top: heightExpanded + TAB_BAR_HEIGHT + 10,
+            },
         }),
         [contentContainerStyle, sync, heightExpanded]
     );
@@ -365,6 +364,20 @@ export const ProfileScreen = () => {
     );
     //#endregion
 
+    //#region Functions
+    const expand = () => {
+        sync({
+            nativeEvent: { contentOffset: { y: 0 } },
+        } as NativeSyntheticEvent<NativeScrollEvent>);
+    };
+
+    const collapse = () => {
+        sync({
+            nativeEvent: { contentOffset: { y: headerDiff } },
+        } as NativeSyntheticEvent<NativeScrollEvent>);
+    };
+    //#endregion
+
     //#region Renderers
     const renderTabBar = useCallback<
         (props: MaterialTopTabBarProps) => React.ReactElement
@@ -410,6 +423,7 @@ export const ProfileScreen = () => {
                                 padding: 15,
                                 marginRight: 60,
                             }}
+                            onFocus={collapse}
                         />
 
                         <Pressable
@@ -518,29 +532,34 @@ export const ProfileScreen = () => {
                 </Text>
             </Animated.View>
             <Animated.View style={collapsedOverlayStyle}>
-                <View
-                    style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        gap: 12,
-                        flex: 1,
-                        marginHorizontal: 48,
-                    }}
-                >
-                    <Avatar
-                        contact={peer ?? ({ meta_title: "" } as TrustedContact)}
-                        variant={"small"}
-                    />
-                    <Text
-                        fontWeight="bold"
-                        color="white"
-                        fontSize={16}
-                        zIndex={50}
-                        minHeight={20}
+                <Pressable onPress={expand} style={{ flex: 1 }}>
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            gap: 12,
+                            flex: 1,
+                            marginHorizontal: 48,
+                            width: "50%",
+                        }}
                     >
-                        {peer?.trusted_name ?? peer?.meta_title}
-                    </Text>
-                </View>
+                        <Avatar
+                            contact={
+                                peer ?? ({ meta_title: "" } as TrustedContact)
+                            }
+                            variant={"small"}
+                        />
+                        <Text
+                            fontWeight="bold"
+                            color="white"
+                            fontSize={16}
+                            zIndex={50}
+                            minHeight={20}
+                        >
+                            {peer?.trusted_name ?? peer?.meta_title}
+                        </Text>
+                    </View>
+                </Pressable>
             </Animated.View>
 
             <Tab.Navigator tabBar={renderTabBar}>
@@ -555,7 +574,7 @@ export const ProfileScreen = () => {
                 </Tab.Screen>
             </Tab.Navigator>
 
-            <ProfileHeader peer={peer} headerHeight={HEADER_HEIGHT} />
+            <ProfileHeader headerHeight={HEADER_HEIGHT} onExpand={expand} />
         </KeyboardAvoidingView>
     );
 };

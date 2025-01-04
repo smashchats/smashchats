@@ -30,9 +30,13 @@
 - [ ] follow https://www.runway.team/blog/how-to-set-up-a-ci-cd-pipeline-for-your-ios-app-fastlane-github-actions
   - [ ] fastlane ios
   - [ ] fastlane ios bump version
-- [ ] profile scroll
+
+## In progress
+
+- [~] profile scroll / collapsible header
   - [ ] implement gesture handler on tabs & user bio so that we can scroll to the top
   - [ ] fix padding tabs hidden behind tabbar & header
+  - [ ] dismiss keyboard when scrolling down
 
 ## Done
 
