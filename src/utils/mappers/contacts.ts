@@ -2,7 +2,7 @@ import { DIDDocument, DIDString, IMProfile, SmashEndpoint, SmashProfileList } fr
 
 import { Contact, ContactInsert } from "@/src/db/models/Contacts";
 import { addPrefixToObjectKeys } from "@/src/utils/Utils";
-import { PartialWithId } from "@/src/utils/types";
+import { PartialWithId } from "@/src/types/";
 
 export const SmashProfileToContactMapper = (profile: SmashProfileList[0]) => {
     return {

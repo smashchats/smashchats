@@ -1,7 +1,5 @@
-import { DisplayableMessage } from "@/src/app/profile/[user]/(tabs)/messages";
 import {
     addPrefixToObjectKeys,
-    addSystemDateMessages,
     DAY,
     daysBetweenTwoDates,
     getDidFromDomain,
@@ -9,8 +7,6 @@ import {
     MINUTE,
     SECOND
 } from "@/src/utils/Utils";
-
-
 
 describe("Utils", () => {
     describe("time", () => {
@@ -96,64 +92,6 @@ describe("Utils", () => {
             });
         });
     });
-
-    describe("addSystemDateMessages", () => {
-        it("adds system date messages", () => {
-            const message1 = { type: "chat-text 1", date: new Date("2024-01-01T00:00:00.000Z") } as DisplayableMessage;
-            const message2 = { type: "chat-text 2", date: new Date("2024-01-03T00:00:00.000Z") } as DisplayableMessage;
-            const messages: DisplayableMessage[] = [
-                message1, message2
-            ];
-            const result = addSystemDateMessages(messages);
-            expect(result.length).toBe(4);
-
-            expect(result[0]).toStrictEqual({
-                type: "system-date",
-                date: new Date("2024-01-01T00:00:00.000Z"),
-                content: "2024-01-01",
-                sha256: "2024-01-01T00:00:00.000Z",
-                from: "system",
-                fromMe: false
-            });
-
-            expect(result[1]).toStrictEqual(message1);
-
-            expect(result[2]).toStrictEqual({
-                type: "system-date",
-                date: new Date("2024-01-03T00:00:00.000Z"),
-                content: "2024-01-03",
-                sha256: "2024-01-03T00:00:00.000Z",
-                from: "system",
-                fromMe: false
-            });
-
-            expect(result[3]).toStrictEqual(message2);
-        });
-
-        it("adds system dates only when date changes between messages", () => {
-            const message1 = { type: "chat-text 3", date: new Date("2024-01-01T12:00:00.000Z") } as DisplayableMessage;
-            const message2 = { type: "chat-text 4", date: new Date("2024-01-01T13:00:00.000Z") } as DisplayableMessage;
-            const messages: DisplayableMessage[] = [
-                message1, message2
-            ];
-
-            const result = addSystemDateMessages(messages);
-            expect(result.length).toBe(3);
-
-            expect(result[0]).toStrictEqual({
-                type: "system-date",
-                date: new Date("2024-01-01T00:00:00.000Z"),
-                content: "2024-01-01",
-                sha256: "2024-01-01T12:00:00.000Z",
-                from: "system",
-                fromMe: false
-            });
-            expect(result[1]).toStrictEqual(message1);
-            expect(result[2]).toStrictEqual(message2);
-        })
-    });
-
-
 
     describe("addPrefixToObjectKeys", () => {
         it("adds a prefix to the keys of an object", () => {

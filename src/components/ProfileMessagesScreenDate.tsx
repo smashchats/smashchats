@@ -25,7 +25,6 @@ export function ProfileMessagesScreenDate({
         <Box
             backgroundColor={Colors.background}
             alignItems={"center"}
-            borderRadius={24}
             width={"80%"}
             alignSelf={"center"}
             paddingVertical={10}

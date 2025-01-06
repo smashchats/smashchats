@@ -1,5 +1,5 @@
 import { DIDString, EncapsulatedIMProtoMessage, IM_CHAT_TEXT, IM_PROFILE, sha256 } from "@smashchats/library";
-import { EnrichedSmashMessage } from "@/src/db/models/Messages";
+import { EnrichedSmashMessage } from "@/src/types/";
 import { ESMToMessageInsertMapper, mapReceivedMessageToEnrichedMessage } from "@/src/utils/mappers/messages";
 
 describe("message mappers", () => {

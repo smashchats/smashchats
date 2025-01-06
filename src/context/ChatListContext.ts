@@ -1,5 +1,5 @@
 import { Action, GlobalActionBase } from "@/src/context/GlobalContext.jsx";
-import { ChatListView } from "@/src/db/queries/ChatListView";
+import { ChatListView } from "@/src/types/";
 
 export const filterChatsBasedOnFilters = (
     chat: ChatListView,

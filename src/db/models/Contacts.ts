@@ -6,7 +6,7 @@ import { contacts, trustRelations } from "@/src/db/schema.js";
 import { drizzle_db } from "@/src/db/database";
 import { SQLiteInsertOnConflictDoUpdateConfig } from "drizzle-orm/sqlite-core";
 import { MapDidDocumentToContactInsert, MapImProfileToPartialDidDocument } from "@/src/utils/mappers/contacts";
-import { PartialWithId } from "@/src/utils/types";
+import { PartialWithId } from "@/src/types/";
 
 export type Contact = InferSelectModel<typeof contacts>;
 export type TrustedContact = Contact & { trusted_name: string | undefined };

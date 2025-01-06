@@ -1,7 +1,7 @@
 import React from "react";
 
 import { Colors } from "@/src/constants/Colors.js";
-import { DisplayableMessage } from "@/src/app/profile/[user]/(tabs)/messages.jsx";
+import { DisplayableMessage } from "@/src/types/";
 import { Box } from "@/src/components/design-system/Box.jsx";
 import { Text } from "@/src/components/design-system/Text.jsx";
 
@@ -18,7 +18,6 @@ export function ProfileMessagesScreenMetadata({
     return (
         <Box
             alignItems={"flex-start"}
-            borderRadius={24}
             maxWidth={"80%"}
             alignSelf={alignSelf}
             paddingVertical={10}

@@ -11,7 +11,8 @@ import { useGlobalState } from "@/src/context/GlobalContext.jsx";
 import { getShownChats } from "@/src/context/ChatListContext";
 import { useLiveTablesQuery } from "@/src/hooks/useLiveQuery";
 import { SCREEN_HEIGHT } from "@/src/components/fragments/Camera/Constants";
-import { ChatListView, chatListView } from "@/src/db/queries/ChatListView";
+import { chatListView } from "@/src/db/queries/ChatListView";
+import { ChatListView } from "@/src/types/";
 
 export function ChatList() {
     const { chatList } = useGlobalState();

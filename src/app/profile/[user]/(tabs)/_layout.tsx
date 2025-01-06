@@ -20,6 +20,8 @@ import {
     KeyboardAvoidingView,
     NativeScrollEvent,
     NativeSyntheticEvent,
+    Keyboard,
+    FlatList,
 } from "react-native";
 
 import * as ScreenOrientation from "expo-screen-orientation";
@@ -43,14 +45,13 @@ import Animated, {
     AnimatedRef,
 } from "react-native-reanimated";
 
-import { DIDString } from "@smashchats/library";
+import { DIDString, IM_CHAT_TEXT, ISO8601, sha256 } from "@smashchats/library";
 
 import { Colors } from "@/src/constants/Colors.js";
 import { Box } from "@/src/components/design-system/Box";
 import { Text } from "@/src/components/design-system/Text";
-import ProfileMessages, {
-    DisplayableMessage,
-} from "@/src/app/profile/[user]/(tabs)/messages.jsx";
+import ProfileMessages from "@/src/app/profile/[user]/(tabs)/messages.jsx";
+import { DisplayableMessage, EnrichedSmashMessage } from "@/src/types/";
 import ProfilePictures from "@/src/app/profile/[user]/(tabs)/pictures.jsx";
 import ProfileBadges from "@/src/app/profile/[user]/(tabs)/badges.jsx";
 import { useGlobalState } from "@/src/context/GlobalContext.js";
@@ -69,12 +70,12 @@ import { NEIGHBOURHOOD_DOMAIN } from "@/data/neighbourhood";
 import useScrollSync from "@/src/hooks/useScrollSync";
 import { Avatar } from "@/src/components/Avatar";
 
-export type ProfileIdType = {
+type ProfileIdType = {
     profileId: string;
     onRef: (ref: MutableRefObject<ScrollView>) => void;
 };
 
-export type ProfileStackParamList = {
+type ProfileStackParamList = {
     messages: ProfileIdType;
     pictures: ProfileIdType;
     badges: ProfileIdType;
@@ -87,7 +88,7 @@ export type HeaderConfig = {
 
 export type ScrollPair = {
     list:
-        | AnimatedRef<Animated.FlatList<DisplayableMessage>>
+        | AnimatedRef<FlatList<DisplayableMessage>>
         | AnimatedRef<Animated.ScrollView>;
     position: SharedValue<number>;
 };
@@ -99,7 +100,7 @@ export enum Visibility {
 
 const Tab = createMaterialTopTabNavigator<ProfileStackParamList>();
 
-const TAB_BAR_HEIGHT = 48;
+const TAB_BAR_HEIGHT = 60;
 const HEADER_HEIGHT = 60;
 
 const OVERLAY_VISIBILITY_OFFSET = 32;
@@ -243,8 +244,7 @@ export const ProfileScreen = () => {
     const messagesScrollHandler = useAnimatedScrollHandler((event) => {
         messagesScrollValue.value = event.contentOffset.y;
     });
-    const messagesTabRef =
-        useAnimatedRef<Animated.FlatList<DisplayableMessage>>();
+    const messagesTabRef = useAnimatedRef<FlatList<DisplayableMessage>>();
     //#endregion
 
     //#region Pictures scroll handler
@@ -299,7 +299,7 @@ export const ProfileScreen = () => {
             onScrollEndDrag: sync,
             scrollEventThrottle: 16,
             scrollIndicatorInsets: {
-                top: heightExpanded + TAB_BAR_HEIGHT + 10,
+                top: heightExpanded + TAB_BAR_HEIGHT - 3,
             },
         }),
         [contentContainerStyle, sync, heightExpanded]
@@ -366,6 +366,7 @@ export const ProfileScreen = () => {
 
     //#region Functions
     const expand = () => {
+        Keyboard.dismiss();
         sync({
             nativeEvent: { contentOffset: { y: 0 } },
         } as NativeSyntheticEvent<NativeScrollEvent>);

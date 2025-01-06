@@ -30,13 +30,16 @@
 - [ ] follow https://www.runway.team/blog/how-to-set-up-a-ci-cd-pipeline-for-your-ios-app-fastlane-github-actions
   - [ ] fastlane ios
   - [ ] fastlane ios bump version
+- [x] add system message for "unread messages"
 
 ## In progress
 
 - [~] profile scroll / collapsible header
   - [ ] implement gesture handler on tabs & user bio so that we can scroll to the top
-  - [ ] fix padding tabs hidden behind tabbar & header
+  - [x] fix padding tabs hidden behind tabbar & header
   - [ ] dismiss keyboard when scrolling down
+  - [x] on expand, keyboard should be dismissed
+  - [~] invert scroll for first tab
 
 ## Done
 

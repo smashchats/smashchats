@@ -6,17 +6,13 @@ import {
     and,
 } from "drizzle-orm";
 
-import { EncapsulatedIMProtoMessage, IM_PROFILE, IM_CHAT_TEXT, DIDString, Logger, IMProfile } from "@smashchats/library";
+import { EncapsulatedIMProtoMessage, IM_PROFILE, IM_CHAT_TEXT, Logger, IMProfile } from "@smashchats/library";
 
 import { messages } from "@/src/db/schema.js";
 import { drizzle_db } from "@/src/db/database";
 import { updateContact } from "@/src/db/models/Contacts.js";
 import { ESMToMessageInsertMapper } from "@/src/utils/mappers/messages";
-
-export interface EnrichedSmashMessage extends EncapsulatedIMProtoMessage {
-    fromDid: DIDString;
-    toDiscussionId: DIDString;
-}
+import { EnrichedSmashMessage } from "@/src/types/";
 
 export type Message = InferSelectModel<typeof messages>;
 export type MessageInsert = InferInsertModel<typeof messages>;

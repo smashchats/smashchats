@@ -8,7 +8,7 @@ import {
     GlobalProvider,
     INITIAL_GLOBAL_STATE,
 } from "@/src/context/GlobalContext.jsx";
-import { ChatListView } from "@/src/db/queries/ChatListView";
+import { ChatListView } from "@/src/types/";
 import { fireEvent, render } from "@testing-library/react-native";
 
 const DEFAULT_VALUES: Partial<ChatListView> = {

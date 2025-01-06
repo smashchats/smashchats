@@ -1,4 +1,5 @@
-import { EnrichedSmashMessage, MessageInsert } from "@/src/db/models/Messages";
+import { MessageInsert } from "@/src/db/models/Messages";
+import { EnrichedSmashMessage } from "@/src/types/";
 import { DIDString, EncapsulatedIMProtoMessage, IM_CHAT_TEXT } from "@smashchats/library";
 
 export const mapReceivedMessageToEnrichedMessage = (

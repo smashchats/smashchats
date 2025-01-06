@@ -1,7 +1,7 @@
 import { render } from "@testing-library/react-native";
 
 import { RenderMessageListItem } from "@/src/components/fragments/MessagesList.jsx";
-import { DisplayableMessage } from "@/src/app/profile/[user]/(tabs)/messages";
+import { DisplayableMessage } from "@/src/types/";
 import { IM_CHAT_TEXT } from "@smashchats/library";
 
 describe("RenderMessageListItem", () => {

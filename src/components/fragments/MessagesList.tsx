@@ -2,12 +2,12 @@ import React from "react";
 import { View } from "react-native";
 
 import { Box } from "@/src/components/design-system/Box";
-import { Colors } from "@/src/constants/Colors";
 import ProfileMessagesScreenText from "@/src/components/ProfileMessagesScreenText";
 import ProfileMessagesScreenDate from "@/src/components/ProfileMessagesScreenDate";
 import ProfileMessagesScreenMetadata from "@/src/components/ProfileMessagesScreenMetadata";
-import { DisplayableMessage } from "@/src/app/profile/[user]/(tabs)/messages";
+import { DisplayableMessage } from "@/src/types/";
 import { IM_CHAT_TEXT } from "@smashchats/library";
+import ProfileMessagesScreenUnreadMessages from "@/src/components/ProfileMessagesScreenUnreadMessages";
 
 type MessagesListProps = {
     messages: DisplayableMessage[];
@@ -33,6 +33,15 @@ export const RenderMessageListItem = ({
                 <ProfileMessagesScreenDate
                     key={`${message.type}-${message.sha256}-index-${idx}`}
                     date={message.date}
+                />
+            );
+        case "system-unread":
+            return (
+                <ProfileMessagesScreenUnreadMessages
+                    key={`${message.type}-${message.sha256}-index-${idx}`}
+                    message={`${message.content} unread message${
+                        (message.content as number) === 1 ? "" : "s"
+                    }`}
                 />
             );
         case "metadata":

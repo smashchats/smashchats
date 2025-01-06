@@ -3,7 +3,7 @@ import React from "react";
 import { Colors } from "@/src/constants/Colors.js";
 import { Box } from "@/src/components/design-system/Box.jsx";
 import { Text } from "@/src/components/design-system/Text.jsx";
-import { DisplayableMessage } from "@/src/app/profile/[user]/(tabs)/messages.js";
+import { DisplayableMessage } from "@/src/types/";
 
 type Props = {
     message: DisplayableMessage;
@@ -19,12 +19,13 @@ export function ProfileMessagesScreenText({
         <Box
             backgroundColor={backgroundColor}
             alignItems={"flex-start"}
-            borderRadius={24}
+            borderRadius={10}
             maxWidth={"80%"}
             alignSelf={alignSelf}
             paddingVertical={10}
             paddingHorizontal={14}
             marginBottom={10}
+            marginHorizontal={10}
         >
             <Text color="white">{message.content}</Text>
         </Box>
