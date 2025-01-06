@@ -46,13 +46,13 @@ exports[`Badge Renders correctly 1`] = `
 </View>
 `;
 
-exports[`Badge Renders correctly with type smashed 1`] = `
+exports[`Badge Renders correctly with type disabled 1`] = `
 <View
   style={
     {
       "alignItems": "center",
-      "backgroundColor": "#64189b",
-      "borderColor": "#64189b",
+      "backgroundColor": "#3f3f3f",
+      "borderColor": "#3f3f3f",
       "borderRadius": 16,
       "borderWidth": 2,
       "flex": undefined,
@@ -92,13 +92,13 @@ exports[`Badge Renders correctly with type smashed 1`] = `
 </View>
 `;
 
-exports[`Badge Renders correctly with type trusted 1`] = `
+exports[`Badge Renders correctly with type selected 1`] = `
 <View
   style={
     {
       "alignItems": "center",
-      "backgroundColor": "#3f3f3f",
-      "borderColor": "#3f3f3f",
+      "backgroundColor": "#64189b",
+      "borderColor": "#64189b",
       "borderRadius": 16,
       "borderWidth": 2,
       "flex": undefined,

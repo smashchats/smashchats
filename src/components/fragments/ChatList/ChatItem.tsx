@@ -68,7 +68,7 @@ function ChatItem({
     most_recent_message,
     most_recent_message_type,
     most_recent_message_date,
-    smashed,
+    active,
     meta_avatar,
 }: ChatItemProps): React.JSX.Element {
     const date = dateToShowableString(new Date(most_recent_message_date));
@@ -134,7 +134,7 @@ function ChatItem({
                     </Heading>
 
                     {unread_count > 0 && (
-                        <Badge type={smashed ? "smashed" : "trusted"}>
+                        <Badge type={active ? "selected" : "disabled"}>
                             <BadgeText
                                 fontWeight="100"
                                 color={Colors.textWhite}

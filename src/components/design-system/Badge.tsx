@@ -49,8 +49,8 @@ export function Badge({
 
                 ...styles.unselected,
                 ...(type === "unselected" ? styles.unselected : {}),
-                ...(type === "trusted" ? styles.trusted : {}),
-                ...(type === "smashed" ? styles.smashed : {}),
+                ...(type === "disabled" ? styles.disabled : {}),
+                ...(type === "selected" ? styles.selected : {}),
 
                 ...(borderWidth && { borderWidth }),
                 ...(borderColor && { borderColor }),
@@ -65,13 +65,12 @@ export function Badge({
 }
 
 const styles = StyleSheet.create({
-    smashed: {
+    selected: {
         backgroundColor: Colors.purple,
         borderColor: Colors.purple,
         borderWidth: 2,
-        // marginLeft: 30
     },
-    trusted: {
+    disabled: {
         backgroundColor: "#3f3f3f",
         borderColor: "#3f3f3f",
         borderWidth: 2,

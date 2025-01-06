@@ -9,6 +9,7 @@ export const chatListView = drizzle_db
         meta_title: contacts.meta_title,
         meta_avatar: contacts.meta_avatar,
         smashed: contacts.smashed,
+        active: contacts.active,
         most_recent_message: messages.data,
         most_recent_message_type: messages.type,
         trusted_name: trustRelations.name,

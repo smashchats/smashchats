@@ -63,7 +63,9 @@ export function ChatList() {
                         href={
                             `/profile/${encodeURIComponent(
                                 d.did_id
-                            )}/messages` as Href<string>
+                            )}/messages?${new URLSearchParams({
+                                active: d.active?.toString() ?? "false",
+                            })}` as Href<string>
                         }
                         asChild
                     >

@@ -47,7 +47,7 @@ exports[`ui renders correctly 1`] = `
       style={
         {
           "alignItems": "center",
-          "backgroundColor": "#64189b",
+          "backgroundColor": "#222222",
           "borderColor": "#64189b",
           "borderRadius": 16,
           "borderWidth": 2,
@@ -122,7 +122,7 @@ exports[`ui renders correctly 1`] = `
       style={
         {
           "alignItems": "center",
-          "backgroundColor": "#64189b",
+          "backgroundColor": "#222222",
           "borderColor": "#64189b",
           "borderRadius": 16,
           "borderWidth": 2,
@@ -493,7 +493,7 @@ exports[`ui selects a filter when you click on it 1`] = `
       style={
         {
           "alignItems": "center",
-          "backgroundColor": "#64189b",
+          "backgroundColor": "#222222",
           "borderColor": "#64189b",
           "borderRadius": 16,
           "borderWidth": 2,
@@ -568,7 +568,7 @@ exports[`ui selects a filter when you click on it 1`] = `
       style={
         {
           "alignItems": "center",
-          "backgroundColor": "#64189b",
+          "backgroundColor": "#222222",
           "borderColor": "#64189b",
           "borderRadius": 16,
           "borderWidth": 2,
@@ -939,7 +939,7 @@ exports[`ui selects a filter when you click on it 2`] = `
       style={
         {
           "alignItems": "center",
-          "backgroundColor": "#64189b",
+          "backgroundColor": "#222222",
           "borderColor": "#64189b",
           "borderRadius": 16,
           "borderWidth": 2,

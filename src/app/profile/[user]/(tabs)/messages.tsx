@@ -3,14 +3,12 @@ import React, {
     memo,
     useCallback,
     useEffect,
-    useRef,
     useState,
 } from "react";
 import {
     FlatList,
     Insets,
     ListRenderItem,
-    ScrollView,
     StyleProp,
     StyleSheet,
     View,
@@ -80,7 +78,6 @@ const ProfileMessages = forwardRef<
 >((props, ref) => {
     const globalState = useGlobalState();
     const { user: peerId } = useLocalSearchParams();
-    const [hasScrolledToEnd, setHasScrolledToEnd] = useState(false);
     const [offset, setOffset] = useState(0);
     const keyExtractor = useCallback(
         (message: DisplayableMessage, index: number) => {
@@ -117,8 +114,6 @@ const ProfileMessages = forwardRef<
         );
     };
 
-    const scrollViewRef = useRef(null);
-
     useEffect(() => {
         (async () => {
             const unread_count = await getUnreadMessagesCount(peerId as string);
@@ -138,15 +133,6 @@ const ProfileMessages = forwardRef<
             setOffset(newOffset);
         })();
     }, []);
-
-    useEffect(() => {
-        if (!hasScrolledToEnd && scrollViewRef.current) {
-            (scrollViewRef.current as ScrollView).scrollToEnd({
-                animated: false,
-            });
-            setHasScrolledToEnd(true);
-        }
-    }, [hasScrolledToEnd]);
 
     useEffect(() => {
         markAllMessagesInDiscussionAsRead(peerId as string).then(() => {
@@ -176,9 +162,7 @@ const ProfileMessages = forwardRef<
     }, [globalState.selfSmashUser]);
 
     const renderItem = useCallback<ListRenderItem<DisplayableMessage>>(
-        ({ item, index }) => (
-            <RenderMessageListItem message={item} idx={index} />
-        ),
+        ({ item }) => <RenderMessageListItem message={item} />,
         []
     );
 

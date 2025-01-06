@@ -13,9 +13,9 @@ describe("Badge", () => {
         expect(tree).toMatchSnapshot();
     });
 
-    test("Renders correctly with type smashed", () => {
+    test("Renders correctly with type selected", () => {
         const tree = render(
-            <Badge type="smashed">
+            <Badge type="selected">
                 <BadgeText>Hello</BadgeText>
             </Badge>
         ).toJSON();
@@ -23,9 +23,9 @@ describe("Badge", () => {
         expect(tree).toMatchSnapshot();
     });
 
-    test("Renders correctly with type trusted", () => {
+    test("Renders correctly with type disabled", () => {
         const tree = render(
-            <Badge type="trusted">
+            <Badge type="disabled">
                 <BadgeText>Hello</BadgeText>
             </Badge>
         ).toJSON();

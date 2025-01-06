@@ -18,6 +18,7 @@ describe(`chat item`, () => {
                 trusted_name="trusted_name"
                 meta_avatar="avatar"
                 smashed={false}
+                active={false}
                 created_at={new Date()}
             />
         ).toJSON();

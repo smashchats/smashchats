@@ -41,6 +41,7 @@ import Animated, {
     useDerivedValue,
     useAnimatedRef,
     AnimatedRef,
+    withTiming,
 } from "react-native-reanimated";
 
 import { DIDString } from "@smashchats/library";
@@ -92,10 +93,17 @@ export enum Visibility {
     Visible = 1,
 }
 
+const scrollTo = (y: number) =>
+    ({
+        nativeEvent: { contentOffset: { y } },
+    } as NativeSyntheticEvent<NativeScrollEvent>);
+
 const Tab = createMaterialTopTabNavigator<ProfileStackParamList>();
 
 const TAB_BAR_HEIGHT = 60;
 const HEADER_HEIGHT = 60;
+
+const ANIMATION_DURATION = 250;
 
 const OVERLAY_VISIBILITY_OFFSET = 32;
 
@@ -106,7 +114,8 @@ const FEATURE_FLAGS = {
 };
 
 export const ProfileScreen = () => {
-    const { user } = useLocalSearchParams();
+    const { user, active } = useLocalSearchParams();
+    const isActive = active === "true";
     const router = useRouter();
     const globalState = useGlobalState();
     const insets = useSafeAreaInsets();
@@ -286,6 +295,18 @@ export const ProfileScreen = () => {
 
     const { sync } = useScrollSync(tabScrollConfigs, headerConfig);
 
+    useEffect(() => {
+        if (!rendered) {
+            return;
+        }
+        const setInitialScrollPosition = () => {
+            sync(scrollTo(isActive ? headerDiff : 0));
+        };
+
+        setInitialScrollPosition();
+        setTimeout(setInitialScrollPosition, 100);
+    }, [rendered, isActive, headerDiff]);
+
     const contentContainerStyle = useMemo<StyleProp<ViewStyle>>(
         () => ({
             paddingTop: rendered ? headerHeight + TAB_BAR_HEIGHT : 0,
@@ -316,6 +337,12 @@ export const ProfileScreen = () => {
     const translateY = useDerivedValue(
         () => -Math.min(сurrentScrollValue.value, headerDiff)
     );
+
+    useEffect(() => {
+        if (tabIndex === 0 && rendered) {
+            collapse({ animate: true });
+        }
+    }, [tabIndex]);
 
     const tabBarAnimatedStyle = useAnimatedStyle(() => ({
         transform: [{ translateY: translateY.value }],
@@ -370,15 +397,20 @@ export const ProfileScreen = () => {
     //#region Functions
     const expand = () => {
         Keyboard.dismiss();
-        sync({
-            nativeEvent: { contentOffset: { y: 0 } },
-        } as NativeSyntheticEvent<NativeScrollEvent>);
+        sync(scrollTo(0));
     };
 
-    const collapse = () => {
-        sync({
-            nativeEvent: { contentOffset: { y: headerDiff } },
-        } as NativeSyntheticEvent<NativeScrollEvent>);
+    const collapse = (options?: { animate: boolean }) => {
+        const _collapse = () => sync(scrollTo(headerDiff));
+
+        if (options?.animate) {
+            tabScrollConfigs[tabIndex].position.value = withTiming(headerDiff, {
+                duration: ANIMATION_DURATION,
+            });
+            setTimeout(_collapse, ANIMATION_DURATION);
+        } else {
+            _collapse();
+        }
     };
     //#endregion
 
@@ -440,7 +472,7 @@ export const ProfileScreen = () => {
                                 padding: 15,
                                 marginRight: 60,
                             }}
-                            onFocus={collapse}
+                            onFocus={() => collapse({ animate: true })}
                         />
 
                         <Pressable
