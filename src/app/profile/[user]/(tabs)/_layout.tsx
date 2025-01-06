@@ -59,10 +59,7 @@ import {
     TrustedContact,
     getContactWithTrustRelation,
 } from "@/src/db/models/Contacts";
-import {
-    EnrichedSmashMessage,
-    saveMessageToDb,
-} from "@/src/db/models/Messages";
+import { saveMessageToDb } from "@/src/db/models/Messages";
 import { ProfileTabBar } from "@/src/components/fragments/ProfileTabBar";
 import { ProfileHeader } from "@/src/components/fragments/ProfileHeader";
 import { MapContactToDid } from "@/src/utils/mappers/contacts";
@@ -91,6 +88,7 @@ export type ScrollPair = {
         | AnimatedRef<FlatList<DisplayableMessage>>
         | AnimatedRef<Animated.ScrollView>;
     position: SharedValue<number>;
+    inverted: boolean;
 };
 
 export enum Visibility {
@@ -267,9 +265,21 @@ export const ProfileScreen = () => {
     //#region Scroll sync
     const scrollPairs = useMemo<ScrollPair[]>(
         () => [
-            { list: messagesTabRef, position: messagesScrollValue },
-            { list: picturesTabRef, position: picturesScrollValue },
-            { list: badgesTabRef, position: badgesScrollValue },
+            {
+                list: messagesTabRef,
+                position: messagesScrollValue,
+                inverted: true,
+            },
+            {
+                list: picturesTabRef,
+                position: picturesScrollValue,
+                inverted: false,
+            },
+            {
+                list: badgesTabRef,
+                position: badgesScrollValue,
+                inverted: false,
+            },
         ],
         [
             messagesTabRef,
@@ -391,13 +401,26 @@ export const ProfileScreen = () => {
         [tabBarStyle]
     );
 
-    const renderMessages = useCallback(
-        () => (
+    const renderMessages = useCallback(() => {
+        const contentContainerStyle: StyleProp<ViewStyle> = {
+            ...(sharedProps.contentContainerStyle as {}),
+            paddingTop: (
+                sharedProps.contentContainerStyle as { paddingBottom: number }
+            ).paddingBottom,
+        };
+
+        const scrollIndicatorInsets = {
+            bottom: heightCollapsed + TAB_BAR_HEIGHT - 3,
+        };
+
+        return (
             <Box flex={1} backgroundColor={Colors.background}>
                 <ProfileMessages
                     ref={messagesTabRef}
                     onScroll={messagesScrollHandler}
                     {...sharedProps}
+                    contentContainerStyle={contentContainerStyle}
+                    scrollIndicatorInsets={scrollIndicatorInsets}
                 />
                 <Pressable onPress={() => inputFieldRef.current?.focus()}>
                     <Box
@@ -462,9 +485,8 @@ export const ProfileScreen = () => {
                     </Box>
                 </Pressable>
             </Box>
-        ),
-        [messagesTabRef, messagesScrollHandler, sharedProps]
-    );
+        );
+    }, [messagesTabRef, messagesScrollHandler, sharedProps]);
 
     const renderPictures = useCallback(
         () => (

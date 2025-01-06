@@ -8,10 +8,13 @@ import React, {
 } from "react";
 import {
     FlatList,
+    Insets,
     ListRenderItem,
     ScrollView,
+    StyleProp,
     StyleSheet,
     View,
+    ViewStyle,
 } from "react-native";
 
 import { useLocalSearchParams } from "expo-router";
@@ -68,7 +71,13 @@ const getUnreadMessagesCount = async (peerId: string): Promise<number> => {
     return result[0].count;
 };
 
-const ProfileMessages = forwardRef<FlatList>((props, ref) => {
+const ProfileMessages = forwardRef<
+    FlatList,
+    {
+        contentContainerStyle: StyleProp<ViewStyle>;
+        scrollIndicatorInsets: Insets;
+    }
+>((props, ref) => {
     const globalState = useGlobalState();
     const { user: peerId } = useLocalSearchParams();
     const [hasScrolledToEnd, setHasScrolledToEnd] = useState(false);
