@@ -80,12 +80,11 @@ export type HeaderConfig = {
     heightCollapsed: number;
 };
 
-export type ScrollPair = {
-    list:
+export type ScrollConfig = {
+    scrollableRef:
         | AnimatedRef<FlatList<DisplayableMessage>>
         | AnimatedRef<Animated.ScrollView>;
     position: SharedValue<number>;
-    inverted: boolean;
 };
 
 export enum Visibility {
@@ -260,22 +259,19 @@ export const ProfileScreen = () => {
     //#endregion
 
     //#region Scroll sync
-    const scrollPairs = useMemo<ScrollPair[]>(
+    const tabScrollConfigs = useMemo<ScrollConfig[]>(
         () => [
             {
-                list: messagesTabRef,
+                scrollableRef: messagesTabRef,
                 position: messagesScrollValue,
-                inverted: true,
             },
             {
-                list: picturesTabRef,
+                scrollableRef: picturesTabRef,
                 position: picturesScrollValue,
-                inverted: false,
             },
             {
-                list: badgesTabRef,
+                scrollableRef: badgesTabRef,
                 position: badgesScrollValue,
-                inverted: false,
             },
         ],
         [
@@ -288,7 +284,7 @@ export const ProfileScreen = () => {
         ]
     );
 
-    const { sync } = useScrollSync(scrollPairs, headerConfig);
+    const { sync } = useScrollSync(tabScrollConfigs, headerConfig);
 
     const contentContainerStyle = useMemo<StyleProp<ViewStyle>>(
         () => ({
@@ -313,8 +309,8 @@ export const ProfileScreen = () => {
     );
 
     const сurrentScrollValue = useDerivedValue(
-        () => scrollPairs[tabIndex].position.value,
-        [tabIndex, scrollPairs]
+        () => tabScrollConfigs[tabIndex].position.value,
+        [tabIndex, tabScrollConfigs]
     );
 
     const translateY = useDerivedValue(
