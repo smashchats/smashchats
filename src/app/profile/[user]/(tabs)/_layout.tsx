@@ -16,7 +16,6 @@ import {
     ViewProps,
     useWindowDimensions,
     FlatListProps,
-    View,
     KeyboardAvoidingView,
     NativeScrollEvent,
     NativeSyntheticEvent,
@@ -31,7 +30,6 @@ import {
     MaterialTopTabBarProps,
     createMaterialTopTabNavigator,
 } from "@react-navigation/material-top-tabs";
-import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, {
@@ -45,11 +43,10 @@ import Animated, {
     AnimatedRef,
 } from "react-native-reanimated";
 
-import { DIDString, IM_CHAT_TEXT, ISO8601, sha256 } from "@smashchats/library";
+import { DIDString } from "@smashchats/library";
 
 import { Colors } from "@/src/constants/Colors.js";
 import { Box } from "@/src/components/design-system/Box";
-import { Text } from "@/src/components/design-system/Text";
 import ProfileMessages from "@/src/app/profile/[user]/(tabs)/messages.jsx";
 import { DisplayableMessage, EnrichedSmashMessage } from "@/src/types/";
 import ProfilePictures from "@/src/app/profile/[user]/(tabs)/pictures.jsx";
@@ -60,12 +57,12 @@ import {
     getContactWithTrustRelation,
 } from "@/src/db/models/Contacts";
 import { saveMessageToDb } from "@/src/db/models/Messages";
-import { ProfileTabBar } from "@/src/components/fragments/ProfileTabBar";
-import { ProfileHeader } from "@/src/components/fragments/ProfileHeader";
+import { ProfileTabBar } from "@/src/components/fragments/ProfileTabs/ProfileTabBar";
+import { ProfileHeader } from "@/src/components/fragments/ProfileTabs/ProfileHeader";
 import { MapContactToDid } from "@/src/utils/mappers/contacts";
-import { NEIGHBOURHOOD_DOMAIN } from "@/data/neighbourhood";
 import useScrollSync from "@/src/hooks/useScrollSync";
-import { Avatar } from "@/src/components/Avatar";
+import { ProfileHeaderCollapsed } from "@/src/components/fragments/ProfileTabs/ProfileHeaderCollapsed";
+import { ProfileHeaderExpanded } from "@/src/components/fragments/ProfileTabs/ProfileHeaderExpanded";
 
 type ProfileIdType = {
     profileId: string;
@@ -532,57 +529,10 @@ export const ProfileScreen = () => {
                 onLayout={handleHeaderLayout}
                 style={headerContainerStyle}
             >
-                {/* <Header
-                    name="Emily Davis"
-                    bio="Let's get started 🚀"
-                    photo={"https://picsum.photos/id/1027/300/300"}
-                /> */}
-
-                <Image
-                    style={{
-                        width: "100%",
-                        height: 300,
-                    }}
-                    alt="Profile picture"
-                    source={peer?.meta_avatar}
-                />
-                <Text color="white" marginBottom={10}>
-                    {peer?.meta_title}
-                </Text>
-                <Text>
-                    {" "}
-                    {`sbfh.${NEIGHBOURHOOD_DOMAIN}, u123.users.smashchats.com, BIG`}
-                </Text>
+                <ProfileHeaderExpanded peer={peer} />
             </Animated.View>
             <Animated.View style={collapsedOverlayStyle}>
-                <Pressable onPress={expand} style={{ flex: 1 }}>
-                    <View
-                        style={{
-                            flexDirection: "row",
-                            alignItems: "center",
-                            gap: 12,
-                            flex: 1,
-                            marginHorizontal: 48,
-                            width: "50%",
-                        }}
-                    >
-                        <Avatar
-                            contact={
-                                peer ?? ({ meta_title: "" } as TrustedContact)
-                            }
-                            variant={"small"}
-                        />
-                        <Text
-                            fontWeight="bold"
-                            color="white"
-                            fontSize={16}
-                            zIndex={50}
-                            minHeight={20}
-                        >
-                            {peer?.trusted_name ?? peer?.meta_title}
-                        </Text>
-                    </View>
-                </Pressable>
+                <ProfileHeaderCollapsed peer={peer} />
             </Animated.View>
 
             <Tab.Navigator tabBar={renderTabBar}>
