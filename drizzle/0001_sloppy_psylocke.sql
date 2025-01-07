@@ -1,1 +1,0 @@
-DROP VIEW `chat_list_view`;

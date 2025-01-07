@@ -6,7 +6,7 @@ import {
     and,
 } from "drizzle-orm";
 
-import { EncapsulatedIMProtoMessage, IM_PROFILE, IM_CHAT_TEXT, Logger, IMProfile } from "@smashchats/library";
+import { IM_PROFILE, IM_CHAT_TEXT, Logger, IMProtoMessage, IMProfileMessage } from "@smashchats/library";
 
 import { messages } from "@/src/db/schema.js";
 import { drizzle_db } from "@/src/db/database";
@@ -33,13 +33,6 @@ export const saveMessageToDb = async (
         .values({ ...messageInsert, ...extraFields })
         .returning({ id: messages.sha256 });
     return messageId;
-};
-
-export const parseDataInMessage = async (message: EncapsulatedIMProtoMessage, logger: Logger) => {
-    if (message.type === IM_PROFILE) {
-        logger.debug("parsing profile message", JSON.stringify(message.data));
-        await updateContact(message.data as IMProfile);
-    }
 };
 
 export const markAllMessagesInDiscussionAsRead = async (

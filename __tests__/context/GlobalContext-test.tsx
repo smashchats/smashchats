@@ -144,7 +144,7 @@ describe("user meta context", () => {
             }
         );
         expect(AsyncStorage.setItem).toHaveBeenCalledWith(
-            "settings.user_meta",
+            "smash.profile",
             JSON.stringify({
                 title: "test",
                 description: "test",

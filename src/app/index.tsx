@@ -8,7 +8,12 @@ import {
 } from "react-native-vision-camera";
 import { useRouter } from "expo-router";
 
-import { EncapsulatedIMProtoMessage, DIDString } from "@smashchats/library";
+import {
+    EncapsulatedIMProtoMessage,
+    DIDString,
+    IM_CHAT_TEXT,
+    IMProtoMessage,
+} from "@smashchats/library";
 
 import { Colors } from "@/src/constants/Colors.js";
 import { ChatList } from "@/src/components/fragments/ChatList/ChatList.jsx";
@@ -35,16 +40,18 @@ export function Home() {
     useEffect(() => {
         if (user) {
             const listener = async (
-                message: EncapsulatedIMProtoMessage,
-                senderDid: DIDString
+                senderDid: DIDString,
+                originalMessage: IMProtoMessage
             ) => {
+                const message = originalMessage as EncapsulatedIMProtoMessage; // TODO remove "as" when lib exports proper types
                 dispatch({
                     type: "LATEST_MESSAGE_ID_IN_DISCUSSION_ACTION",
                     discussionId: senderDid,
                     messageId: message.sha256,
                 });
             };
-            user.on("data", listener);
+
+            user.on(IM_CHAT_TEXT, listener);
 
             return () => {
                 user.removeListener("data", listener);

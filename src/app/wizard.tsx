@@ -43,7 +43,7 @@ export default function Wizard() {
             });
             dispatch({
                 type: "SET_SELF_DID_ACTION",
-                selfDid: await user.getDID(),
+                selfDid: await user.getDIDDocument(),
             });
             handleUserMessages(user, globalState.logger);
         })();

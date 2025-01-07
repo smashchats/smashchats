@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "48d6504f-013f-4b36-a801-110d38a0ab98",
+  "id": "34678066-47a2-489f-b8d1-07747bfdbd50",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "contacts": {
@@ -87,6 +87,14 @@
         },
         "blocked": {
           "name": "blocked",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": false
+        },
+        "active": {
+          "name": "active",
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
@@ -265,73 +273,7 @@
       "checkConstraints": {}
     }
   },
-  "views": {
-    "chat_list_view": {
-      "columns": {
-        "did_id": {
-          "name": "did_id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "meta_title": {
-          "name": "meta_title",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "meta_avatar": {
-          "name": "meta_avatar",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "smashed": {
-          "name": "smashed",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": false
-        },
-        "data": {
-          "name": "data",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "type": {
-          "name": "type",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "name": {
-          "name": "name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "(unixepoch())"
-        }
-      },
-      "name": "chat_list_view",
-      "isExisting": false,
-      "definition": "select \"contacts\".\"did_id\", \"contacts\".\"meta_title\", \"contacts\".\"meta_avatar\", \"contacts\".\"smashed\", \"messages\".\"data\", \"messages\".\"type\", \"trust_relations\".\"name\", \"contacts\".\"created_at\", MAX(\"messages\".\"created_at\") as \"most_recent_message_date\", COUNT(\"messages\".\"sha256\") - COUNT(\"messages\".\"date_read\") as \"unread_count\" from \"contacts\" left join \"messages\" on \"contacts\".\"did_id\" = \"messages\".\"discussion_id\" left join \"trust_relations\" on \"contacts\".\"did_id\" = \"trust_relations\".\"did_id\" group by \"contacts\".\"did_id\" order by \"messages\".\"created_at\" desc"
-    }
-  },
+  "views": {},
   "enums": {},
   "_meta": {
     "schemas": {},

@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { saveData, getData } from '@/src/utils/StorageUtils'
+import { saveObject, getData } from '@/src/utils/StorageUtils'
 
 jest.mock('@react-native-async-storage/async-storage', () => ({
     setItem: jest.fn(),
@@ -54,7 +54,7 @@ describe('getData', () => {
 describe('saveData', () => {
     it('should save data', async () => {
         const data = { hello: "world" }
-        await saveData('test', data);
+        await saveObject('test', data);
         expect(AsyncStorage.setItem).toHaveBeenCalledWith('test', JSON.stringify(data));
     });
 
@@ -62,14 +62,14 @@ describe('saveData', () => {
         const data = { hello: "world" }
         // @ts-expect-error
         jest.spyOn(AsyncStorage, 'setItem').mockResolvedValue(new Error('Save failed'));
-        await saveData('test', data);
+        await saveObject('test', data);
         expect(AsyncStorage.setItem).toHaveBeenCalledWith('test', JSON.stringify(data));
     });
 
     it('should not save item if it\'s not serializable', async () => {
         const data = undefined
         // @ts-expect-error
-        await saveData('test', data);
+        await saveObject('test', data);
         expect(AsyncStorage.setItem).not.toHaveBeenCalled();
     });
 });

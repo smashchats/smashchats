@@ -14,14 +14,14 @@ export default function ProfileLayout() {
     const state = useGlobalState();
 
     // Local state for input values
-    const [inputTitle, setInputTitle] = useState(state.userMeta.title);
+    const [inputTitle, setInputTitle] = useState(state.userMeta.title ?? "");
     const [inputDescription, setInputDescription] = useState(
-        state.userMeta.description
+        state.userMeta.description ?? ""
     );
 
     useEffect(() => {
-        setInputTitle(state.userMeta.title);
-        setInputDescription(state.userMeta.description);
+        setInputTitle(state.userMeta.title ?? "");
+        setInputDescription(state.userMeta.description ?? "");
     }, [state.userMeta]);
 
     const handleInputTitleToMeta = () => {

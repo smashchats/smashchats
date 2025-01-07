@@ -1,54 +1,49 @@
 import {
     DIDString,
-    EncapsulatedIMProtoMessage,
-    IMProfile,
     IM_CHAT_TEXT,
-    Identity,
-    ISO8601,
     Logger,
-    SMASH_NBH_PROFILE_LIST,
     SmashMessaging,
-    SmashProfileList,
     SmashUser,
-    sha256,
     IM_PROFILE,
     IM_SESSION_RESET,
+    DIDDocManager,
+    IMPeerIdentity,
+    LogLevel,
+    SMASH_PROFILE_LIST,
+    SmashChatProfileListMessage,
+    IMProfile,
+    EncapsulatedIMProtoMessage,
+    IMProtoMessage,
+    IMProfileMessage,
 } from "@smashchats/library";
-import { IJsonIdentity } from "2key-ratchet";
 
-import { getData, saveData } from "@/src/utils/StorageUtils.js";
-import {
-    parseDataInMessage,
-    saveMessageToDb,
-} from "@/src/db/models/Messages";
+import { IDENTITY_KEY, PROFILE_KEY, getData, getRawData, saveRawData } from "@/src/utils/StorageUtils.js";
+import { saveMessageToDb } from "@/src/db/models/Messages";
 import {
     getContactsFromDb,
     saveContactToDb,
+    updateContact,
 } from "@/src/db/models/Contacts";
 import { mapReceivedMessageToEnrichedMessage } from "@/src/utils/mappers/messages";
 import { MapContactToDid, SmashProfileToContactMapper } from "@/src/utils/mappers/contacts";
 
-const getOrCreateIdentity = async (logger: Logger): Promise<Identity> => {
-    let savedIdentity: IJsonIdentity | null = await getData<IJsonIdentity>(
-        "identity"
-    );
+const getOrCreateIdentity = async (didDocumentManager: DIDDocManager, logger: Logger): Promise<IMPeerIdentity> => {
+    let newIdentity: IMPeerIdentity;
+    let savedIdentity = await getRawData(IDENTITY_KEY);
 
-    let newIdentity: Identity;
     if (!savedIdentity) {
         logger.info("creating new identity");
         try {
-            newIdentity = await SmashMessaging.generateIdentity(1, 0, true);
+            newIdentity = await didDocumentManager.generate();
         } catch (error) {
             logger.error("getOrCreateIdentity error", error);
             throw error;
         }
-        saveData<IJsonIdentity>(
-            "identity",
-            await SmashMessaging.serializeIdentity(newIdentity)
-        );
+        const newExportedIdentity = await newIdentity.serialize();
+        saveRawData(IDENTITY_KEY, newExportedIdentity);
     } else {
         logger.info("loading existing identity");
-        newIdentity = await SmashMessaging.deserializeIdentity(savedIdentity);
+        newIdentity = await SmashMessaging.importIdentity(savedIdentity);
     }
 
     return newIdentity;
@@ -56,17 +51,22 @@ const getOrCreateIdentity = async (logger: Logger): Promise<Identity> => {
 
 export const loadIdentity = async (
     logger: Logger,
-    LOG_LEVEL: "DEBUG" | "INFO" | "WARN" | "ERROR" = "DEBUG"
+    logLevel: LogLevel = "DEBUG"
 ): Promise<SmashUser> => {
+    const didDocumentManager = new DIDDocManager();
+    SmashMessaging.use(didDocumentManager);
+    // TODO load contact dids from db
     try {
-        const savedIdentity = await getOrCreateIdentity(logger);
-        const meta = await getData<IMProfile>("settings.user_meta");
+        const savedIdentity = await getOrCreateIdentity(didDocumentManager, logger);
+        const meta = await getData<Partial<IMProfile>>(PROFILE_KEY);
         const user = new SmashUser(
             savedIdentity,
-            meta ?? undefined,
-            LOG_LEVEL,
-            meta?.title ?? "device"
+            meta?.title ?? "device",
+            logLevel,
         );
+        if (meta) {
+            user.updateMeta(meta);
+        }
 
         const contacts = await getContactsFromDb();
         user.initChats(
@@ -84,43 +84,26 @@ export const loadIdentity = async (
     }
 };
 
-
-
 export const handleUserMessages = async (
     user: SmashUser,
     logger: Logger
 ) => {
-    const selfDid = await user.getDID();
-    // Handle profile list updates
-    user.on(
-        SMASH_NBH_PROFILE_LIST,
-        async (_, profiles: SmashProfileList) => {
-            for (const profile of profiles.filter((p) => p.did.id !== selfDid.id)) {
-                const contact = SmashProfileToContactMapper(profile);
-                await saveContactToDb(contact);
-            }
+    const selfDid = await user.getDIDDocument();
+
+    const newProfilesMessagesListener = async (_sender: DIDString, { data: profiles }: SmashChatProfileListMessage) => {
+        for (const profile of profiles.filter((p) => p.did.id !== selfDid.id)) {
+            const contact = SmashProfileToContactMapper(profile);
+            await saveContactToDb(contact);
         }
-    );
+    }
+    user.on(SMASH_PROFILE_LIST, newProfilesMessagesListener);
 
-    const IGNORED_MESSAGE_TYPES = [IM_SESSION_RESET];
-
-    const messageListener = async (
-        senderDid: DIDString,
-        message: EncapsulatedIMProtoMessage,
-        _sha256: sha256,
-        _timestamp: ISO8601
+    const textMessagesListener = async (senderDid: DIDString, originalMessage: IMProtoMessage
     ) => {
-        logger.debug("message received", message);
+        const message = originalMessage as EncapsulatedIMProtoMessage; // TODO remove "as" when lib exports proper types
         try {
-
-            if (message.type === IM_CHAT_TEXT) {
-                const m = mapReceivedMessageToEnrichedMessage(message, senderDid);
-                await saveMessageToDb(m);
-            }
-            await parseDataInMessage(message, logger);
-            if (![IM_CHAT_TEXT, IM_PROFILE, ...IGNORED_MESSAGE_TYPES].includes(message.type)) {
-                logger.warn("unhandled message type", message.type);
-            }
+            const m = mapReceivedMessageToEnrichedMessage(message, senderDid);
+            await saveMessageToDb(m);
         } catch (e) {
             if (e instanceof Error) {
                 if (
@@ -140,9 +123,31 @@ export const handleUserMessages = async (
                 logger.error("error saving message, error_object:", e);
             }
         }
+    }
+    user.on(IM_CHAT_TEXT, textMessagesListener);
+
+    const profileMessagesListener = async (_sender: DIDString, message: IMProfileMessage) => {
+        logger.debug("parsing profile message", JSON.stringify(message.data));
+        await updateContact(message.data)
+    }
+    user.on(IM_PROFILE, profileMessagesListener);
+
+    const IGNORED_MESSAGE_TYPES = [IM_SESSION_RESET];
+    const messageListener = async (
+        _senderDid: DIDString,
+        message: IMProtoMessage
+    ) => {
+        if (![IM_CHAT_TEXT, IM_PROFILE, ...IGNORED_MESSAGE_TYPES].includes(message.type)) {
+            logger.debug("message received", message);
+            logger.warn("unhandled message type", message.type);
+        }
     };
     user.on("data", messageListener);
+
     return () => {
         user.removeListener("data", messageListener);
+        user.removeListener(IM_CHAT_TEXT, textMessagesListener);
+        user.removeListener(IM_PROFILE, profileMessagesListener);
+        user.removeListener(SMASH_PROFILE_LIST, newProfilesMessagesListener);
     };
 };

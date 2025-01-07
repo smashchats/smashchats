@@ -2,13 +2,20 @@ import * as React from "react";
 import { createContext, useContext, useReducer } from "react";
 
 import {
+    Logger,
+    DIDDocument,
+    IMProfile,
+    SmashUser,
+    sha256,
+} from "@smashchats/library";
+
+import {
     ChatListAction,
     ChatListParams,
     chatListReducer,
     INITIAL_CHAT_LIST_STATE,
 } from "@/src/context/ChatListContext.js";
-import { Logger, DIDDocument, IMProfile, SmashUser } from "@smashchats/library";
-import { saveData } from "@/src/utils/StorageUtils";
+import { PROFILE_KEY, saveObject } from "@/src/utils/StorageUtils";
 
 export interface Settings {
     telemetryEnabled: boolean;
@@ -25,7 +32,7 @@ export interface GlobalActionBase {
 export interface LatestMessageIdInDiscussionAction extends GlobalActionBase {
     type: "LATEST_MESSAGE_ID_IN_DISCUSSION_ACTION";
     discussionId: string;
-    messageId: string;
+    messageId: sha256;
 }
 
 export interface SetSettingsAction extends GlobalActionBase {
@@ -35,7 +42,7 @@ export interface SetSettingsAction extends GlobalActionBase {
 
 export interface SetSettingsUserMetaAction extends GlobalActionBase {
     type: "SET_SETTINGS_USER_META_ACTION";
-    userMeta: IMProfile | null;
+    userMeta: Partial<IMProfile> | null;
 }
 
 export interface SetLoggerAction extends GlobalActionBase {
@@ -77,11 +84,11 @@ export type Action =
 
 export type GlobalParams = {
     chatList: ChatListParams;
-    latestMessageIdInDiscussion: Record<string, string>;
+    latestMessageIdInDiscussion: Record<string, sha256>;
     selfSmashUser: SmashUser;
     selfDid: DIDDocument;
     settings: Settings;
-    userMeta: IMProfile;
+    userMeta: Partial<IMProfile>;
     appWorkflow: AppWorkflow;
     logger: Logger;
 };
@@ -194,13 +201,13 @@ export const GlobalProvider: React.FC<{
 
     React.useEffect(() => {
         if (state.settings) {
-            saveData("settings.settings", state.settings);
+            saveObject("settings.settings", state.settings);
         }
     }, [state.settings]);
 
     React.useEffect(() => {
         if (state.userMeta) {
-            saveData("settings.user_meta", state.userMeta);
+            saveObject(PROFILE_KEY, state.userMeta);
         }
     }, [state.userMeta]);
 
@@ -236,9 +243,9 @@ export const GlobalConsumer = GlobalContext.Consumer;
 export default GlobalContext;
 
 function latestMessageIdInDiscussionReducer(
-    latestMessageIdInDiscussion: Record<string, string>,
+    latestMessageIdInDiscussion: Record<string, sha256>,
     action: LatestMessageIdInDiscussionAction | Action
-): Record<string, string> {
+): Record<string, sha256> {
     if (action.type !== "LATEST_MESSAGE_ID_IN_DISCUSSION_ACTION") {
         return latestMessageIdInDiscussion;
     }
@@ -256,15 +263,15 @@ export function settingsReducer(settings: Settings, action: Action): Settings {
 }
 
 export function userMetaReducer(
-    userMeta: IMProfile,
+    userMeta: Partial<IMProfile>,
     action: Action
-): IMProfile {
+): Partial<IMProfile> {
     if (action.type !== "SET_SETTINGS_USER_META_ACTION") {
         return userMeta;
     }
     return (
         action.userMeta ??
-        ({ title: "", description: "", avatar: "" } as IMProfile)
+        ({ title: "", description: "", avatar: "" } as Partial<IMProfile>)
     );
 }
 

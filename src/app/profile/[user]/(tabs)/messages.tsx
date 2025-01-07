@@ -28,8 +28,11 @@ import {
     EncapsulatedIMProtoMessage,
     DIDString,
     IM_CHAT_TEXT,
-    ISO8601,
     sha256,
+    IMText,
+    undefinedString,
+    encapsulateMessage,
+    IMProtoMessage,
 } from "@smashchats/library";
 
 import {
@@ -178,12 +181,46 @@ const ProfileMessages = forwardRef<
         });
     }, []);
 
+    const appendMessage = ({
+        data,
+        sha256,
+        after_sha256,
+    }: {
+        data: any;
+        sha256: sha256;
+        after_sha256: sha256 | undefinedString;
+    }) => {
+        const now = new Date();
+
+        setMessages(
+            appendMessageToDisplayableMessages(
+                {
+                    type: IM_CHAT_TEXT,
+                    from_did_id: globalState.selfDid.id,
+                    discussion_id: peerId,
+                    data,
+                    sha256,
+                    after_sha256,
+                    created_at: now,
+                    date_delivered: now,
+                    date_read: now,
+                    timestamp: now,
+                    reply_to_sha256: null,
+                } satisfies Message,
+                messages,
+                globalState.selfDid.id
+            )
+        );
+    };
+
     useEffect(() => {
         const callback = (
             senderId: DIDString,
-            message: EncapsulatedIMProtoMessage
+            originalMessage: IMProtoMessage
         ) => {
-            if (senderId === peerId && message.type === IM_CHAT_TEXT) {
+            const message = originalMessage as EncapsulatedIMProtoMessage; // TODO remove "as" when lib exports proper types
+
+            if (senderId === peerId) {
                 markAllMessagesInDiscussionAsRead(peerId).then(() => {
                     globalState.logger.debug(
                         `messages::onNewMessages::Marked received messages in discussion ${peerId} as read`
@@ -192,28 +229,14 @@ const ProfileMessages = forwardRef<
                 // TODO scroll to bottom (?)
 
                 // TODO check if the message is correctly formatted
-                const now = new Date();
-                setMessages(
-                    appendMessageToDisplayableMessages(
-                        {
-                            ...message,
-                            data: message.data as string,
-                            date_delivered: now,
-                            date_read: now,
-                            timestamp: now,
-                            created_at: now,
-                            from_did_id: globalState.selfDid.id,
-                            discussion_id: peerId,
-                            after_sha256: message.sha256,
-                            reply_to_sha256: null,
-                        } satisfies Message,
-                        messages,
-                        globalState.selfDid.id
-                    )
-                );
+                appendMessage({
+                    data: message.data as string,
+                    sha256: message.sha256,
+                    after_sha256: message.after,
+                });
             }
         };
-        globalState.selfSmashUser.on("data", callback);
+        globalState.selfSmashUser.on(IM_CHAT_TEXT, callback);
         return () => {
             globalState.selfSmashUser.removeListener("data", callback);
         };
@@ -236,43 +259,29 @@ const ProfileMessages = forwardRef<
         setNewMessage("");
         const now = new Date();
 
-        const lastMessageId =
+        const lastMessageId: sha256 | undefinedString =
             globalState.latestMessageIdInDiscussion[peerId] ?? "0";
 
-        // TODO: generate sha256
-        const timestamp: ISO8601 = now.toISOString() as ISO8601;
-        const sha256 = now.getTime().toString();
-        // const { sha256, timestamp } = library.prepareMessage(did, text, after)
-
-        setMessages(
-            appendMessageToDisplayableMessages(
-                {
-                    type: IM_CHAT_TEXT,
-                    from_did_id: globalState.selfDid.id,
-                    discussion_id: peerId,
-                    data: dataToSend,
-                    sha256: sha256,
-                    after_sha256: lastMessageId,
-                    created_at: now,
-                    date_delivered: now,
-                    date_read: now,
-                    timestamp: now,
-                    reply_to_sha256: null,
-                } satisfies Message,
-                messages,
-                globalState.selfDid.id
-            )
+        const message = await encapsulateMessage(
+            new IMText(dataToSend, lastMessageId)
         );
+        const { sha256, timestamp } = message;
+
+        appendMessage({
+            data: dataToSend,
+            sha256,
+            after_sha256: lastMessageId,
+        });
 
         saveMessageToDb(
             {
                 fromDid: globalState.selfDid.id,
                 toDiscussionId: peerId as DIDString,
                 data: dataToSend,
-                sha256: sha256 as sha256,
+                sha256,
                 timestamp,
                 type: IM_CHAT_TEXT,
-                after: lastMessageId as sha256,
+                after: lastMessageId,
             } satisfies EnrichedSmashMessage,
             {
                 date_read: new Date(),
@@ -282,14 +291,13 @@ const ProfileMessages = forwardRef<
         dispatch({
             type: "LATEST_MESSAGE_ID_IN_DISCUSSION_ACTION",
             discussionId: peerId,
-            messageId: "sha256",
+            messageId: sha256,
         });
 
         try {
-            await globalState.selfSmashUser.sendTextMessage(
+            await globalState.selfSmashUser.send(
                 MapContactToDid(props.peer),
-                dataToSend,
-                lastMessageId
+                message
             );
 
             // TODO: update message in db as successfully sent to SME

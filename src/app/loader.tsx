@@ -2,9 +2,9 @@ import { Dispatch, useEffect } from "react";
 import { View } from "react-native";
 import { SplashScreen, Stack } from "expo-router";
 import { PostHogProvider } from "posthog-react-native";
-import changeNavigationBarColor from 'react-native-navigation-bar-color';
+import changeNavigationBarColor from "react-native-navigation-bar-color";
 
-import { Logger, SmashUser, IMProfile, DIDDocument } from "@smashchats/library";
+import { Logger, SmashUser, DIDDocument, IMProfile } from "@smashchats/library";
 
 import { handleUserMessages, loadIdentity } from "@/src/utils/IdentityUtils";
 import {
@@ -13,7 +13,7 @@ import {
     useGlobalDispatch,
     useGlobalState,
 } from "@/src/context/GlobalContext";
-import { getData } from "@/src/utils/StorageUtils";
+import { PROFILE_KEY, getData } from "@/src/utils/StorageUtils";
 import { ThemedText } from "@/src/components/ThemedText";
 import { dev_nab_join_action, didId } from "@/data/dev";
 import { createTrustRelation } from "@/src/db/models/TrustRelation";
@@ -29,7 +29,7 @@ export default function LoaderScreen() {
         try {
             await Promise.all([
                 createTrustRelation(didId),
-                user.join(dev_nab_join_action),
+                user.join(dev_nab_join_action), // TODO use new join format (if any)
                 saveContactToDb(
                     MapDidToContact(dev_nab_join_action.did as DIDDocument)
                 ),
@@ -81,14 +81,17 @@ export default function LoaderScreen() {
     };
 
     const setupUser = async (dispatch: Dispatch<Action>) => {
-        const user = await loadIdentity(state.logger, __DEV__ ? "DEBUG" : "WARN");
+        const user = await loadIdentity(
+            state.logger,
+            __DEV__ ? "DEBUG" : "WARN"
+        );
         dispatch({
             type: "SET_USER_ACTION",
             user,
         });
         dispatch({
             type: "SET_SELF_DID_ACTION",
-            selfDid: await user.getDID(),
+            selfDid: await user.getDIDDocument(),
         });
         return user;
     };
@@ -114,7 +117,7 @@ export default function LoaderScreen() {
         (async () => {
             const [settings, meta] = await Promise.all([
                 getData<Settings>("settings.settings"),
-                getData<IMProfile>("settings.user_meta"),
+                getData<Partial<IMProfile>>(PROFILE_KEY),
             ]);
             const newUser = settings === null;
             dispatch({

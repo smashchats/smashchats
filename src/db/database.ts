@@ -3,8 +3,8 @@ import { openDatabaseSync } from "expo-sqlite/next";
 import * as schema from "@/src/db/schema.js";
 
 export const DATABASE_NAME = __DEV__
-    ? "dev-smashchats-2024-12-20-16h-26"
-    : "prod-smashchats-alpha-2024-12-17";
+    ? "dev-smashchats-2025-01-07-16h-26"
+    : "prod-smashchats-alpha-2025-01-07";
 
 export const expo_db = openDatabaseSync(DATABASE_NAME, {
     enableChangeListener: true,
