@@ -171,7 +171,7 @@ const ProfileMessages = forwardRef<
     }, []);
 
     useEffect(() => {
-        markAllMessagesInDiscussionAsRead(peerId as string).then(() => {
+        markAllMessagesInDiscussionAsRead(peerId).then(() => {
             globalState.logger.debug(
                 `messages::useEffect::Marked all messages in discussion ${peerId} as read`
             );

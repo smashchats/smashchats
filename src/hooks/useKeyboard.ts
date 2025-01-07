@@ -26,5 +26,9 @@ export function useKeyboard() {
         };
     }, []);
 
-    return { Keyboard, keyboardVisible };
+    const hideKeyboard = () => {
+        Keyboard.dismiss();
+    }
+
+    return { Keyboard, keyboardVisible, hideKeyboard };
 }

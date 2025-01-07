@@ -38,6 +38,7 @@ import Animated, {
     useAnimatedRef,
     AnimatedRef,
     withTiming,
+    runOnJS,
 } from "react-native-reanimated";
 
 import { Colors } from "@/src/constants/Colors.js";
@@ -56,6 +57,7 @@ import { ProfileHeader } from "@/src/components/fragments/ProfileTabs/ProfileHea
 import useScrollSync from "@/src/hooks/useScrollSync";
 import { ProfileHeaderCollapsed } from "@/src/components/fragments/ProfileTabs/ProfileHeaderCollapsed";
 import { ProfileHeaderExpanded } from "@/src/components/fragments/ProfileTabs/ProfileHeaderExpanded";
+import { useKeyboard } from "@/src/hooks/useKeyboard";
 
 type ProfileIdType = {
     profileId: string;
@@ -101,13 +103,13 @@ const ANIMATION_DURATION = 250;
 const OVERLAY_VISIBILITY_OFFSET = 32;
 
 export const ProfileScreen = () => {
-    const { user, active } = useLocalSearchParams();
-    const isActive = active === "true";
     const router = useRouter();
     const globalState = useGlobalState();
-    const insets = useSafeAreaInsets();
+    const { keyboardVisible, hideKeyboard } = useKeyboard();
+    const { user, active } = useLocalSearchParams();
 
     const [peer, setPeer] = useState<TrustedContact>();
+    const isActive = active === "true";
 
     useEffect(() => {
         const fetchUser = async (did_id: string) => {
@@ -182,7 +184,12 @@ export const ProfileScreen = () => {
             contentSize: { height: contentHeight },
             layoutMeasurement: { height: layoutHeight },
         } = event;
-        messagesScrollValue.value = contentHeight - layoutHeight - y;
+        const invertedScroll = contentHeight - layoutHeight - y;
+        messagesScrollValue.value = invertedScroll;
+
+        if (invertedScroll < heightExpanded && keyboardVisible) {
+            runOnJS(hideKeyboard)();
+        }
     });
     const messagesTabRef = useAnimatedRef<FlatList<DisplayableMessage>>();
     //#endregion
@@ -433,10 +440,10 @@ export const ProfileScreen = () => {
             style={{
                 flex: 1,
                 backgroundColor: Colors.background,
-                marginTop: insets.top,
+                marginTop: top,
             }}
             behavior="height"
-            keyboardVerticalOffset={-insets.bottom}
+            keyboardVerticalOffset={-bottom}
         >
             <Animated.View
                 onLayout={handleHeaderLayout}

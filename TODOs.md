@@ -37,9 +37,10 @@
 - [~] profile scroll / collapsible header
   - [ ] implement gesture handler on tabs & user bio so that we can scroll to the top
   - [x] fix padding tabs hidden behind tabbar & header
-  - [ ] dismiss keyboard when scrolling down
+  - [x] dismiss keyboard when scrolling header down
   - [x] on expand, keyboard should be dismissed
   - [~] invert scroll for first tab
+  - [ ] fix scrollIndicatorInsets for first tab
 
 ## Done
 
