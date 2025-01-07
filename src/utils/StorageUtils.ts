@@ -32,6 +32,7 @@ export const saveObject = async <T extends {}>(key: string, data: T) => {
 };
 
 export const saveRawData = async (key: string, data: string) => {
+    if (typeof data !== "string") return
     try {
         await AsyncStorage.setItem(key, data);
     } catch (e) {

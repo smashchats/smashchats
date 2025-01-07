@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { saveObject, getData } from '@/src/utils/StorageUtils'
+import { saveObject, getData, getRawData, saveRawData } from '@/src/utils/StorageUtils'
 
 jest.mock('@react-native-async-storage/async-storage', () => ({
     setItem: jest.fn(),
@@ -70,6 +70,64 @@ describe('saveData', () => {
         const data = undefined
         // @ts-expect-error
         await saveObject('test', data);
+        expect(AsyncStorage.setItem).not.toHaveBeenCalled();
+    });
+});
+
+describe('getRawData', () => {
+    it('should return unparsed object', async () => {
+        const data = `{"hello":"world"}`
+        jest.spyOn(AsyncStorage, 'getItem').mockResolvedValue(data);
+        const result = await getRawData('test');
+        expect(result).toEqual(`{"hello":"world"}`);
+    });
+
+    it('should return text', async () => {
+        const data = `"hello"`
+        jest.spyOn(AsyncStorage, 'getItem').mockResolvedValue(data);
+        const result = await getData('test');
+        expect(result).toEqual("hello");
+    })
+
+    it('should return null if key not found', async () => {
+        jest.spyOn(AsyncStorage, 'getItem').mockResolvedValue(null);
+        const result = await getData('test');
+        expect(result).toBeNull();
+    });
+
+    it('should return null if data is corrupted', async () => {
+        // @ts-expect-error
+        jest.spyOn(AsyncStorage, 'getItem').mockResolvedValue({});
+        const result = await getData('corrupted');
+        expect(result).toBeNull();
+    })
+    it('should return null if data is undefined', async () => {
+        // @ts-expect-error
+        jest.spyOn(AsyncStorage, 'getItem').mockResolvedValue(undefined);
+        const result = await getData('undefined');
+        expect(result).toBeNull();
+    })
+})
+
+describe('saveRawData', () => {
+    it('should save data', async () => {
+        const data = `{ hello: "world" }`
+        await saveRawData('test', data);
+        expect(AsyncStorage.setItem).toHaveBeenCalledWith('test', `${data}`);
+    });
+
+    it('should not throw error if save fails', async () => {
+        const data = `{ hello: "world" }`
+        // @ts-expect-error
+        jest.spyOn(AsyncStorage, 'setItem').mockResolvedValue(new Error('Save failed'));
+        await saveRawData('test', data);
+        expect(AsyncStorage.setItem).toHaveBeenCalledWith('test', `${data}`);
+    });
+
+    it('should not save item if it\'s not a string', async () => {
+        const data = undefined
+        // @ts-expect-error
+        await saveRawData('test', data);
         expect(AsyncStorage.setItem).not.toHaveBeenCalled();
     });
 });

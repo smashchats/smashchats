@@ -6,11 +6,10 @@ import {
     and,
 } from "drizzle-orm";
 
-import { IM_PROFILE, IM_CHAT_TEXT, Logger, IMProtoMessage, IMProfileMessage } from "@smashchats/library";
+import { IM_CHAT_TEXT } from "@smashchats/library";
 
 import { messages } from "@/src/db/schema.js";
 import { drizzle_db } from "@/src/db/database";
-import { updateContact } from "@/src/db/models/Contacts.js";
 import { ESMToMessageInsertMapper } from "@/src/utils/mappers/messages";
 import { EnrichedSmashMessage } from "@/src/types/";
 
