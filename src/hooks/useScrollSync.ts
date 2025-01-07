@@ -15,7 +15,7 @@ const useScrollSync = (
 
         const headerDiff = heightExpanded - heightCollapsed;
 
-        for (const { scrollableRef, position } of scrollConfigs) {
+        for (const { scrollableRef, position, invert } of scrollConfigs) {
             const scrollPosition = position.value ?? 0;
 
             if (scrollPosition > headerDiff && y > headerDiff) {
@@ -29,10 +29,12 @@ const useScrollSync = (
                         animated: false,
                     });
                 } else {
-                    (scrollableRef.current as Animated.FlatList<any>).scrollToOffset({
-                        offset: Math.min(y, headerDiff),
-                        animated: false,
-                    });
+                    if (!invert) {
+                        (scrollableRef.current as Animated.FlatList<any>).scrollToOffset({
+                            offset: Math.min(y, headerDiff),
+                            animated: false,
+                        });
+                    }
                 }
             }
         };

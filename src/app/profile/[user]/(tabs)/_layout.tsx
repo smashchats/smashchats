@@ -86,6 +86,7 @@ export type ScrollConfig = {
         | AnimatedRef<FlatList<DisplayableMessage>>
         | AnimatedRef<Animated.ScrollView>;
     position: SharedValue<number>;
+    invert: boolean;
 };
 
 export enum Visibility {
@@ -245,7 +246,12 @@ export const ProfileScreen = () => {
     //#region Messages scroll handler
     const messagesScrollValue = useSharedValue(0);
     const messagesScrollHandler = useAnimatedScrollHandler((event) => {
-        messagesScrollValue.value = event.contentOffset.y;
+        const {
+            contentOffset: { y },
+            contentSize: { height: contentHeight },
+            layoutMeasurement: { height: layoutHeight },
+        } = event;
+        messagesScrollValue.value = contentHeight - layoutHeight - y;
     });
     const messagesTabRef = useAnimatedRef<FlatList<DisplayableMessage>>();
     //#endregion
@@ -273,14 +279,17 @@ export const ProfileScreen = () => {
             {
                 scrollableRef: messagesTabRef,
                 position: messagesScrollValue,
+                invert: true,
             },
             {
                 scrollableRef: picturesTabRef,
                 position: picturesScrollValue,
+                invert: false,
             },
             {
                 scrollableRef: badgesTabRef,
                 position: badgesScrollValue,
+                invert: false,
             },
         ],
         [
@@ -432,6 +441,9 @@ export const ProfileScreen = () => {
             paddingTop: (
                 sharedProps.contentContainerStyle as { paddingBottom: number }
             ).paddingBottom,
+            paddingBottom: (
+                sharedProps.contentContainerStyle as { paddingTop: number }
+            ).paddingTop,
         };
 
         const scrollIndicatorInsets = {
@@ -563,7 +575,17 @@ export const ProfileScreen = () => {
                 <ProfileHeaderCollapsed peer={peer} />
             </Animated.View>
 
-            <Tab.Navigator tabBar={renderTabBar}>
+            <Tab.Navigator
+                tabBar={renderTabBar}
+                screenListeners={{
+                    tabPress: (e) => {
+                        if (Keyboard.isVisible()) {
+                            e.preventDefault();
+                            Keyboard.dismiss();
+                        }
+                    },
+                }}
+            >
                 <Tab.Screen options={{ title: "Chats" }} name="messages">
                     {renderMessages}
                 </Tab.Screen>
