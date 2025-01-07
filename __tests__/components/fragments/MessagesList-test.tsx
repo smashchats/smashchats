@@ -7,7 +7,7 @@ import { IM_CHAT_TEXT } from "@smashchats/library";
 describe("RenderMessageListItem", () => {
     it("renders correctly", () => {
         const tree = render(
-            <RenderMessageListItem message={{} as DisplayableMessage} idx={1} />
+            <RenderMessageListItem message={{} as DisplayableMessage} />
         ).toJSON();
         expect(tree).toMatchSnapshot();
     });
@@ -34,9 +34,7 @@ describe("RenderMessageListItem", () => {
         let tree;
 
         messages.forEach((message, idx) => {
-            tree = render(
-                <RenderMessageListItem message={message} idx={idx} />
-            ).toJSON();
+            tree = render(<RenderMessageListItem message={message} />).toJSON();
             expect(tree).toMatchSnapshot();
         });
     });

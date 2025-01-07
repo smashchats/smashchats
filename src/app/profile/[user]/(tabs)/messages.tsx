@@ -3,13 +3,16 @@ import React, {
     memo,
     useCallback,
     useEffect,
+    useRef,
     useState,
 } from "react";
 import {
     FlatList,
     Insets,
     ListRenderItem,
+    Pressable,
     StyleProp,
+    TextInput,
     StyleSheet,
     View,
     ViewStyle,
@@ -18,15 +21,24 @@ import {
 import { useLocalSearchParams } from "expo-router";
 import Animated from "react-native-reanimated";
 import { eq, desc, and, isNull, count } from "drizzle-orm";
+import { Feather } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
+
 import {
     EncapsulatedIMProtoMessage,
     DIDString,
     IM_CHAT_TEXT,
+    ISO8601,
+    sha256,
 } from "@smashchats/library";
 
-import { useGlobalState } from "@/src/context/GlobalContext.js";
+import {
+    useGlobalDispatch,
+    useGlobalState,
+} from "@/src/context/GlobalContext.js";
 import {
     addSystemMessages,
+    appendMessageToDisplayableMessages,
     appendOlderMessages,
 } from "@/src/utils/MessagesUtils.js";
 import { drizzle_db } from "@/src/db/database";
@@ -34,11 +46,23 @@ import { messages as MessagesSchema } from "@/src/db/schema";
 import {
     Message,
     markAllMessagesInDiscussionAsRead,
+    saveMessageToDb,
 } from "@/src/db/models/Messages";
 import { RenderMessageListItem } from "@/src/components/fragments/MessagesList";
 import { Colors } from "@/src/constants/Colors";
-import { DisplayableMessage } from "@/src/types/";
+import { DisplayableMessage, EnrichedSmashMessage } from "@/src/types/";
+import { Box } from "@/src/components/design-system/Box";
+import { MapContactToDid } from "@/src/utils/mappers/contacts";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { TrustedContact } from "@/src/db/models/Contacts";
+
 const DEFAULT_LOAD_LIMIT = __DEV__ ? 10 : 100;
+
+const FEATURE_FLAGS = {
+    show_pictures_and_badges: false,
+    send_media: false,
+    show_smash_or_pass: false,
+};
 
 const getMessages = async (
     peerId: string,
@@ -74,10 +98,22 @@ const ProfileMessages = forwardRef<
     {
         contentContainerStyle: StyleProp<ViewStyle>;
         scrollIndicatorInsets: Insets;
+        onCollapse: (props: { animate: boolean }) => void;
+        peer: TrustedContact;
     }
 >((props, ref) => {
     const globalState = useGlobalState();
-    const { user: peerId } = useLocalSearchParams();
+    const dispatch = useGlobalDispatch();
+
+    const { user: peerId }: { user: string } = useLocalSearchParams();
+
+    const [newMessage, setNewMessage] = useState("");
+    const [shouldShowSendIcon, setShouldShowSendIcon] = useState(true);
+    const inputFieldRef = useRef<TextInput>(null);
+
+    const footerHeight = 60;
+    const insets = useSafeAreaInsets();
+
     const [offset, setOffset] = useState(0);
     const keyExtractor = useCallback(
         (message: DisplayableMessage, index: number) => {
@@ -100,7 +136,7 @@ const ProfileMessages = forwardRef<
 
     const loadMoreMessages = async () => {
         const older_messages = await getMessages(
-            peerId as string,
+            peerId,
             offset,
             DEFAULT_LOAD_LIMIT
         );
@@ -116,7 +152,7 @@ const ProfileMessages = forwardRef<
 
     useEffect(() => {
         (async () => {
-            const unread_count = await getUnreadMessagesCount(peerId as string);
+            const unread_count = await getUnreadMessagesCount(peerId);
             const needToLoadMore = unread_count > DEFAULT_LOAD_LIMIT;
 
             let loadLimit = needToLoadMore ? unread_count : DEFAULT_LOAD_LIMIT;
@@ -126,7 +162,7 @@ const ProfileMessages = forwardRef<
 
             setMessages(
                 addSystemMessages(
-                    await getMessages(peerId as string, 0, loadLimit),
+                    await getMessages(peerId, 0, loadLimit),
                     globalState.selfDid.id
                 )
             );
@@ -153,6 +189,28 @@ const ProfileMessages = forwardRef<
                         `messages::onNewMessages::Marked received messages in discussion ${peerId} as read`
                     );
                 });
+                // TODO scroll to bottom (?)
+
+                // TODO check if the message is correctly formatted
+                const now = new Date();
+                setMessages(
+                    appendMessageToDisplayableMessages(
+                        {
+                            ...message,
+                            data: message.data as string,
+                            date_delivered: now,
+                            date_read: now,
+                            timestamp: now,
+                            created_at: now,
+                            from_did_id: globalState.selfDid.id,
+                            discussion_id: peerId,
+                            after_sha256: message.sha256,
+                            reply_to_sha256: null,
+                        } satisfies Message,
+                        messages,
+                        globalState.selfDid.id
+                    )
+                );
             }
         };
         globalState.selfSmashUser.on("data", callback);
@@ -166,22 +224,174 @@ const ProfileMessages = forwardRef<
         []
     );
 
+    useEffect(() => {
+        setShouldShowSendIcon(newMessage.length > 0);
+    }, [newMessage]);
+
+    const handleSendMessage = async () => {
+        const dataToSend = newMessage.trim();
+        if (dataToSend.length === 0) {
+            return;
+        }
+        setNewMessage("");
+        const now = new Date();
+
+        const lastMessageId =
+            globalState.latestMessageIdInDiscussion[peerId] ?? "0";
+
+        // TODO: generate sha256
+        const timestamp: ISO8601 = now.toISOString() as ISO8601;
+        const sha256 = now.getTime().toString();
+        // const { sha256, timestamp } = library.prepareMessage(did, text, after)
+
+        setMessages(
+            appendMessageToDisplayableMessages(
+                {
+                    type: IM_CHAT_TEXT,
+                    from_did_id: globalState.selfDid.id,
+                    discussion_id: peerId,
+                    data: dataToSend,
+                    sha256: sha256,
+                    after_sha256: lastMessageId,
+                    created_at: now,
+                    date_delivered: now,
+                    date_read: now,
+                    timestamp: now,
+                    reply_to_sha256: null,
+                } satisfies Message,
+                messages,
+                globalState.selfDid.id
+            )
+        );
+
+        saveMessageToDb(
+            {
+                fromDid: globalState.selfDid.id,
+                toDiscussionId: peerId as DIDString,
+                data: dataToSend,
+                sha256: sha256 as sha256,
+                timestamp,
+                type: IM_CHAT_TEXT,
+                after: lastMessageId as sha256,
+            } satisfies EnrichedSmashMessage,
+            {
+                date_read: new Date(),
+            }
+        );
+
+        dispatch({
+            type: "LATEST_MESSAGE_ID_IN_DISCUSSION_ACTION",
+            discussionId: peerId,
+            messageId: "sha256",
+        });
+
+        try {
+            await globalState.selfSmashUser.sendTextMessage(
+                MapContactToDid(props.peer),
+                dataToSend,
+                lastMessageId
+            );
+
+            // TODO: update message in db as successfully sent to SME
+        } catch (error) {
+            // TODO: mark message as failed to send to SME
+            globalState.logger.error(
+                `messages::handleSendMessage::Error sending message to SME: ${error}`
+            );
+        }
+    };
+
+    const handleSendMedia = async () => {
+        if (!FEATURE_FLAGS.send_media) {
+            return;
+        }
+
+        let { canceled, assets } = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            quality: 0.2,
+        });
+        if (canceled) {
+            return;
+        }
+        globalState.logger.info("assets", assets);
+    };
+
     if (!globalState.selfDid) {
         return <View />;
     }
 
     return (
-        <Animated.FlatList
-            {...props}
-            inverted={true}
-            ref={ref}
-            style={styles.container}
-            keyExtractor={keyExtractor}
-            data={messages}
-            renderItem={renderItem}
-            onEndReached={() => loadMoreMessages()}
-            onEndReachedThreshold={10}
-        />
+        <Box flex={1} backgroundColor={Colors.background}>
+            <Animated.FlatList
+                {...props}
+                inverted={true}
+                ref={ref}
+                style={styles.container}
+                keyExtractor={keyExtractor}
+                data={messages}
+                renderItem={renderItem}
+                onEndReached={() => loadMoreMessages()}
+                onEndReachedThreshold={10}
+            />
+            <Pressable onPress={() => inputFieldRef.current?.focus()}>
+                <Box
+                    backgroundColor={Colors.background}
+                    h={footerHeight + insets.bottom + 900}
+                    bottom={-insets.bottom + 30}
+                    width={"102%"}
+                    marginBottom={-900}
+                    left={"-1%"}
+                    position="relative"
+                    borderColor={Colors.darkGray}
+                    borderBottomWidth={0}
+                    borderWidth={3}
+                    borderRadius={20}
+                >
+                    <TextInput
+                        ref={inputFieldRef}
+                        placeholder="Share something..."
+                        placeholderTextColor={Colors.textGray}
+                        value={newMessage}
+                        onChangeText={setNewMessage}
+                        style={{
+                            color: "white",
+                            padding: 15,
+                            marginRight: 60,
+                        }}
+                        onFocus={() => props.onCollapse({ animate: true })}
+                    />
+
+                    <Pressable
+                        style={{
+                            position: "absolute",
+                            right: 0,
+                            top: 0,
+                            padding: 20,
+                        }}
+                        onPress={handleSendMessage}
+                    >
+                        <Feather
+                            name="chevron-right"
+                            size={24}
+                            color={
+                                shouldShowSendIcon
+                                    ? Colors.textWhite
+                                    : Colors.darkGray
+                            }
+                        />
+                    </Pressable>
+
+                    {!shouldShowSendIcon && FEATURE_FLAGS.send_media && (
+                        <Pressable
+                            style={styles.floatingActionButton}
+                            onPress={handleSendMedia}
+                        >
+                            <Feather name="paperclip" size={28} color="white" />
+                        </Pressable>
+                    )}
+                </Box>
+            </Pressable>
+        </Box>
     );
 });
 
@@ -189,6 +399,22 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: Colors.background,
         flex: 1,
+    },
+    floatingActionButton: {
+        width: 50,
+        height: 50,
+        position: "absolute",
+        right: 0,
+        bottom: 0,
+        top: "50%",
+        backgroundColor: Colors.purple,
+        borderRadius: 25,
+        marginRight: 20,
+        marginBottom: 40,
+        transform: [{ translateY: -45 }],
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 99,
     },
 });
 

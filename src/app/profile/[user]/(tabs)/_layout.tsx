@@ -3,13 +3,10 @@ import React, {
     useCallback,
     useEffect,
     useMemo,
-    useRef,
     useState,
 } from "react";
 import {
     ScrollView,
-    Pressable,
-    TextInput,
     StyleSheet,
     ViewStyle,
     StyleProp,
@@ -24,8 +21,7 @@ import {
 } from "react-native";
 
 import * as ScreenOrientation from "expo-screen-orientation";
-import { Feather } from "@expo/vector-icons";
-import * as ImagePicker from "expo-image-picker";
+
 import {
     MaterialTopTabBarProps,
     createMaterialTopTabNavigator,
@@ -44,12 +40,9 @@ import Animated, {
     withTiming,
 } from "react-native-reanimated";
 
-import { DIDString } from "@smashchats/library";
-
 import { Colors } from "@/src/constants/Colors.js";
-import { Box } from "@/src/components/design-system/Box";
 import ProfileMessages from "@/src/app/profile/[user]/(tabs)/messages.jsx";
-import { DisplayableMessage, EnrichedSmashMessage } from "@/src/types/";
+import { DisplayableMessage } from "@/src/types/";
 import ProfilePictures from "@/src/app/profile/[user]/(tabs)/pictures.jsx";
 import ProfileBadges from "@/src/app/profile/[user]/(tabs)/badges.jsx";
 import { useGlobalState } from "@/src/context/GlobalContext.js";
@@ -57,10 +50,9 @@ import {
     TrustedContact,
     getContactWithTrustRelation,
 } from "@/src/db/models/Contacts";
-import { saveMessageToDb } from "@/src/db/models/Messages";
 import { ProfileTabBar } from "@/src/components/fragments/ProfileTabs/ProfileTabBar";
 import { ProfileHeader } from "@/src/components/fragments/ProfileTabs/ProfileHeader";
-import { MapContactToDid } from "@/src/utils/mappers/contacts";
+
 import useScrollSync from "@/src/hooks/useScrollSync";
 import { ProfileHeaderCollapsed } from "@/src/components/fragments/ProfileTabs/ProfileHeaderCollapsed";
 import { ProfileHeaderExpanded } from "@/src/components/fragments/ProfileTabs/ProfileHeaderExpanded";
@@ -108,25 +100,14 @@ const ANIMATION_DURATION = 250;
 
 const OVERLAY_VISIBILITY_OFFSET = 32;
 
-const FEATURE_FLAGS = {
-    show_pictures_and_badges: false,
-    send_media: false,
-    show_smash_or_pass: false,
-};
-
 export const ProfileScreen = () => {
     const { user, active } = useLocalSearchParams();
     const isActive = active === "true";
     const router = useRouter();
     const globalState = useGlobalState();
     const insets = useSafeAreaInsets();
-    const footerHeight = 60;
 
-    const [newMessage, setNewMessage] = useState("");
-    const [shouldShowSendIcon, setShouldShowSendIcon] = useState(true);
     const [peer, setPeer] = useState<TrustedContact>();
-
-    const inputFieldRef = useRef<TextInput>(null);
 
     useEffect(() => {
         const fetchUser = async (did_id: string) => {
@@ -159,56 +140,6 @@ export const ProfileScreen = () => {
             ScreenOrientation.unlockAsync();
         };
     }, []);
-
-    useEffect(() => {
-        setShouldShowSendIcon(newMessage.length > 0);
-    }, [newMessage]);
-
-    let peerId = `${user}`;
-
-    const handleSendMessage = async () => {
-        const dataToSend = newMessage.trim();
-        if (dataToSend.length === 0) {
-            return;
-        }
-        setNewMessage("");
-
-        const lastMessageId =
-            globalState.latestMessageIdInDiscussion[peerId] ?? "0";
-
-        const data = await globalState.selfSmashUser.sendTextMessage(
-            MapContactToDid(peer!),
-            dataToSend,
-            lastMessageId
-        );
-        const selfDid = globalState.selfDid;
-
-        saveMessageToDb(
-            {
-                ...data,
-                fromDid: selfDid.id,
-                toDiscussionId: peerId as DIDString,
-            } satisfies EnrichedSmashMessage,
-            {
-                date_read: new Date(),
-            }
-        );
-    };
-
-    const handleSendMedia = async () => {
-        if (!FEATURE_FLAGS.send_media) {
-            return;
-        }
-
-        let { canceled, assets } = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.All,
-            quality: 0.2,
-        });
-        if (canceled) {
-            return;
-        }
-        globalState.logger.info("assets", assets);
-    };
 
     //#region Collapsed header
     //#region Header
@@ -450,78 +381,20 @@ export const ProfileScreen = () => {
             bottom: heightCollapsed + TAB_BAR_HEIGHT - 3,
         };
 
+        if (!peer) {
+            return null;
+        }
+
         return (
-            <Box flex={1} backgroundColor={Colors.background}>
-                <ProfileMessages
-                    ref={messagesTabRef}
-                    onScroll={messagesScrollHandler}
-                    {...sharedProps}
-                    contentContainerStyle={contentContainerStyle}
-                    scrollIndicatorInsets={scrollIndicatorInsets}
-                />
-                <Pressable onPress={() => inputFieldRef.current?.focus()}>
-                    <Box
-                        backgroundColor={Colors.background}
-                        h={footerHeight + insets.bottom + 900}
-                        bottom={-insets.bottom + 30}
-                        width={"102%"}
-                        marginBottom={-900}
-                        left={"-1%"}
-                        position="relative"
-                        borderColor={Colors.darkGray}
-                        borderBottomWidth={0}
-                        borderWidth={3}
-                        borderRadius={20}
-                    >
-                        <TextInput
-                            ref={inputFieldRef}
-                            placeholder="Share something..."
-                            placeholderTextColor={Colors.textGray}
-                            value={newMessage}
-                            onChangeText={setNewMessage}
-                            style={{
-                                color: "white",
-                                padding: 15,
-                                marginRight: 60,
-                            }}
-                            onFocus={() => collapse({ animate: true })}
-                        />
-
-                        <Pressable
-                            style={{
-                                position: "absolute",
-                                right: 0,
-                                top: 0,
-                                padding: 20,
-                            }}
-                            onPress={handleSendMessage}
-                        >
-                            <Feather
-                                name="chevron-right"
-                                size={24}
-                                color={
-                                    shouldShowSendIcon
-                                        ? Colors.textWhite
-                                        : Colors.darkGray
-                                }
-                            />
-                        </Pressable>
-
-                        {!shouldShowSendIcon && FEATURE_FLAGS.send_media && (
-                            <Pressable
-                                style={styles.floatingActionButton}
-                                onPress={handleSendMedia}
-                            >
-                                <Feather
-                                    name="paperclip"
-                                    size={28}
-                                    color="white"
-                                />
-                            </Pressable>
-                        )}
-                    </Box>
-                </Pressable>
-            </Box>
+            <ProfileMessages
+                ref={messagesTabRef}
+                onScroll={messagesScrollHandler}
+                onCollapse={collapse}
+                {...sharedProps}
+                contentContainerStyle={contentContainerStyle}
+                scrollIndicatorInsets={scrollIndicatorInsets}
+                peer={peer}
+            />
         );
     }, [messagesTabRef, messagesScrollHandler, sharedProps]);
 
@@ -608,22 +481,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Colors.background,
-    },
-    floatingActionButton: {
-        width: 50,
-        height: 50,
-        position: "absolute",
-        right: 0,
-        bottom: 0,
-        top: "50%",
-        backgroundColor: Colors.purple,
-        borderRadius: 25,
-        marginRight: 20,
-        marginBottom: 40,
-        transform: [{ translateY: -45 }],
-        justifyContent: "center",
-        alignItems: "center",
-        zIndex: 99,
     },
     tabBarContainer: {
         top: 0,
