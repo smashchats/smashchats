@@ -16,8 +16,6 @@ import { EnrichedSmashMessage } from "@/src/types/";
 export type Message = InferSelectModel<typeof messages>;
 export type MessageInsert = InferInsertModel<typeof messages>;
 
-
-
 export const saveMessageToDb = async (
     message: EnrichedSmashMessage,
     extraFields?: Partial<MessageInsert>

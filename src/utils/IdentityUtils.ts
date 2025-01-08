@@ -16,6 +16,7 @@ import {
     IMProtoMessage,
     IMProfileMessage,
     DIDDocument,
+    MessagingEventMap,
 } from "@smashchats/library";
 
 import { IDENTITY_KEY, PROFILE_KEY, getData, getRawData, saveRawData } from "@/src/utils/StorageUtils.js";
@@ -88,7 +89,7 @@ export const loadIdentity = async (
 //#region message listeners
 const IGNORED_MESSAGE_TYPES = [IM_SESSION_RESET];
 
-export const messageListener = (logger: Logger) => async (
+export const firehoseListener = (logger: Logger) => async (
     _senderDid: DIDString,
     message: IMProtoMessage
 ) => {
@@ -137,28 +138,32 @@ export const newProfilesMessagesListener = (selfDid: DIDDocument) => async (_sen
     }
 }
 
+type EventType = (`${string}.${string}.${string}` | keyof MessagingEventMap)
+
 export const handleUserMessages = async (
     user: SmashUser,
     logger: Logger
 ) => {
     const selfDid = await user.getDIDDocument();
 
-    const listeners = {
+    const listeners: Partial<Record<EventType, (...args: any[]) => Promise<void>>> = {
         [SMASH_PROFILE_LIST]: newProfilesMessagesListener(selfDid),
         [IM_CHAT_TEXT]: textMessagesListener(logger),
         [IM_PROFILE]: profileMessagesListener(logger),
-        "data": messageListener(logger)
+        "data": firehoseListener(logger)
     }
-    user.on(SMASH_PROFILE_LIST, listeners[SMASH_PROFILE_LIST]);
-    user.on(IM_CHAT_TEXT, listeners[IM_CHAT_TEXT]);
-    user.on(IM_PROFILE, listeners[IM_PROFILE]);
-    user.on("data", listeners["data"]);
+    const unsubscribes: (() => void)[] = []
+
+    Object.entries(listeners).forEach(([key, value]) => {
+        const type = key as EventType
+        if (value) {
+            user.on(type, value);
+            unsubscribes.push(() => user.removeListener(type, value));
+        }
+    })
 
     return () => {
-        user.removeListener("data", listeners["data"]);
-        user.removeListener(IM_CHAT_TEXT, listeners[IM_CHAT_TEXT]);
-        user.removeListener(IM_PROFILE, listeners[IM_PROFILE]);
-        user.removeListener(SMASH_PROFILE_LIST, listeners[SMASH_PROFILE_LIST]);
+        unsubscribes.forEach(unsubscribe => unsubscribe());
     };
 };
 
