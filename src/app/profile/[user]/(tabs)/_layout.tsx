@@ -14,8 +14,6 @@ import {
     useWindowDimensions,
     FlatListProps,
     KeyboardAvoidingView,
-    NativeScrollEvent,
-    NativeSyntheticEvent,
     Keyboard,
     FlatList,
 } from "react-native";
@@ -58,6 +56,7 @@ import useScrollSync from "@/src/hooks/useScrollSync";
 import { ProfileHeaderCollapsed } from "@/src/components/fragments/ProfileTabs/ProfileHeaderCollapsed";
 import { ProfileHeaderExpanded } from "@/src/components/fragments/ProfileTabs/ProfileHeaderExpanded";
 import { useKeyboard } from "@/src/hooks/useKeyboard";
+import { scrollTo } from "@/src/utils/Utils";
 
 type ProfileIdType = {
     profileId: string;
@@ -87,11 +86,6 @@ export enum Visibility {
     Hidden = 0,
     Visible = 1,
 }
-
-const scrollTo = (y: number) =>
-    ({
-        nativeEvent: { contentOffset: { y } },
-    } as NativeSyntheticEvent<NativeScrollEvent>);
 
 const Tab = createMaterialTopTabNavigator<ProfileStackParamList>();
 
