@@ -257,7 +257,6 @@ const ProfileMessages = forwardRef<
             return;
         }
         setNewMessage("");
-        const now = new Date();
 
         const lastMessageId: sha256 | undefinedString =
             globalState.latestMessageIdInDiscussion[peerId] ?? "0";
