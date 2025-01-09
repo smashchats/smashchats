@@ -36,7 +36,7 @@ export function ChatListFilters() {
                         }
                     >
                         <Badge
-                            type={selected ? "smashed" : "unselected"}
+                            type={selected ? "selected" : "unselected"}
                             size="lg"
                             marginRight={6}
                         >
