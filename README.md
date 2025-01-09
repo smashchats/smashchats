@@ -176,3 +176,9 @@ https://docs.expo.dev/guides/local-app-production/
 ```bash
 adb -d logcat --pid=`adb -d shell pidof -s com.unstaticlabs.smashchats`
 ```
+
+Run this to check which installed packages need to be updated
+
+```bash
+npx expo install --check
+```

@@ -6,7 +6,7 @@ import { Image } from "expo-image";
 import { Colors } from "@/src/constants/Colors.js";
 import { Box } from "@/src/components/design-system/Box.jsx";
 import Animated from "react-native-reanimated";
-import { SCREEN_HEIGHT } from "@gorhom/bottom-sheet";
+import { SCREEN_HEIGHT } from "@/src/components/fragments/Camera/Constants";
 
 export const ProfilePictures = forwardRef<Animated.ScrollView, ScrollViewProps>(
     (props, ref) => {
