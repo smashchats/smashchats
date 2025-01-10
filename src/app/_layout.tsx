@@ -24,13 +24,13 @@ import { useColorScheme } from "@/src/hooks/useColorScheme.js";
 
 import { drizzle_db, expo_db } from "@/src/db/database";
 import LoaderScreen from "@/src/app/loader";
-import { ThemedText } from "@/src/components/ThemedText";
+import { ThemedText } from "@/src/ui/components/ThemedText";
 import { Colors } from "@/src/constants/Colors";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
+function RootLayout() {
     const colorScheme = useColorScheme();
     const [fontsLoaded] = useFonts({
         SpaceMono: require("@/assets/fonts/SpaceMono-Regular.ttf"),
@@ -98,3 +98,12 @@ export default function RootLayout() {
         </GestureHandlerRootView>
     );
 }
+
+let AppEntryPoint = RootLayout;
+
+if (process.env.EXPO_PUBLIC_STORYBOOK_ENABLED === "true") {
+    SplashScreen.hideAsync();
+    AppEntryPoint = require("@/.storybook").default;
+}
+
+export default AppEntryPoint;

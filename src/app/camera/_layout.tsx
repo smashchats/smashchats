@@ -7,12 +7,12 @@ import {
     Text,
     View,
 } from "react-native";
+
 import {
     Gesture,
     GestureDetector,
     TapGestureHandler,
 } from "react-native-gesture-handler";
-
 import {
     CameraProps,
     CameraRuntimeError,
@@ -25,7 +25,8 @@ import {
     useMicrophonePermission,
     useCameraDevices,
 } from "react-native-vision-camera";
-
+import StaticSafeAreaInsets from "react-native-static-safe-area-insets";
+import { initialWindowMetrics } from "react-native-safe-area-context";
 import Reanimated, {
     Extrapolation,
     interpolate,
@@ -43,12 +44,10 @@ import {
     SAFE_AREA_PADDING,
     SCREEN_HEIGHT,
     SCREEN_WIDTH,
-} from "@/src/components/fragments/Camera/Constants";
-import { useIsForeground } from "@/src/components/fragments/Camera/hooks/useIsForeground";
-import { StatusBarBlurBackground } from "@/src/components/fragments/Camera/views/StatusBarBlurBackground";
-import { CaptureButton } from "@/src/components/fragments/Camera/views/CaptureButton";
-import StaticSafeAreaInsets from "react-native-static-safe-area-insets";
-import { initialWindowMetrics } from "react-native-safe-area-context";
+} from "@/src/ui/fragments/Camera/Constants";
+import { useIsForeground } from "@/src/ui/fragments/Camera/hooks";
+import { CaptureButton, StatusBarBlurBackground } from "@/src/ui/fragments/Camera/views";
+
 
 const ReanimatedCamera = Reanimated.createAnimatedComponent(Camera);
 Reanimated.addWhitelistedNativeProps({

@@ -1,6 +1,7 @@
 const path = require("path");
 const fs = require("fs");
 const { getDefaultConfig } = require("expo/metro-config");
+const withStorybook = require("@storybook/react-native/metro/withStorybook");
 
 const config = getDefaultConfig(__dirname);
 config.resolver.resolveRequest = (context, moduleName, platform) => {
@@ -32,4 +33,8 @@ config.resolver.extraNodeModules = {
 };
 config.resolver.sourceExts.push("sql");
 
-module.exports = config;
+module.exports = withStorybook(config, {
+    enabled: true,
+    configPath: path.resolve(__dirname, "./.storybook"),
+    useJs: true,
+});

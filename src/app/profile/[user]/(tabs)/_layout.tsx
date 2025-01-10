@@ -49,12 +49,13 @@ import {
     TrustedContact,
     getContactWithTrustRelation,
 } from "@/src/db/models/Contacts";
-import { ProfileTabBar } from "@/src/components/fragments/ProfileTabs/ProfileTabBar";
-import { ProfileHeader } from "@/src/components/fragments/ProfileTabs/ProfileHeader";
-
+import {
+    ProfileHeader,
+    ProfileHeaderCollapsed,
+    ProfileHeaderExpanded,
+    ProfileTabBar,
+} from "@/src/ui/fragments/ProfileTabs";
 import useScrollSync from "@/src/hooks/useScrollSync";
-import { ProfileHeaderCollapsed } from "@/src/components/fragments/ProfileTabs/ProfileHeaderCollapsed";
-import { ProfileHeaderExpanded } from "@/src/components/fragments/ProfileTabs/ProfileHeaderExpanded";
 import { useKeyboard } from "@/src/hooks/useKeyboard";
 import { scrollTo } from "@/src/utils/Utils";
 

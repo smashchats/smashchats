@@ -1,0 +1,35 @@
+import React from "react";
+
+import { Colors } from "@/src/constants/Colors.js";
+import { Box } from "@/src/ui/design-system/layout";
+import { Text } from "@/src/ui/design-system/Text";
+import { DisplayableMessage } from "@/src/types/";
+
+type Props = {
+    message: DisplayableMessage;
+};
+
+export function ProfileMessagesScreenText({
+    message,
+}: Readonly<Props>): JSX.Element {
+    const backgroundColor = message.fromMe ? Colors.purple : Colors.darkGray;
+    const alignSelf = message.fromMe ? "flex-end" : "flex-start";
+
+    return (
+        <Box
+            backgroundColor={backgroundColor}
+            alignItems={"flex-start"}
+            borderRadius={10}
+            maxWidth={"80%"}
+            alignSelf={alignSelf}
+            paddingVertical={10}
+            paddingHorizontal={14}
+            marginBottom={10}
+            marginHorizontal={10}
+        >
+            <Text color="white">{message.content}</Text>
+        </Box>
+    );
+}
+
+export default ProfileMessagesScreenText;

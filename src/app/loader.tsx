@@ -14,7 +14,7 @@ import {
     useGlobalState,
 } from "@/src/context/GlobalContext";
 import { PROFILE_KEY, getData } from "@/src/utils/StorageUtils";
-import { ThemedText } from "@/src/components/ThemedText";
+import { ThemedText } from "@/src/ui/components/ThemedText";
 import { dev_nab_join_action, didId } from "@/data/dev";
 import { createTrustRelation } from "@/src/db/models/TrustRelation";
 import { saveContactToDb } from "@/src/db/models/Contacts";

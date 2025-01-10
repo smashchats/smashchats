@@ -51,10 +51,10 @@ import {
     markAllMessagesInDiscussionAsRead,
     saveMessageToDb,
 } from "@/src/db/models/Messages";
-import { RenderMessageListItem } from "@/src/components/fragments/MessagesList";
+import { RenderMessageListItem } from "@/src/ui/fragments/MessagesList";
 import { Colors } from "@/src/constants/Colors";
 import { DisplayableMessage, EnrichedSmashMessage } from "@/src/types/";
-import { Box } from "@/src/components/design-system/Box";
+import { Box } from "@/src/ui/design-system/layout";
 import { MapContactToDid } from "@/src/utils/mappers/contacts";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TrustedContact } from "@/src/db/models/Contacts";

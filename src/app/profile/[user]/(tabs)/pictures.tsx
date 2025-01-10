@@ -4,9 +4,9 @@ import { ScrollViewProps, TouchableOpacity, StyleSheet } from "react-native";
 import { Image } from "expo-image";
 
 import { Colors } from "@/src/constants/Colors.js";
-import { Box } from "@/src/components/design-system/Box.jsx";
+import { Box } from "@/src/ui/design-system/layout";
 import Animated from "react-native-reanimated";
-import { SCREEN_HEIGHT } from "@/src/components/fragments/Camera/Constants";
+import { SCREEN_HEIGHT } from "@/src/ui/fragments/Camera/Constants";
 
 export const ProfilePictures = forwardRef<Animated.ScrollView, ScrollViewProps>(
     (props, ref) => {

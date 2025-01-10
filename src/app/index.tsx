@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
@@ -16,16 +16,19 @@ import {
 } from "@smashchats/library";
 
 import { Colors } from "@/src/constants/Colors.js";
-import { ChatList } from "@/src/components/fragments/ChatList/ChatList.jsx";
-import { FloatingActionButton } from "@/src/components/design-system/FloatingActionButton.jsx";
+import { ChatList } from "@/src/ui/fragments/ChatList";
+import { FloatingActionButton } from "@/src/ui/design-system/FloatingActionButton";
 import {
     useGlobalDispatch,
     useGlobalState,
 } from "@/src/context/GlobalContext.js";
+import { ChatListView } from "@/src/types/ChatListScreen.types";
+import { useLiveTablesQuery } from "@/src/hooks/useLiveQuery";
+import { chatListView } from "@/src/db/queries/ChatListView";
 
 export function Home() {
     const dispatch = useGlobalDispatch();
-    const globalState = useGlobalState();
+    const { logger, selfSmashUser } = useGlobalState();
     const router = useRouter();
     const {
         hasPermission: hasCameraPermission,
@@ -35,8 +38,9 @@ export function Home() {
         hasPermission: hasMicrophonePermission,
         requestPermission: requestMicrophonePermission,
     } = useMicrophonePermission();
+    const [chats, setChats] = useState<ChatListView[]>([]);
 
-    const user = globalState.selfSmashUser;
+    const user = selfSmashUser;
     useEffect(() => {
         if (user) {
             const listener = async (
@@ -58,6 +62,26 @@ export function Home() {
             };
         }
     }, [user]);
+
+    const { data: chat_list_data } = useLiveTablesQuery(chatListView, [
+        "messages",
+        "contacts",
+        "trust_relations",
+    ]);
+
+    useEffect(() => {
+        setChats(
+            chat_list_data.map((d) => ({
+                ...d,
+                most_recent_message: d.most_recent_message ?? "",
+                most_recent_message_type: d.most_recent_message_type ?? "empty",
+                most_recent_message_date: d.most_recent_message_date
+                    ? d.most_recent_message_date * 1000
+                    : d.created_at.getTime(),
+                trusted_name: d.trusted_name ?? undefined,
+            }))
+        );
+    }, [chat_list_data]);
 
     async function handleFABCameraPress(): Promise<void> {
         try {
@@ -101,7 +125,7 @@ export function Home() {
 
             return router.push("/camera");
         } catch (error) {
-            globalState.logger.error(error as string);
+            logger.error(error as string);
         }
     }
 
@@ -109,7 +133,7 @@ export function Home() {
         <SafeAreaView
             style={{ backgroundColor: Colors.background, minHeight: "100%" }}
         >
-            <ChatList />
+            <ChatList chats={chats} />
             {__DEV__ && (
                 <FloatingActionButton
                     icon="camera"

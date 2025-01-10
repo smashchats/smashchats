@@ -3,8 +3,8 @@ import { StyleSheet, ScrollViewProps } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 
 import { Colors } from "@/src/constants/Colors.js";
-import { Box } from "@/src/components/design-system/Box.jsx";
-import { Text } from "@/src/components/design-system/Text.jsx";
+import { Box } from "@/src/ui/design-system/layout";
+import { Text } from "@/src/ui/design-system/Text";
 import Animated from "react-native-reanimated";
 
 export const ProfileBadges = forwardRef<Animated.ScrollView, ScrollViewProps>(

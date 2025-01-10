@@ -10,9 +10,9 @@ import {
     useGlobalDispatch,
     useGlobalState,
 } from "@/src/context/GlobalContext";
-import { ThemedText } from "@/src/components/ThemedText";
+import { ThemedText } from "@/src/ui/components/ThemedText";
 import { Colors } from "@/src/constants/Colors";
-import { Avatar } from "@/src/components/Avatar";
+import { Avatar } from "@/src/ui/components/Avatar";
 import { TrustedContact } from "@/src/db/models/Contacts";
 import { PickImage } from "@/src/utils/ImageUtils";
 import { useThemeColor } from "@/src/hooks/useThemeColor";

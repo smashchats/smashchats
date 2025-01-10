@@ -4,6 +4,7 @@ module.exports = {
     collectCoverage: true,
     collectCoverageFrom: [
         "**/*.{ts,tsx,js,jsx}",
+        "!**/*.stories.{js,jsx,ts,tsx}",
         "!**/coverage/**",
         "!**/android/**",
         "!**/ios/**",
@@ -11,13 +12,15 @@ module.exports = {
         "!**/babel.config.js",
         "!**/expo-env.d.ts",
         "!**/.expo/**",
+        "!**/.storybook/**",
+        "!**/__mocks__/**",
     ],
     preset: "jest-expo",
     transform: {
         "^.+\\.(js|jsx|ts|tsx)$": "babel-jest"
     },
     transformIgnorePatterns: [
-        "node_modules/(?!(jest-)?react-native|expo|@expo|@react-native|@smashchats/library)"
+        "node_modules/(?!(jest-)?react-native|expo|@react-navigation|@expo|@react-native|@smashchats/library)"
     ],
     coverageDirectory: "./coverage",
     testPathIgnorePatterns: ["node_modules"],

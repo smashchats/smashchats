@@ -1,0 +1,1 @@
+export { SmashOrPass } from "./SmashOrPass";

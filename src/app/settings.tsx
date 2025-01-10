@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { Button, View, TextInput, Switch } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { ThemedText } from "@/src/components/ThemedText";
-import { Avatar } from "@/src/components/Avatar";
+import { ThemedText } from "@/src/ui/components/ThemedText";
+import { Avatar } from "@/src/ui/components/Avatar";
 import { TrustedContact } from "@/src/db/models/Contacts";
 import { useGlobalState, useGlobalDispatch } from "@/src/context/GlobalContext";
 import { Colors } from "@/src/constants/Colors";
@@ -79,7 +79,10 @@ export default function ProfileLayout() {
                         variant="xlarge"
                     />
                     <View style={{ marginTop: 15 }}>
-                        <Button title="Change image" onPress={pickAndSetImage} />
+                        <Button
+                            title="Change image"
+                            onPress={pickAndSetImage}
+                        />
                     </View>
                 </View>
                 <View style={{ marginTop: 20, width: "100%" }}>
