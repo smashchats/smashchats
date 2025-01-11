@@ -99,11 +99,12 @@ function RootLayout() {
     );
 }
 
-let AppEntryPoint = RootLayout;
+const show_storybook = process.env.EXPO_PUBLIC_STORYBOOK_ENABLED === "true";
 
-if (process.env.EXPO_PUBLIC_STORYBOOK_ENABLED === "true") {
+if (show_storybook) {
     SplashScreen.hideAsync();
-    AppEntryPoint = require("@/.storybook").default;
 }
+
+const AppEntryPoint = show_storybook ? require("@/.storybook").default : RootLayout;
 
 export default AppEntryPoint;
