@@ -17,9 +17,10 @@ import {
     IMProfileMessage,
     DIDDocument,
     MessagingEventMap,
+    IIMPeerIdentity,
 } from "@smashchats/library";
 
-import { IDENTITY_KEY, PROFILE_KEY, getData, getRawData, saveRawData } from "@/src/utils/StorageUtils.js";
+import { IDENTITY_KEY, PROFILE_KEY, getData, saveObject } from "@/src/utils/StorageUtils.js";
 import { saveMessageToDb } from "@/src/db/models/Messages";
 import {
     getContactsFromDb,
@@ -31,7 +32,7 @@ import { MapContactToDid, SmashProfileToContactMapper } from "@/src/utils/mapper
 
 const getOrCreateIdentity = async (didDocumentManager: DIDDocManager, logger: Logger): Promise<IMPeerIdentity> => {
     let newIdentity: IMPeerIdentity;
-    let savedIdentity = await getRawData(IDENTITY_KEY);
+    let savedIdentity = await getData<IIMPeerIdentity>(IDENTITY_KEY);
 
     if (!savedIdentity) {
         logger.info("creating new identity");
@@ -42,7 +43,7 @@ const getOrCreateIdentity = async (didDocumentManager: DIDDocManager, logger: Lo
             throw error;
         }
         const newExportedIdentity = await newIdentity.serialize();
-        saveRawData(IDENTITY_KEY, newExportedIdentity);
+        saveObject(IDENTITY_KEY, newExportedIdentity);
     } else {
         logger.info("loading existing identity");
         newIdentity = await SmashMessaging.importIdentity(savedIdentity);
@@ -132,7 +133,12 @@ export const textMessagesListener = (logger: Logger) => async (senderDid: DIDStr
 }
 
 export const newProfilesMessagesListener = (selfDid: DIDDocument) => async (_sender: DIDString, { data: profiles }: SmashChatProfileListMessage) => {
-    for await (const profile of profiles.filter((p) => p.did.id !== selfDid.id)) {
+    for await (const profile of profiles.filter((p) => {
+        if (typeof p.did === "string") {
+            return p.did !== selfDid.id
+        }
+        return p.did.id !== selfDid.id
+    })) {
         const contact = SmashProfileToContactMapper(profile);
         await saveContactToDb(contact);
     }

@@ -29,7 +29,7 @@ export default function LoaderScreen() {
         try {
             await Promise.all([
                 createTrustRelation(didId),
-                user.join(dev_nab_join_action), // TODO use new join format (if any)
+                user.join(dev_nab_join_action),
                 saveContactToDb(
                     MapDidToContact(dev_nab_join_action.did as DIDDocument)
                 ),

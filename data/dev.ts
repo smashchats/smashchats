@@ -1,20 +1,19 @@
-import { DIDDocument, SMASH_NBH_JOIN, SmashActionJson, DIDString } from "@smashchats/library";
+import { DIDDocument, SMASH_NBH_JOIN, SmashActionJson } from "@smashchats/library";
 
 // sme.dev.smashchats.com
 
 export const dev_nab_join_action: SmashActionJson = {
     action: SMASH_NBH_JOIN,
     did: {
-        // @ts-expect-error
-        id: "ZIsYX5VG4YYsRoZHXjqgP6qxiuJPA+2VHDsyaelBgsY=",
-        ik: "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE+xdYcQA4u/V9XNVtcJYRIS81sFmuDFjmJY3wI+Cek6tDwAB3s+SaI+Dt7BYYI0t/5Q/DpyyE3mU/jh+8exXePw==",
-        ek: "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEI2H2O9WR3mFvKKyARRx022LI7XpgjId/xh+YZOq59kQstZMdXQ6BiIMcRgs5ZmPERaB56LBOn4BVOGmDEt1AzA==",
-        signature: "Y5An8lEcc6dgZRD9u4ucFS0jaQ7RuhGQ1OhcRn6idxX5kLyLpp6CtMAvtDwtn1SpCKxD8Ue1qlzuLUMlBaahjw==",
+        id: "did:doc:4f564575546bda55c8ce9004d82cfa3b2258c81d9114c5910662a8a3d9918673",
+        ik: "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEkJe/dNZh48NYacBBKkCAdySIZ6NIhpRw+cSakysNozr8Ze8SZMqLCgLYksZlbO2ClzKANlgBSWlM2nj1o7kBUw==",
+        ek: "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEozJwLAXtOj8pBldKzVx3lCgPEHkb6a/Q5hDwy3s832PiomBUGRmJwaTjcIKNau9Sbf3eZ1XPiE6HI33FzK2bHA==",
+        signature: "ZvTG9wRzaPydtuLi/GSl/kHmVQA5RC/EDeMEkMngRVWVmpqeE7PSI32ANNjxLUALHRhOiHI1rcymAnTvPqULsg==",
         endpoints: [
             {
                 url: "wss://sme.dev.smashchats.com/",
-                preKey: "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAERLj1hG01chiLksY1iTygZsKXJgr9Ih/V8eiWAWww7RK5sSC7PMRykkoIZ3K6EBPebLSLlXe6HMNNlGdkqvn2Vw==",
-                signature: "DQO+FqS3bDYVKO4KBhIXhAp6e3cXuvUKzLIvvNYi9++P9YiJmmfqqg5CvZcqOqiBnsRnFU9DzEXTMrAdSqkcFQ=="
+                preKey: "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOs/pLYvdqO1gmHUMMXK6iujynHOZEPZWc94O8QPDddnTAACIKduZGc8JfxUx/ZDq8tlaMHV8l9c2VvSr3C+jMg==",
+                signature: "L56lvk91VxmS6LXXfwQZqqMUdmReiLIrBJgCetRnsVBxtql7zguDYACHUUcccdQmPOG9YBice9gbvaQB+oeRZA=="
             },
         ],
     },
@@ -27,7 +26,7 @@ export const dev_nab_join_action: SmashActionJson = {
                 keyAlgorithm: {
                     name: "ECDH",
                     namedCurve: "P-256",
-                } as KeyAlgorithm,
+                },
                 encryptionAlgorithm: {
                     name: "AES-GCM",
                     length: 256,
@@ -37,4 +36,4 @@ export const dev_nab_join_action: SmashActionJson = {
     }
 }
 
-export const didId = (dev_nab_join_action.did as DIDDocument).id as DIDString;
+export const didId = (dev_nab_join_action.did as DIDDocument).id;

@@ -5,12 +5,22 @@ import { addPrefixToObjectKeys } from "@/src/utils/Utils";
 import { PartialWithId } from "@/src/types/";
 
 export const SmashProfileToContactMapper = (profile: SmashProfileList[0]) => {
+    const did: Partial<DIDDocument> = {};
+    if (typeof profile.did === "string") {
+        did.id = profile.did;
+    } else {
+        did.id = profile.did.id;
+        did.ik = profile.did.ik;
+        did.ek = profile.did.ek;
+        did.signature = profile.did.signature;
+        did.endpoints = profile.did.endpoints ?? [];
+    }
     return {
-        did_id: profile.did.id,
-        did_ik: profile.did.ik,
-        did_ek: profile.did.ek,
-        did_signature: profile.did.signature,
-        did_endpoints: profile.did.endpoints ?? [],
+        did_id: did.id,
+        did_ik: did.ik,
+        did_ek: did.ek,
+        did_signature: did.signature,
+        did_endpoints: did.endpoints ?? [],
         meta_title: profile.meta?.title,
         meta_description: profile.meta?.description,
         meta_avatar: profile.meta?.avatar,

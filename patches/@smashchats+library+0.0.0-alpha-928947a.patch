@@ -1,0 +1,35 @@
+diff --git a/node_modules/@smashchats/library/dist/src/api/tools/solveChallenge.js b/node_modules/@smashchats/library/dist/src/api/tools/solveChallenge.js
+index 0a1ce42..9d728b0 100644
+--- a/node_modules/@smashchats/library/dist/src/api/tools/solveChallenge.js
++++ b/node_modules/@smashchats/library/dist/src/api/tools/solveChallenge.js
+@@ -8,7 +8,7 @@ export const solveChallenge = async (data, auth) => {
+     const symmetricKey = await CryptoUtils.deriveKey({
+         ...auth.keyAlgorithm,
+         public: smePublicKey,
+-    }, auth.preKeyPair.privateKey, auth.encryptionAlgorithm, false, ['encrypt', 'decrypt']);
++    }, auth.preKeyPair.privateKey, auth.encryptionAlgorithm, true, ['encrypt', 'decrypt']);
+     const unencryptedChallenge = await CryptoUtils.decrypt({
+         ...auth.encryptionAlgorithm,
+         iv: new Uint8Array(ivBuffer),
+diff --git a/node_modules/@smashchats/library/dist/src/core/messaging/session/SignalSession.js b/node_modules/@smashchats/library/dist/src/core/messaging/session/SignalSession.js
+index c603536..8dc8daa 100644
+--- a/node_modules/@smashchats/library/dist/src/core/messaging/session/SignalSession.js
++++ b/node_modules/@smashchats/library/dist/src/core/messaging/session/SignalSession.js
+@@ -27,7 +27,7 @@ export class SignalSession {
+         try {
+             const bundle = await SignalSession.createPreKeyBundle(peerDidDocument, sme);
+             const protocol = await PreKeyBundleProtocol.importProto(bundle);
+-            const cipher = await AsymmetricRatchet.create(identity, protocol);
++            const cipher = await AsymmetricRatchet.create(identity, protocol, { exportableKeys: true });
+             const sessionId = await SignalSession.generateSessionId(cipher);
+             const session = new SignalSession(sessionId, cipher, peerDidDocument.ik, logger);
+             logger.debug(`>> session created with id ${sessionId}`);
+@@ -59,7 +59,7 @@ export class SignalSession {
+         try {
+             const preKeyMessage = await PreKeyMessageProtocol.importProto(data);
+             await SignalSession.validateSessionId(sessionId, preKeyMessage);
+-            const cipher = await AsymmetricRatchet.create(identity, preKeyMessage);
++            const cipher = await AsymmetricRatchet.create(identity, preKeyMessage, { exportableKeys: true });
+             const peerIk = await KeyUtils.encodeKeyAsString(preKeyMessage.identity.signingKey.key);
+             const session = new SignalSession(sessionId, cipher, peerIk, logger);
+             const messages = await session.decryptMessages(preKeyMessage.signedMessage);
