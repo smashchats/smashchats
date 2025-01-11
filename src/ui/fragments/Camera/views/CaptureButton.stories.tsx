@@ -1,11 +1,11 @@
 import { useSharedValue } from "react-native-reanimated";
-import { CaptureButton } from "./CaptureButton";
+import { CaptureButton as CaptureBtn, Props } from "./CaptureButton";
 import { useRef } from "react";
 import { Camera } from "react-native-vision-camera";
 
 const meta = {
     title: "Components/Camera/CaptureButton",
-    component: CaptureButton,
+    component: CaptureBtn,
     parameters: {
         layout: "centered",
     },
@@ -24,36 +24,21 @@ const meta = {
 
 export default meta;
 
-export const Default = {
-    render: (args: any) => {
-        const s = useSharedValue(0);
-        const camera = useRef<Camera>({
-            stopRecording: () => Promise.resolve(),
-            startRecording: () => Promise.resolve(),
-            takePhoto: () => Promise.resolve(),
-        } as unknown as Camera);
-        return <CaptureButton camera={camera} cameraZoom={s} {...args} />;
-    },
+const CameraWrapper: React.FC<Props> = (args) => {
+    const camera = useRef<Camera>({
+        stopRecording: () => Promise.resolve(),
+        startRecording: () => Promise.resolve(),
+        takePhoto: () => Promise.resolve(),
+    } as unknown as Camera);
+    const s = useSharedValue(0);
+    return <CaptureBtn {...args} camera={camera} cameraZoom={s} />;
+};
+
+export const CaptureButton = {
+    render: (args: any) => <CameraWrapper {...args} />,
     args: {
         onMediaCaptured: () => console.log("Media captured"),
         setIsPressingButton: () => console.log("Is pressing button"),
         enabled: true,
-    },
-};
-
-export const Disabled = {
-    args: {
-        enabled: false,
-        onMediaCaptured: () => console.log("Media captured"),
-        setIsPressingButton: () => console.log("Is pressing button"),
-    },
-    render: (args: any) => {
-        const s = useSharedValue(0);
-        const camera = useRef<Camera>({
-            stopRecording: () => Promise.resolve(),
-            startRecording: () => Promise.resolve(),
-            takePhoto: () => Promise.resolve(),
-        } as unknown as Camera);
-        return <CaptureButton camera={camera} cameraZoom={s} {...args} />;
     },
 };

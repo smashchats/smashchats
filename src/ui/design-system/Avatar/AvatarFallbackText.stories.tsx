@@ -1,10 +1,10 @@
 import { Colors } from "@/src/constants/Colors";
 import { AvatarWrapper } from "./AvatarWrapper";
-import { AvatarFallbackText as AFT } from "./AvatarFallbackText";
+import { AvatarFallbackText as FallbackText } from "./AvatarFallbackText";
 
 const meta = {
     title: "Design System/Avatar",
-    component: AFT,
+    component: FallbackText,
     subcomponents: [AvatarWrapper],
     argTypes: {
         name: {
@@ -21,7 +21,7 @@ export const AvatarFallbackText = {
     },
     render: (args: any) => (
         <AvatarWrapper bgColor={Colors.purple} size={100}>
-            <AFT {...args}></AFT>
+            <FallbackText {...args}></FallbackText>
         </AvatarWrapper>
     ),
 };

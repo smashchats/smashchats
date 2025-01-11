@@ -32,7 +32,7 @@ import {
 const START_RECORDING_DELAY = 200;
 const BORDER_WIDTH = CAPTURE_BUTTON_SIZE * 0.1;
 
-interface Props extends ViewProps {
+export interface Props extends ViewProps {
     camera: React.RefObject<Camera>;
     onMediaCaptured: (
         media: PhotoFile | VideoFile,
