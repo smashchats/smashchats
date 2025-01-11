@@ -48,7 +48,7 @@ export function dateToShowableString(date: Date): string {
     });
 }
 
-function getExcerpt(rawMessage: string, messageType: string): string {
+export function getExcerpt(rawMessage: string, messageType: string): string {
     if (messageType === IM_CHAT_TEXT) {
         return rawMessage.split(" ").slice(0, 10).join(" ");
     } else if (messageType === "empty") {
