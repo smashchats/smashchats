@@ -15,7 +15,7 @@ interface Props {
     chats: ChatListView[];
 }
 
-export function ChatList({ chats }: Props) {
+export function ChatList({ chats }: Readonly<Props>) {
     const {
         chatList: { selectedFilters },
     } = useGlobalState();

@@ -1,7 +1,6 @@
 import { DIDDocument } from "@smashchats/library";
 import { DNSoverHttpsResponse } from "@/src/types/";
-import { NativeSyntheticEvent } from "react-native";
-import { NativeScrollEvent } from "react-native";
+import { NativeScrollEvent, NativeSyntheticEvent } from "react-native";
 
 const DOH_SERVERS = ["https://dns.google/resolve"];
 const SERVER = DOH_SERVERS[0];

@@ -1,8 +1,7 @@
 import React from "react";
 import { Pressable } from "react-native";
 import { Box } from "@/src/ui/design-system/layout";
-import { Badge } from "@/src/ui/design-system/Badge";
-import { BadgeText } from "@/src/ui/design-system/Badge";
+import { Badge, BadgeText } from "@/src/ui/design-system/Badge";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {
     useGlobalDispatch,
