@@ -68,7 +68,7 @@ export const addSystemMessages = (db_messages: Message[], selfDidString: DIDStri
 export const appendMessageToDisplayableMessages = (db_message: Message, displayedMessages: DisplayableMessage[], selfDidString: DIDString): DisplayableMessage[] => {
     const latestMessage = displayedMessages[0];
 
-    if (!isSameDay(latestMessage.date, db_message.date_delivered ?? db_message.created_at)) {
+    if (!latestMessage || !isSameDay(latestMessage.date, db_message.date_delivered ?? db_message.created_at)) {
         return [
             mapMessageToDisplayableMessage(db_message, selfDidString),
             generateSystemDateMessage(db_message.date_delivered ?? db_message.created_at),

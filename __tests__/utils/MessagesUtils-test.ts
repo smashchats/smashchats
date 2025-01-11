@@ -139,6 +139,15 @@ describe("MessagesUtils", () => {
             expect(result[0].type).toBe("chat-text 12");
         })
 
+        it("appends a date and message at the beginning of the list of messages", () => {
+            const message = { type: "chat-text 15", date_delivered: new Date("2024-01-01T10:00:00.000Z") } as Message;
+
+            const result = appendMessageToDisplayableMessages(message, [], "did:smash:test" as DIDString);
+            expect(result.length).toBe(2);
+            expect(result[1].type).toBe("system-date");
+            expect(result[0].type).toBe("chat-text 15");
+        })
+
         it("appends several same-day old messages at the beginning of the list of messages", () => {
             const message3 = { type: "chat-text 15", date_delivered: new Date("2024-01-01T12:00:00.000Z"), date_read: new Date("2024-01-01T12:00:00.000Z") } as Message;
             const message4 = { type: "chat-text 16", date_delivered: new Date("2024-01-01T13:00:00.000Z"), date_read: new Date("2024-01-01T13:00:00.000Z") } as Message;

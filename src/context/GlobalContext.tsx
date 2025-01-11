@@ -127,6 +127,10 @@ export const rootReducer = (
     state: GlobalParams,
     action: Action
 ): GlobalParams => {
+    state.logger.info("dispatched", action.type);
+    state.logger.debug("action", action);
+    state.logger.debug("state", state);
+    
     return {
         ...state,
         chatList: chatListReducer(state.chatList, action),
