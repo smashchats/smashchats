@@ -10,7 +10,6 @@ import { Colors } from "@/src/constants/Colors.js";
 import { Box, HStack } from "@/src/ui/design-system/layout";
 import { NEIGHBOURHOOD_DOMAIN } from "@/data/neighbourhood.js";
 import { useGlobalState } from "@/src/context/GlobalContext";
-import { ThemedText } from "@/src/ui/components/ThemedText";
 
 export function ChatListHeader(): JSX.Element {
     const globalState = useGlobalState();

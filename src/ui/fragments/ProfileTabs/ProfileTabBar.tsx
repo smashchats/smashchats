@@ -1,13 +1,18 @@
 import React, { useEffect } from "react";
-import { Dimensions, TouchableOpacity } from "react-native";
+import { Dimensions, TouchableOpacity, StyleSheet } from "react-native";
 
 import { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
+import Animated, {
+    useAnimatedStyle,
+    withTiming,
+    useSharedValue,
+    interpolate,
+    Extrapolation,
+} from "react-native-reanimated";
 
 import { Box, HStack } from "@/src/ui/design-system/layout";
 import { Text } from "@/src/ui/design-system/Text";
 import { Badge, BadgeText } from "@/src/ui/design-system/Badge";
-
-// At some point, come back here and try to implement this: https://github.com/react-navigation/react-navigation/blob/main/packages/react-native-tab-view/src/TabBarIndicator.tsx
 
 type Props = MaterialTopTabBarProps & {
     onIndexChange?: (index: number) => void;
@@ -20,14 +25,44 @@ export function ProfileTabBar({
     onIndexChange,
 }: Props) {
     const { width } = Dimensions.get("window");
-
-    const positionsLeft = [-3, width / 2 - 89, undefined];
-    const positionsRight = [undefined, undefined, -3];
-    const { index } = state;
+    const position = useSharedValue(0);
 
     useEffect(() => {
-        onIndexChange?.(index);
-    }, [onIndexChange, index]);
+        position.value = withTiming(state.index, {
+            duration: 250,
+        });
+        onIndexChange?.(state.index);
+    }, [state.index, onIndexChange]);
+
+    const badgeAnimatedStyle = useAnimatedStyle(() => {
+        const totalWidth = width - 2 * 30;
+
+        const badgeWidth = interpolate(
+            position.value,
+            [0, 1, 2],
+            state.routes.map((route) => {
+                const text = descriptors[route.key].options.title ?? route.name;
+                return text.length * 12 + 16;
+            }),
+            Extrapolation.CLAMP
+        );
+
+        const translateX = interpolate(
+            position.value,
+            [0, 1, 2],
+            [
+                -3,
+                totalWidth / 2 - badgeWidth / 2 - 10,
+                totalWidth - badgeWidth - 2,
+            ],
+            Extrapolation.CLAMP
+        );
+
+        return {
+            width: badgeWidth,
+            transform: [{ translateX }],
+        };
+    });
 
     return (
         <Box
@@ -100,20 +135,29 @@ export function ProfileTabBar({
                     );
                 })}
             </HStack>
-            <Badge
-                type="unselected"
-                borderWidth={4}
-                position="absolute"
-                bgColor="transparent"
-                top={-3}
-                height={36}
-                left={positionsLeft[state.index]}
-                right={positionsRight[state.index]}
-            >
-                <BadgeText paddingHorizontal={8} opacity={0}>
-                    {descriptors[state.routes[state.index].key].options.title}
-                </BadgeText>
-            </Badge>
+            <Animated.View style={[styles.badge, badgeAnimatedStyle]}>
+                <Badge
+                    type="unselected"
+                    borderWidth={4}
+                    bgColor="transparent"
+                    minHeight={36}
+                >
+                    <BadgeText paddingHorizontal={8} opacity={0}>
+                        {
+                            descriptors[state.routes[state.index].key].options
+                                .title
+                        }
+                    </BadgeText>
+                </Badge>
+            </Animated.View>
         </Box>
     );
 }
+
+const styles = StyleSheet.create({
+    badge: {
+        position: "absolute",
+        top: -3,
+        height: 36,
+    },
+});
