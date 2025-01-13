@@ -103,7 +103,7 @@ const ProfileMessages = forwardRef<
     {
         contentContainerStyle: StyleProp<ViewStyle>;
         scrollIndicatorInsets: Insets;
-        onCollapse: (props: { animate: boolean }) => void;
+        onCollapse: () => void;
         peer: TrustedContact;
         onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
     }
@@ -368,7 +368,7 @@ const ProfileMessages = forwardRef<
                             padding: 15,
                             marginRight: 60,
                         }}
-                        onFocus={() => props.onCollapse({ animate: true })}
+                        onFocus={() => props.onCollapse()}
                     />
 
                     <Pressable

@@ -155,24 +155,22 @@ export const ProfileScreen = () => {
 
     //#region Functions
     const expand = () => {
+        const _expand = () => sync(scrollTo(0));
+
         Keyboard.dismiss();
-        messagesScrollValue.value = withTiming(0, {
+        tabScrollConfigs[tabIndex].position.value = withTiming(0, {
             duration: SCROLL_ANIMATION_DURATION,
         });
-        sync(scrollTo(0));
+        setTimeout(_expand, SCROLL_ANIMATION_DURATION);
     };
 
-    const collapse = (options?: { animate: boolean }) => {
+    const collapse = () => {
         const _collapse = () => sync(scrollTo(headerDiff));
 
-        if (options?.animate) {
-            tabScrollConfigs[tabIndex].position.value = withTiming(headerDiff, {
-                duration: SCROLL_ANIMATION_DURATION,
-            });
-            setTimeout(_collapse, SCROLL_ANIMATION_DURATION);
-        } else {
-            _collapse();
-        }
+        tabScrollConfigs[tabIndex].position.value = withTiming(headerDiff, {
+            duration: SCROLL_ANIMATION_DURATION,
+        });
+        setTimeout(_collapse, SCROLL_ANIMATION_DURATION);
     };
     //#endregion
 
@@ -190,7 +188,7 @@ export const ProfileScreen = () => {
         if (invertedScroll < heightExpanded && keyboardVisible) {
             runOnJS(hideKeyboard)();
         }
-        runOnJS(collapse)({ animate: true });
+        runOnJS(collapse)();
     });
     const messagesTabRef = useAnimatedRef<FlatList<DisplayableMessage>>();
     //#endregion
@@ -285,7 +283,7 @@ export const ProfileScreen = () => {
 
     useEffect(() => {
         if (tabIndex === 0 && rendered) {
-            collapse({ animate: true });
+            collapse();
         }
     }, [tabIndex]);
 
