@@ -1,22 +1,21 @@
 import React from "react";
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
 
 import { TrustedContact } from "@/src/db/models/Contacts";
 import { Avatar } from "@/src/ui/components/Avatar";
 import { Text } from "@/src/ui/design-system/Text";
 
-export const ProfileHeaderCollapsed = ({ peer }: { peer?: TrustedContact }) => {
+type Props = {
+    peer?: TrustedContact;
+    marginHorizontal?: number;
+};
+
+export const ProfileHeaderCollapsed = ({
+    peer,
+    marginHorizontal = 48,
+}: Readonly<Props>) => {
     return (
-        <View
-            style={{
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 12,
-                flex: 1,
-                marginHorizontal: 48,
-                width: "50%",
-            }}
-        >
+        <View style={[styles.container, { marginHorizontal }]}>
             <Avatar
                 contact={peer ?? ({ meta_title: "" } as TrustedContact)}
                 variant={"small"}
@@ -33,3 +32,13 @@ export const ProfileHeaderCollapsed = ({ peer }: { peer?: TrustedContact }) => {
         </View>
     );
 };
+
+const styles = StyleSheet.create({
+    container: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 12,
+        flex: 1,
+        width: "50%",
+    },
+});

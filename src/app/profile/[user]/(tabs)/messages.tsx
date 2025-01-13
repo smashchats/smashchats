@@ -410,9 +410,11 @@ const ProfileMessages = forwardRef<
                     <TextInput
                         ref={inputFieldRef}
                         placeholder="Share something..."
+                        returnKeyType="send"
                         placeholderTextColor={Colors.textGray}
                         value={newMessage}
                         onChangeText={setNewMessage}
+                        onSubmitEditing={handleSendMessage}
                         style={{
                             color: "white",
                             padding: 15,

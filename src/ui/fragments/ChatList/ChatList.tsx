@@ -8,7 +8,7 @@ import { ChatListFilters } from "@/src/ui/fragments/ChatList/ChatListFilters";
 import { ChatListHeader } from "@/src/ui/fragments/ChatList/ChatListHeader";
 import { useGlobalState } from "@/src/context/GlobalContext.jsx";
 import { getShownChats } from "@/src/context/ChatListContext";
-import { SCREEN_HEIGHT } from "@/src/ui/fragments/Camera/Constants";
+import { SCREEN_HEIGHT } from "@/src/ui/constants";
 import { ChatListView } from "@/src/types/ChatListScreen.types";
 
 interface Props {

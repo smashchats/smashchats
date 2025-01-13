@@ -4,7 +4,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { Colors } from "@/src/constants/Colors.js";
 import { MaterialCommunityIcon } from "@/src/ui/design-system/MaterialCommunityIconsType";
-import { SCREEN_HEIGHT } from "@/src/ui/fragments/Camera/Constants";
+import { SCREEN_HEIGHT } from "@/src/ui/constants";
 
 type Props = {
     icon: MaterialCommunityIcon;

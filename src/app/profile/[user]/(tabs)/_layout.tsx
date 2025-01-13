@@ -78,7 +78,7 @@ const Tab = createMaterialTopTabNavigator<ProfileStackParamList>();
 const TAB_BAR_HEIGHT = 60;
 const HEADER_HEIGHT = 60;
 
-const OVERLAY_VISIBILITY_OFFSET = 32;
+const OVERLAY_VISIBILITY_OFFSET = 90;
 
 export const ProfileScreen = () => {
     const router = useRouter();
@@ -295,8 +295,8 @@ export const ProfileScreen = () => {
         transform: [{ translateY: translateY.value }],
         opacity: interpolate(
             translateY.value,
-            [-headerDiff, 0],
-            [Visibility.Hidden, Visibility.Visible]
+            [-headerDiff, (-headerDiff * 2) / 5, 0],
+            [Visibility.Hidden, Visibility.Visible, Visibility.Visible]
         ),
     }));
 
