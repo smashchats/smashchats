@@ -6,7 +6,7 @@ import {
     and,
 } from "drizzle-orm";
 
-import { IM_CHAT_TEXT } from "@smashchats/library";
+import { IM_CHAT_TEXT, sha256 } from "@smashchats/library";
 
 import { messages } from "@/src/db/schema.js";
 import { drizzle_db } from "@/src/db/database";
@@ -34,7 +34,11 @@ export const saveMessageToDb = async (
 
 export const markAllMessagesInDiscussionAsRead = async (
     discussionId: string
-) => {
+): Promise<sha256[]> => {
+    const unreadMessages = await drizzle_db
+        .select({ id: messages.sha256 })
+        .from(messages)
+        .where(and(eq(messages.discussion_id, discussionId), isNull(messages.date_read)));
     await drizzle_db
         .update(messages)
         .set({ date_read: new Date() })
@@ -44,4 +48,5 @@ export const markAllMessagesInDiscussionAsRead = async (
                 isNull(messages.date_read)
             )
         );
+    return unreadMessages.map((m) => m.id as sha256);
 };

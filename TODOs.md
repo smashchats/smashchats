@@ -2,6 +2,7 @@
 
 ## Pending
 
+-   [ ] (BUG) lastMessageId not correctly initialized
 -   [~] Contact notes
     -   [ ] dynamically generate filters
     -   [ ] use filters to search in notes & user bio.{title, description}

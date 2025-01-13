@@ -194,7 +194,11 @@ const ProfileMessages = forwardRef<
     }, []);
 
     useEffect(() => {
-        markAllMessagesInDiscussionAsRead(peerId).then(() => {
+        markAllMessagesInDiscussionAsRead(peerId).then((unreadMessages) => {
+            globalState.selfSmashUser.ackMessagesRead(
+                peerId as DIDString,
+                unreadMessages
+            );
             globalState.logger.debug(
                 `messages::useEffect::Marked all messages in discussion ${peerId} as read`
             );
@@ -246,6 +250,9 @@ const ProfileMessages = forwardRef<
                         `messages::onNewMessages::Marked received messages in discussion ${peerId} as read`
                     );
                 });
+                globalState.selfSmashUser.ackMessagesRead(peerId, [
+                    message.sha256,
+                ]);
 
                 if (!hasUserScrolledToOlderMessages) {
                     scrollToBottom();
