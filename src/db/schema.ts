@@ -39,6 +39,8 @@ export const trustRelations = sqliteTable("trust_relations", {
 export const messages = sqliteTable("messages", {
     sha256: text().primaryKey(),
     timestamp: defaultTimestamp("timestamp"),
+    // sending --> delivered (to SME) --> received (by peer) --> read (by peer)
+    status: text("status", { mode: "text" }).notNull().default("sending"),
     type: text("type", { mode: "text" }).notNull(),
     data: text("data", { mode: "text" }).notNull(),
     after_sha256: text(),
@@ -51,6 +53,7 @@ export const messages = sqliteTable("messages", {
         .references(() => contacts.did_id),
     created_at: defaultTimestamp("created_at"),
     date_delivered: timestamp("date_delivered"),
+    // if message if from peer, we store the date the user (self) read the message ; if message is from self, we store the date the peer read the message
     date_read: timestamp("date_read"),
 });
 

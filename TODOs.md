@@ -10,7 +10,7 @@
 -   [ ] save "active" contact --> display as purple
 -   [ ] fix chat list ordering (see with xsbfh for algorithm?)
 -   [ ] DID set (when contact sends profile) vs DID patch (when resolving? & when nab sends profiles)
--   [ ] touchableOpacity
+-   [ ] replace Pressable with TouchableOpacity where needed
 -   [ ] animations?
 -   [ ] delete contacts / discussions
 -   [ ] delete own avatar
@@ -23,7 +23,6 @@
 -   [ ] send media messages
     -   [ ] media organizer à la stash
 -   [ ] cache images on device
--   [ ] mark messages as received / read (depends on library)
 -   [ ] bio max 140chars
 -   [ ] replace routing? https://github.com/expo/router/issues/723
 -   [ ] fastlane android bump version
@@ -37,6 +36,7 @@
 
 ## Done
 
+-   [x] mark messages as received / read
 -   [x] profile scroll / collapsible header
     -   [x] fix padding tabs hidden behind tabbar & header
     -   [x] dismiss keyboard when scrolling header down

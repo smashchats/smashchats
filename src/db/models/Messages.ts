@@ -4,9 +4,11 @@ import {
     eq,
     isNull,
     and,
+    inArray,
+    not,
 } from "drizzle-orm";
 
-import { IM_CHAT_TEXT, sha256 } from "@smashchats/library";
+import { DIDString, IM_CHAT_TEXT, MessageStatus, sha256 } from "@smashchats/library";
 
 import { messages } from "@/src/db/schema.js";
 import { drizzle_db } from "@/src/db/database";
@@ -32,8 +34,9 @@ export const saveMessageToDb = async (
     return messageId;
 };
 
-export const markAllMessagesInDiscussionAsRead = async (
-    discussionId: string
+export const markAllMessagesNotFromSelfInDiscussionAsRead = async (
+    discussionId: string,
+    selfDid: DIDString
 ): Promise<sha256[]> => {
     const unreadMessages = await drizzle_db
         .select({ id: messages.sha256 })
@@ -45,8 +48,30 @@ export const markAllMessagesInDiscussionAsRead = async (
         .where(
             and(
                 eq(messages.discussion_id, discussionId),
-                isNull(messages.date_read)
+                isNull(messages.date_read),
+                not(eq(messages.from_did_id, selfDid))
             )
         );
     return unreadMessages.map((m) => m.id as sha256);
+};
+
+
+
+export const updateMessagesStatus = async (messageIds: sha256[], status: MessageStatus) => {
+    const target = drizzle_db
+        .update(messages);
+
+    const set: Partial<MessageInsert> = {
+        status: status,
+    }
+
+    switch (status) {
+        case "received":
+            set.date_delivered = new Date();
+            break;
+        case "read":
+            set.date_read = new Date();
+            break;
+    }
+    await target.set(set).where(inArray(messages.sha256, messageIds));
 };

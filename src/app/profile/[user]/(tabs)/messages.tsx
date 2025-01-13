@@ -54,7 +54,7 @@ import { drizzle_db } from "@/src/db/database";
 import { messages as MessagesSchema } from "@/src/db/schema";
 import {
     Message,
-    markAllMessagesInDiscussionAsRead,
+    markAllMessagesNotFromSelfInDiscussionAsRead,
     saveMessageToDb,
 } from "@/src/db/models/Messages";
 import { RenderMessageListItem } from "@/src/ui/fragments/MessagesList";
@@ -194,7 +194,10 @@ const ProfileMessages = forwardRef<
     }, []);
 
     useEffect(() => {
-        markAllMessagesInDiscussionAsRead(peerId).then((unreadMessages) => {
+        markAllMessagesNotFromSelfInDiscussionAsRead(
+            peerId,
+            globalState.selfDid.id
+        ).then((unreadMessages) => {
             globalState.selfSmashUser.ackMessagesRead(
                 peerId as DIDString,
                 unreadMessages
@@ -209,10 +212,12 @@ const ProfileMessages = forwardRef<
         data,
         sha256,
         after_sha256,
+        from_self,
     }: {
         data: any;
         sha256: sha256;
         after_sha256: sha256 | undefinedString;
+        from_self: boolean;
     }) => {
         const now = new Date();
 
@@ -230,6 +235,7 @@ const ProfileMessages = forwardRef<
                     date_read: now,
                     timestamp: now,
                     reply_to_sha256: null,
+                    status: from_self ? "sending" : "received",
                 } satisfies Message,
                 messages,
                 globalState.selfDid.id
@@ -238,14 +244,17 @@ const ProfileMessages = forwardRef<
     };
 
     useEffect(() => {
-        const callback = (
+        const onNewMessageByPeer = (
             senderId: DIDString,
             originalMessage: IMProtoMessage
         ) => {
             const message = originalMessage as EncapsulatedIMProtoMessage; // TODO remove "as" when lib exports proper types
 
             if (senderId === peerId) {
-                markAllMessagesInDiscussionAsRead(peerId).then(() => {
+                markAllMessagesNotFromSelfInDiscussionAsRead(
+                    peerId,
+                    globalState.selfDid.id
+                ).then(() => {
                     globalState.logger.debug(
                         `messages::onNewMessages::Marked received messages in discussion ${peerId} as read`
                     );
@@ -258,17 +267,20 @@ const ProfileMessages = forwardRef<
                     scrollToBottom();
                 }
 
-                // TODO check if the message is correctly formatted
                 appendMessage({
                     data: message.data as string,
                     sha256: message.sha256,
                     after_sha256: message.after,
+                    from_self: false,
                 });
             }
         };
-        globalState.selfSmashUser.on(IM_CHAT_TEXT, callback);
+        globalState.selfSmashUser.on(IM_CHAT_TEXT, onNewMessageByPeer);
         return () => {
-            globalState.selfSmashUser.removeListener("data", callback);
+            globalState.selfSmashUser.removeListener(
+                "data",
+                onNewMessageByPeer
+            );
         };
     }, [globalState.selfSmashUser]);
 
@@ -309,6 +321,7 @@ const ProfileMessages = forwardRef<
             data: dataToSend,
             sha256,
             after_sha256: lastMessageId,
+            from_self: true,
         });
 
         saveMessageToDb(

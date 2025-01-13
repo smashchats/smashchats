@@ -18,10 +18,12 @@ import {
     DIDDocument,
     MessagingEventMap,
     IIMPeerIdentity,
+    MessageStatus,
+    sha256,
 } from "@smashchats/library";
 
 import { IDENTITY_KEY, PROFILE_KEY, getData, saveObject } from "@/src/utils/StorageUtils.js";
-import { saveMessageToDb } from "@/src/db/models/Messages";
+import { saveMessageToDb, updateMessagesStatus } from "@/src/db/models/Messages";
 import {
     getContactsFromDb,
     saveContactToDb,
@@ -110,7 +112,7 @@ export const textMessagesListener = (logger: Logger) => async (senderDid: DIDStr
     const message = originalMessage as EncapsulatedIMProtoMessage; // TODO remove "as" when lib exports proper types
     try {
         const m = mapReceivedMessageToEnrichedMessage(message, senderDid);
-        await saveMessageToDb(m);
+        await saveMessageToDb(m, { status: "received" });
     } catch (e) {
         if (e instanceof Error) {
             if (
@@ -144,6 +146,11 @@ export const newProfilesMessagesListener = (selfDid: DIDDocument) => async (_sen
     }
 }
 
+export const statusMessagesListener = (logger: Logger) => async (status: MessageStatus, messageIds: sha256[]) => {
+    logger.debug("parsing status message", status, messageIds);
+    await updateMessagesStatus(messageIds, status);
+}
+
 type EventType = (`${string}.${string}.${string}` | keyof MessagingEventMap)
 
 export const handleUserMessages = async (
@@ -156,6 +163,7 @@ export const handleUserMessages = async (
         [SMASH_PROFILE_LIST]: newProfilesMessagesListener(selfDid),
         [IM_CHAT_TEXT]: textMessagesListener(logger),
         [IM_PROFILE]: profileMessagesListener(logger),
+        "status": statusMessagesListener(logger),
         "data": firehoseListener(logger)
     }
     const unsubscribes: (() => void)[] = []

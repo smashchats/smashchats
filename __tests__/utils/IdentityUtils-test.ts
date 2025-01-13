@@ -15,12 +15,13 @@ import {
 
 import { ContactInsert, saveContactToDb, updateContact } from "@/src/db/models/Contacts";
 import * as DbModelMessages from "@/src/db/models/Messages";
-import { saveMessageToDb } from "@/src/db/models/Messages";
+import { saveMessageToDb, updateMessagesStatus } from "@/src/db/models/Messages";
 import { EnrichedSmashMessage } from "@/src/types/";
 import {
     handleUserMessages,
     newProfilesMessagesListener,
     profileMessagesListener,
+    statusMessagesListener,
     textMessagesListener,
 } from "@/src/utils/IdentityUtils";
 
@@ -32,6 +33,7 @@ jest.mock("@/src/db/models/Contacts", () => ({
 
 jest.mock("@/src/db/models/Messages", () => ({
     saveMessageToDb: jest.fn(),
+    updateMessagesStatus: jest.fn(),
 }));
 
 describe("listeners", () => {
@@ -129,7 +131,7 @@ describe("listeners", () => {
                 data: JSON.stringify(message.data),
             };
 
-            expect(saveMessageToDb).toHaveBeenCalledWith(enrichedMessage);
+            expect(saveMessageToDb).toHaveBeenCalledWith(enrichedMessage, { status: "received" });
         });
 
         it("doesn't throw if message is already saved", async () => {
@@ -196,6 +198,33 @@ describe("listeners", () => {
             await listener(peerDid.id, message);
 
             expect(updateContact).toHaveBeenCalledWith(message.data);
+        });
+    });
+
+    describe("statusMessagesListener", () => {
+        it("updates status of delivered messages", async () => {
+            const listener = statusMessagesListener(logger);
+
+            await listener("delivered", ["sha256" as sha256]);
+
+            expect(logger.debug).toHaveBeenCalled();
+            expect(updateMessagesStatus).toHaveBeenCalledWith(["sha256" as sha256], "delivered");
+        });
+
+        it("updates status of received messages", async () => {
+            const listener = statusMessagesListener(logger);
+
+            await listener("received", ["sha256" as sha256]);
+
+            expect(updateMessagesStatus).toHaveBeenCalledWith(["sha256" as sha256], "received");
+        });
+
+        it("updates status of read messages", async () => {
+            const listener = statusMessagesListener(logger);
+
+            await listener("read", ["sha256" as sha256]);
+
+            expect(updateMessagesStatus).toHaveBeenCalledWith(["sha256" as sha256], "read");
         });
     });
 });
