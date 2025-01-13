@@ -1,4 +1,5 @@
 import React, {
+    RefObject,
     forwardRef,
     memo,
     useCallback,
@@ -16,12 +17,15 @@ import {
     StyleSheet,
     View,
     ViewStyle,
-    NativeScrollEvent,
-    NativeSyntheticEvent,
 } from "react-native";
 
 import { useLocalSearchParams } from "expo-router";
-import Animated from "react-native-reanimated";
+import Animated, {
+    ScrollHandlerProcessed,
+    runOnJS,
+    useAnimatedScrollHandler,
+    useComposedEventHandler,
+} from "react-native-reanimated";
 import { eq, desc, and, isNull, count } from "drizzle-orm";
 import { Feather } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
@@ -105,7 +109,7 @@ const ProfileMessages = forwardRef<
         scrollIndicatorInsets: Insets;
         onCollapse: () => void;
         peer: TrustedContact;
-        onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
+        onScroll: ScrollHandlerProcessed;
     }
 >((props, ref) => {
     const globalState = useGlobalState();
@@ -116,6 +120,16 @@ const ProfileMessages = forwardRef<
     const [newMessage, setNewMessage] = useState("");
     const [shouldShowSendIcon, setShouldShowSendIcon] = useState(true);
     const inputFieldRef = useRef<TextInput>(null);
+
+    const [hasUserScrolledToOlderMessages, setHasUserScrolledToOlderMessages] =
+        useState(false);
+
+    const scrollToBottom = () => {
+        (ref as RefObject<FlatList>)?.current?.scrollToOffset({
+            offset: 0,
+            animated: true,
+        });
+    };
 
     const footerHeight = 60;
     const insets = useSafeAreaInsets();
@@ -159,10 +173,13 @@ const ProfileMessages = forwardRef<
     useEffect(() => {
         (async () => {
             const unread_count = await getUnreadMessagesCount(peerId);
-            const needToLoadMore = unread_count > DEFAULT_LOAD_LIMIT;
+            const needToLoadMoreThanDefaultThreshold =
+                unread_count > DEFAULT_LOAD_LIMIT;
 
-            let loadLimit = needToLoadMore ? unread_count : DEFAULT_LOAD_LIMIT;
-            let newOffset = needToLoadMore
+            let loadLimit = needToLoadMoreThanDefaultThreshold
+                ? unread_count
+                : DEFAULT_LOAD_LIMIT;
+            let newOffset = needToLoadMoreThanDefaultThreshold
                 ? unread_count - DEFAULT_LOAD_LIMIT + 1
                 : DEFAULT_LOAD_LIMIT;
 
@@ -229,7 +246,10 @@ const ProfileMessages = forwardRef<
                         `messages::onNewMessages::Marked received messages in discussion ${peerId} as read`
                     );
                 });
-                // TODO scroll to bottom (?)
+
+                if (!hasUserScrolledToOlderMessages) {
+                    scrollToBottom();
+                }
 
                 // TODO check if the message is correctly formatted
                 appendMessage({
@@ -253,6 +273,15 @@ const ProfileMessages = forwardRef<
     useEffect(() => {
         setShouldShowSendIcon(newMessage.length > 0);
     }, [newMessage]);
+
+    const onScroll = useAnimatedScrollHandler((event) => {
+        runOnJS(setHasUserScrolledToOlderMessages)(event.contentOffset.y > 100);
+    });
+
+    const composedOnScrollHandler = useComposedEventHandler([
+        props.onScroll,
+        onScroll,
+    ]);
 
     const handleSendMessage = async () => {
         const dataToSend = newMessage.trim();
@@ -334,6 +363,7 @@ const ProfileMessages = forwardRef<
         <Box flex={1} backgroundColor={Colors.background}>
             <Animated.FlatList
                 {...props}
+                onScroll={composedOnScrollHandler}
                 inverted={true}
                 ref={ref}
                 style={styles.container}
