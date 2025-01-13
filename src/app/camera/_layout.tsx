@@ -42,12 +42,13 @@ import {
     CONTROL_BUTTON_SIZE,
     MAX_ZOOM_FACTOR,
     SAFE_AREA_PADDING,
-    SCREEN_HEIGHT,
-    SCREEN_WIDTH,
 } from "@/src/ui/fragments/Camera/Constants";
 import { useIsForeground } from "@/src/ui/fragments/Camera/hooks";
-import { CaptureButton, StatusBarBlurBackground } from "@/src/ui/fragments/Camera/views";
-
+import {
+    CaptureButton,
+    StatusBarBlurBackground,
+} from "@/src/ui/fragments/Camera/views";
+import { SCREEN_HEIGHT, SCREEN_WIDTH } from "@/src/ui/constants";
 
 const ReanimatedCamera = Reanimated.createAnimatedComponent(Camera);
 Reanimated.addWhitelistedNativeProps({
