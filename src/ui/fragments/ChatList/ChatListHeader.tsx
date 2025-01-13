@@ -62,20 +62,7 @@ export function ChatListHeader(): JSX.Element {
                             width: 40,
                             height: 25,
                         }}
-                    >
-                        {__DEV__ && (
-                            <ThemedText
-                                style={{
-                                    fontSize: 10,
-                                    color: Colors.dark.text,
-                                }}
-                            >
-                                {globalState?.selfDid?.id?.substring(
-                                    globalState?.selfDid?.id.length - 4
-                                )}
-                            </ThemedText>
-                        )}
-                    </Pressable>
+                    />
                 </HStack>
 
                 <HStack>

@@ -31,10 +31,8 @@ import Animated, {
     interpolate,
     useSharedValue,
     useAnimatedScrollHandler,
-    SharedValue,
     useDerivedValue,
     useAnimatedRef,
-    AnimatedRef,
     withTiming,
     runOnJS,
 } from "react-native-reanimated";
