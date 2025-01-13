@@ -1,6 +1,5 @@
 import { DIDDocument } from "@smashchats/library";
 import { DNSoverHttpsResponse } from "@/src/types/";
-import { NativeScrollEvent, NativeSyntheticEvent } from "react-native";
 
 const DOH_SERVERS = ["https://dns.google/resolve"];
 const SERVER = DOH_SERVERS[0];
@@ -42,8 +41,3 @@ export const addPrefixToObjectKeys = (obj: Record<string, any>, prefix: string) 
         Object.entries(obj).map(([key, value]) => [prefix + key, value])
     );
 };
-
-export const scrollTo = (y: number) =>
-({
-    nativeEvent: { contentOffset: { y } },
-} as NativeSyntheticEvent<NativeScrollEvent>);

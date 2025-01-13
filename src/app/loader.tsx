@@ -35,6 +35,7 @@ export default function LoaderScreen() {
                 ),
                 new Promise((resolve) => setTimeout(resolve, 3 * 1_000)),
             ]);
+            state.logger.debug("Discovering network");
             await user.discover();
         } catch (error) {
             state.logger.error("Error creating trust relation", error);

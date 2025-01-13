@@ -16,6 +16,8 @@ import {
     StyleSheet,
     View,
     ViewStyle,
+    NativeScrollEvent,
+    NativeSyntheticEvent,
 } from "react-native";
 
 import { useLocalSearchParams } from "expo-router";
@@ -103,6 +105,7 @@ const ProfileMessages = forwardRef<
         scrollIndicatorInsets: Insets;
         onCollapse: (props: { animate: boolean }) => void;
         peer: TrustedContact;
+        onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
     }
 >((props, ref) => {
     const globalState = useGlobalState();

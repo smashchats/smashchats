@@ -55,9 +55,14 @@ import {
     ProfileHeaderExpanded,
     ProfileTabBar,
 } from "@/src/ui/fragments/ProfileTabs";
-import useScrollSync from "@/src/hooks/useScrollSync";
+import useScrollSync, {
+    HeaderConfig,
+    SCROLL_ANIMATION_DURATION,
+    ScrollConfig,
+    scrollTo,
+    Visibility,
+} from "@/src/hooks/useScrollSync";
 import { useKeyboard } from "@/src/hooks/useKeyboard";
-import { scrollTo } from "@/src/utils/Utils";
 
 type ProfileIdType = {
     profileId: string;
@@ -70,30 +75,10 @@ type ProfileStackParamList = {
     badges: ProfileIdType;
 };
 
-export type HeaderConfig = {
-    heightExpanded: number;
-    heightCollapsed: number;
-};
-
-export type ScrollConfig = {
-    scrollableRef:
-        | AnimatedRef<FlatList<DisplayableMessage>>
-        | AnimatedRef<Animated.ScrollView>;
-    position: SharedValue<number>;
-    invert: boolean;
-};
-
-export enum Visibility {
-    Hidden = 0,
-    Visible = 1,
-}
-
 const Tab = createMaterialTopTabNavigator<ProfileStackParamList>();
 
 const TAB_BAR_HEIGHT = 60;
 const HEADER_HEIGHT = 60;
-
-const ANIMATION_DURATION = 250;
 
 const OVERLAY_VISIBILITY_OFFSET = 32;
 
@@ -170,6 +155,29 @@ export const ProfileScreen = () => {
     );
     //#endregion
 
+    //#region Functions
+    const expand = () => {
+        Keyboard.dismiss();
+        messagesScrollValue.value = withTiming(0, {
+            duration: SCROLL_ANIMATION_DURATION,
+        });
+        sync(scrollTo(0));
+    };
+
+    const collapse = (options?: { animate: boolean }) => {
+        const _collapse = () => sync(scrollTo(headerDiff));
+
+        if (options?.animate) {
+            tabScrollConfigs[tabIndex].position.value = withTiming(headerDiff, {
+                duration: SCROLL_ANIMATION_DURATION,
+            });
+            setTimeout(_collapse, SCROLL_ANIMATION_DURATION);
+        } else {
+            _collapse();
+        }
+    };
+    //#endregion
+
     //#region [Tabs] scroll handlers
     //#region Messages scroll handler
     const messagesScrollValue = useSharedValue(0);
@@ -180,11 +188,11 @@ export const ProfileScreen = () => {
             layoutMeasurement: { height: layoutHeight },
         } = event;
         const invertedScroll = contentHeight - layoutHeight - y;
-        messagesScrollValue.value = invertedScroll;
 
         if (invertedScroll < heightExpanded && keyboardVisible) {
             runOnJS(hideKeyboard)();
         }
+        runOnJS(collapse)({ animate: true });
     });
     const messagesTabRef = useAnimatedRef<FlatList<DisplayableMessage>>();
     //#endregion
@@ -212,17 +220,15 @@ export const ProfileScreen = () => {
             {
                 scrollableRef: messagesTabRef,
                 position: messagesScrollValue,
-                invert: true,
+                virtual: true,
             },
             {
                 scrollableRef: picturesTabRef,
                 position: picturesScrollValue,
-                invert: false,
             },
             {
                 scrollableRef: badgesTabRef,
                 position: badgesScrollValue,
-                invert: false,
             },
         ],
         [
@@ -271,10 +277,9 @@ export const ProfileScreen = () => {
         [contentContainerStyle, sync, heightExpanded]
     );
 
-    const сurrentScrollValue = useDerivedValue(
-        () => tabScrollConfigs[tabIndex].position.value,
-        [tabIndex, tabScrollConfigs]
-    );
+    const сurrentScrollValue = useDerivedValue(() => {
+        return tabScrollConfigs[tabIndex].position.value;
+    }, [tabIndex, tabScrollConfigs]);
 
     const translateY = useDerivedValue(
         () => -Math.min(сurrentScrollValue.value, headerDiff)
@@ -336,26 +341,6 @@ export const ProfileScreen = () => {
     );
     //#endregion
 
-    //#region Functions
-    const expand = () => {
-        Keyboard.dismiss();
-        sync(scrollTo(0));
-    };
-
-    const collapse = (options?: { animate: boolean }) => {
-        const _collapse = () => sync(scrollTo(headerDiff));
-
-        if (options?.animate) {
-            tabScrollConfigs[tabIndex].position.value = withTiming(headerDiff, {
-                duration: ANIMATION_DURATION,
-            });
-            setTimeout(_collapse, ANIMATION_DURATION);
-        } else {
-            _collapse();
-        }
-    };
-    //#endregion
-
     //#region Renderers
     const renderTabBar = useCallback<
         (props: MaterialTopTabBarProps) => React.ReactElement
@@ -371,9 +356,9 @@ export const ProfileScreen = () => {
     const renderMessages = useCallback(() => {
         const contentContainerStyle: StyleProp<ViewStyle> = {
             ...(sharedProps.contentContainerStyle as {}),
-            paddingTop: (
-                sharedProps.contentContainerStyle as { paddingBottom: number }
-            ).paddingBottom,
+            paddingTop:
+                (sharedProps.contentContainerStyle as { paddingBottom: number })
+                    .paddingBottom + 30,
             paddingBottom: (
                 sharedProps.contentContainerStyle as { paddingTop: number }
             ).paddingTop,
@@ -390,9 +375,8 @@ export const ProfileScreen = () => {
         return (
             <ProfileMessages
                 ref={messagesTabRef}
-                onScroll={messagesScrollHandler}
                 onCollapse={collapse}
-                {...sharedProps}
+                onScroll={messagesScrollHandler}
                 contentContainerStyle={contentContainerStyle}
                 scrollIndicatorInsets={scrollIndicatorInsets}
                 peer={peer}

@@ -1,8 +1,6 @@
 import { renderHook } from "@testing-library/react-native";
 import { SharedValue } from "react-native-reanimated";
-import useScrollSync from "@/src/hooks/useScrollSync";
-import { ScrollConfig } from "@/src/app/profile/[user]/(tabs)/_layout";
-import { scrollTo } from "@/src/utils/Utils";
+import useScrollSync, { ScrollConfig, scrollTo } from "@/src/hooks/useScrollSync";
 
 describe("generating a NativeScrollEvent with `scrollTo`", () => {
     it("should return an object with the correct properties", () => {
