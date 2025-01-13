@@ -12,7 +12,7 @@ import Animated, {
 
 import { Box, HStack } from "@/src/ui/design-system/layout";
 import { Text } from "@/src/ui/design-system/Text";
-import { Badge, BadgeText } from "@/src/ui/design-system/Badge";
+import { Badge } from "@/src/ui/design-system/Badge";
 
 type Props = MaterialTopTabBarProps & {
     onIndexChange?: (index: number) => void;
@@ -141,14 +141,7 @@ export function ProfileTabBar({
                     borderWidth={4}
                     bgColor="transparent"
                     minHeight={36}
-                >
-                    <BadgeText paddingHorizontal={8} opacity={0}>
-                        {
-                            descriptors[state.routes[state.index].key].options
-                                .title
-                        }
-                    </BadgeText>
-                </Badge>
+                />
             </Animated.View>
         </Box>
     );
