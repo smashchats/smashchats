@@ -121,6 +121,8 @@ export function ProfileTabBar({
                             onLongPress={onLongPress}
                             style={{
                                 alignItems: "center",
+                                paddingLeft: index === 0 ? 0 : 12,
+                                paddingRight: index === 2 ? 0 : 12,
                             }}
                         >
                             <Text
