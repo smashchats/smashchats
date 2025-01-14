@@ -178,7 +178,8 @@ export const ProfileScreen = () => {
 
     //#region [Tabs] scroll handlers
     //#region Messages scroll handler
-    const messagesScrollValue = useSharedValue(0);
+    const messagesRealScrollValue = useSharedValue(0);
+    const messagesVirtualScrollValue = useSharedValue(0);
     const messagesScrollHandler = useAnimatedScrollHandler((event) => {
         const {
             contentOffset: { y },
@@ -186,11 +187,18 @@ export const ProfileScreen = () => {
             layoutMeasurement: { height: layoutHeight },
         } = event;
         const invertedScroll = contentHeight - layoutHeight - y;
+        messagesRealScrollValue.value = invertedScroll;
+
+        if (invertedScroll < headerDiff) {
+            messagesVirtualScrollValue.value = invertedScroll;
+            // TODO: sync-ish --> determine if this is a good place to sync and what happens when we change tabs and back (what scroll should we find etc).
+        } else {
+            runOnJS(collapse)();
+        }
 
         if (invertedScroll < heightExpanded && keyboardVisible) {
             runOnJS(hideKeyboard)();
         }
-        runOnJS(collapse)();
     });
     const messagesTabRef = useAnimatedRef<FlatList<DisplayableMessage>>();
     //#endregion
@@ -205,7 +213,7 @@ export const ProfileScreen = () => {
         () => [
             {
                 scrollableRef: messagesTabRef,
-                position: messagesScrollValue,
+                position: messagesVirtualScrollValue,
                 virtual: true,
             } as unknown as ScrollConfig,
             picturesScrollConfig,
@@ -213,7 +221,7 @@ export const ProfileScreen = () => {
         ],
         [
             messagesTabRef,
-            messagesScrollValue,
+            messagesVirtualScrollValue,
             picturesScrollConfig,
             badgesScrollConfig,
         ]
@@ -225,6 +233,8 @@ export const ProfileScreen = () => {
         if (!rendered) {
             return;
         }
+
+        // TODO: what position if user is active? length of message list?
         const setInitialScrollPosition = () => {
             sync(scrollTo(isActive ? headerDiff : 0));
         };
@@ -264,7 +274,11 @@ export const ProfileScreen = () => {
     );
 
     useEffect(() => {
-        if (tabIndex === 0 && rendered) {
+        if (
+            tabIndex === 0 &&
+            rendered &&
+            messagesRealScrollValue.value >= headerDiff
+        ) {
             collapse();
         }
     }, [tabIndex]);
@@ -333,13 +347,13 @@ export const ProfileScreen = () => {
 
     const renderMessages = useCallback(() => {
         const contentContainerStyle: StyleProp<ViewStyle> = {
-            ...(sharedProps.contentContainerStyle as {}),
             paddingTop:
                 (sharedProps.contentContainerStyle as { paddingBottom: number })
                     .paddingBottom + 30,
             paddingBottom: (
                 sharedProps.contentContainerStyle as { paddingTop: number }
             ).paddingTop,
+            minHeight: screenHeight,
         };
 
         const scrollIndicatorInsets = {
@@ -357,6 +371,9 @@ export const ProfileScreen = () => {
                 onScroll={messagesScrollHandler}
                 contentContainerStyle={contentContainerStyle}
                 scrollIndicatorInsets={scrollIndicatorInsets}
+                onMomentumScrollEnd={() =>
+                    sync(scrollTo(messagesRealScrollValue.value))
+                }
                 peer={peer}
             />
         );

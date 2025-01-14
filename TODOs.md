@@ -30,9 +30,15 @@
 -   [ ] follow https://www.runway.team/blog/how-to-set-up-a-ci-cd-pipeline-for-your-ios-app-fastlane-github-actions
     -   [ ] fastlane ios
     -   [ ] fastlane ios bump version
--   [ ] implement gesture handler on tabs & user bio so that we can scroll to the top
 
 ## In progress
+
+-   [~] Profile screen
+    -   [ ] fix transparency behind tab bar
+    -   [ ] fix scrollIndicatorInsets for first tab
+    -   [ ] fix transparency behind header
+    -   [ ] fix buggy-ness
+    -   [ ] implement gesture handler on tabs & user bio so that we can scroll to the top
 
 ## Done
 

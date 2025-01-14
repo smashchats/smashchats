@@ -17,6 +17,8 @@ import {
     StyleSheet,
     View,
     ViewStyle,
+    NativeSyntheticEvent,
+    NativeScrollEvent,
 } from "react-native";
 
 import { useLocalSearchParams } from "expo-router";
@@ -108,6 +110,9 @@ const ProfileMessages = forwardRef<
         contentContainerStyle: StyleProp<ViewStyle>;
         scrollIndicatorInsets: Insets;
         onCollapse: () => void;
+        onMomentumScrollEnd?: (
+            event: NativeSyntheticEvent<NativeScrollEvent>
+        ) => void;
         peer: TrustedContact;
         onScroll: ScrollHandlerProcessed;
     }
