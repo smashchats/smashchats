@@ -35,6 +35,7 @@ import Animated, {
     useAnimatedRef,
     withTiming,
     runOnJS,
+    AnimatedRef,
 } from "react-native-reanimated";
 
 import { Colors } from "@/src/constants/Colors.js";
@@ -61,6 +62,7 @@ import useScrollSync, {
     Visibility,
 } from "@/src/hooks/useScrollSync";
 import { useKeyboard } from "@/src/hooks/useKeyboard";
+import { useCollapsibleHeaderTab } from "@/src/hooks/useCollapsibleHeaderTab";
 
 type ProfileIdType = {
     profileId: string;
@@ -193,21 +195,9 @@ export const ProfileScreen = () => {
     const messagesTabRef = useAnimatedRef<FlatList<DisplayableMessage>>();
     //#endregion
 
-    //#region Pictures scroll handler
-    const picturesScrollValue = useSharedValue(0);
-    const picturesScrollHandler = useAnimatedScrollHandler((event) => {
-        picturesScrollValue.value = event.contentOffset.y;
-    });
-    const picturesTabRef = useAnimatedRef<Animated.ScrollView>();
-    //#endregion
-
-    //#region Badges scroll handler
-    const badgesScrollValue = useSharedValue(0);
-    const badgesScrollHandler = useAnimatedScrollHandler((event) => {
-        badgesScrollValue.value = event.contentOffset.y;
-    });
-    const badgesTabRef = useAnimatedRef<Animated.ScrollView>();
-    //#endregion
+    const [picturesScrollConfig, picturesScrollHandler] =
+        useCollapsibleHeaderTab();
+    const [badgesScrollConfig, badgesScrollHandler] = useCollapsibleHeaderTab();
     //#endregion
 
     //#region Scroll sync
@@ -217,23 +207,15 @@ export const ProfileScreen = () => {
                 scrollableRef: messagesTabRef,
                 position: messagesScrollValue,
                 virtual: true,
-            },
-            {
-                scrollableRef: picturesTabRef,
-                position: picturesScrollValue,
-            },
-            {
-                scrollableRef: badgesTabRef,
-                position: badgesScrollValue,
-            },
+            } as unknown as ScrollConfig,
+            picturesScrollConfig,
+            badgesScrollConfig,
         ],
         [
             messagesTabRef,
             messagesScrollValue,
-            picturesTabRef,
-            picturesScrollValue,
-            badgesTabRef,
-            badgesScrollValue,
+            picturesScrollConfig,
+            badgesScrollConfig,
         ]
     );
 
@@ -383,23 +365,27 @@ export const ProfileScreen = () => {
     const renderPictures = useCallback(
         () => (
             <ProfilePictures
-                ref={picturesTabRef}
+                ref={
+                    picturesScrollConfig.scrollableRef as AnimatedRef<Animated.ScrollView>
+                }
                 onScroll={picturesScrollHandler}
                 {...sharedProps}
             />
         ),
-        [picturesTabRef, picturesScrollHandler, sharedProps]
+        [picturesScrollConfig.scrollableRef, picturesScrollHandler, sharedProps]
     );
 
     const renderBadges = useCallback(
         () => (
             <ProfileBadges
-                ref={badgesTabRef}
+                ref={
+                    badgesScrollConfig.scrollableRef as AnimatedRef<Animated.ScrollView>
+                }
                 onScroll={badgesScrollHandler}
                 {...sharedProps}
             />
         ),
-        [badgesTabRef, badgesScrollHandler, sharedProps]
+        [badgesScrollConfig.scrollableRef, badgesScrollHandler, sharedProps]
     );
 
     //#endregion

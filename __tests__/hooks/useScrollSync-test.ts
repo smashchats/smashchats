@@ -53,21 +53,18 @@ describe("useScrollSync", () => {
         });
     });
 
-    it("should sync scroll for FlatList", () => {
+    it("should not sync scroll for virtual FlatList", () => {
         const mockScrollConfigs = [{
             scrollableRef: createMockRef(false),
             position: { value: 0 } as SharedValue<number>,
-            invert: false
+            virtual: true
         }] as unknown as ScrollConfig[];
 
         const { result } = renderHook(() => useScrollSync(mockScrollConfigs, mockHeaderConfig));
 
         result.current.sync(scrollTo(100));
 
-        expect(mockScrollToOffset).toHaveBeenCalledWith({
-            offset: 100,
-            animated: false
-        });
+        expect(mockScrollToOffset).not.toHaveBeenCalled();
     });
 
     it("should not sync scroll when position is greater than header difference", () => {

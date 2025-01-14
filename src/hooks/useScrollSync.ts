@@ -1,7 +1,13 @@
-import { FlatList, FlatListProps, NativeScrollEvent, NativeSyntheticEvent } from "react-native";
-import Animated, { AnimatedRef, SharedValue, withTiming } from "react-native-reanimated";
-
-import { DisplayableMessage } from "@/src/types/DiscussionScreen.types";
+import {
+    FlatListProps,
+    NativeScrollEvent,
+    NativeSyntheticEvent,
+} from "react-native";
+import Animated, {
+    AnimatedRef,
+    SharedValue,
+    withTiming,
+} from "react-native-reanimated";
 
 export const SCROLL_ANIMATION_DURATION = 250;
 
@@ -11,9 +17,7 @@ export type HeaderConfig = {
 };
 
 export type ScrollConfig = {
-    scrollableRef:
-    | AnimatedRef<FlatList<DisplayableMessage>>
-    | AnimatedRef<Animated.ScrollView>;
+    scrollableRef: AnimatedRef<Scrollable>;
     position: SharedValue<number>;
     virtual?: boolean;
 };
@@ -28,6 +32,7 @@ export const scrollTo = (y: number) =>
     nativeEvent: { contentOffset: { y } },
 } as NativeSyntheticEvent<NativeScrollEvent>);
 
+export type Scrollable = Animated.ScrollView | Animated.FlatList<any>;
 
 const useScrollSync = (
     scrollConfigs: ScrollConfig[],
@@ -62,7 +67,7 @@ const useScrollSync = (
                         y: Math.min(y, headerDiff),
                         animated: false,
                     });
-                } else {
+                } else if (scrollableRef.current.hasOwnProperty("scrollToOffset")) {
                     (scrollableRef.current as Animated.FlatList<any>).scrollToOffset({
                         offset: Math.min(y, headerDiff),
                         animated: false,
