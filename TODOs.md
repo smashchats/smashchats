@@ -34,7 +34,7 @@
 ## In progress
 
 -   [~] Profile screen
-    -   [ ] fix transparency behind tab bar
+    -   [x] fix transparency behind tab bar
     -   [ ] fix scrollIndicatorInsets for first tab
     -   [ ] fix transparency behind header
     -   [ ] fix buggy-ness

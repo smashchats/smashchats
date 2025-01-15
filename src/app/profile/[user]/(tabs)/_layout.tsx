@@ -473,6 +473,8 @@ const styles = StyleSheet.create({
         right: 0,
         position: "absolute",
         backgroundColor: Colors.background,
+        marginTop: -HEADER_HEIGHT,
+        paddingTop: HEADER_HEIGHT,
         zIndex: 150,
     },
     headerContainer: {
