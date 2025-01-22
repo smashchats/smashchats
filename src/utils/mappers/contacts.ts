@@ -1,33 +1,19 @@
-import { DIDDocument, DIDString, IMProfile, SmashEndpoint, SmashProfileList } from "@smashchats/library";
+import { DIDDocument, DIDString, IMProfile, SmashEndpoint, SmashMessaging, SmashProfileList } from "@smashchats/library";
 
 import { Contact, ContactInsert } from "@/src/db/models/Contacts";
-import { addPrefixToObjectKeys } from "@/src/utils/Utils";
-import { PartialWithId } from "@/src/types/";
 
-export const SmashProfileToContactMapper = (profile: SmashProfileList[0]) => {
-    const did: Partial<DIDDocument> = {};
-    if (typeof profile.did === "string") {
-        did.id = profile.did;
-    } else {
-        did.id = profile.did.id;
-        did.ik = profile.did.ik;
-        did.ek = profile.did.ek;
-        did.signature = profile.did.signature;
-        did.endpoints = profile.did.endpoints ?? [];
-    }
+export const SmashProfileToContactMapper = async (profile: SmashProfileList[0]) => {
+    const did = MapDidToContactInsert(await SmashMessaging.resolve(profile.did));
+
     return {
-        did_id: did.id,
-        did_ik: did.ik,
-        did_ek: did.ek,
-        did_signature: did.signature,
-        did_endpoints: did.endpoints ?? [],
+        ...did,
         meta_title: profile.meta?.title,
         meta_description: profile.meta?.description,
         meta_avatar: profile.meta?.avatar,
     };
 };
 
-export const MapContactToDid = (c: Contact): DIDDocument => {
+export const MapContactToDidDocument = (c: Contact): DIDDocument => {
     return {
         id: c.did_id as DIDString,
         ik: c.did_ik as string,
@@ -37,39 +23,17 @@ export const MapContactToDid = (c: Contact): DIDDocument => {
     };
 };
 
-export const MapDidToContact = (did: DIDDocument): ContactInsert => {
+export const MapDidToContactInsert = (did: DIDDocument): ContactInsert => {
     return {
         did_id: did.id,
         did_ik: did.ik,
         did_ek: did.ek,
         did_signature: did.signature,
-        did_endpoints: did.endpoints,
+        did_endpoints: did.endpoints ?? [],
     };
 };
 
-export const MapImProfileToPartialDidDocument = (profile: IMProfile): PartialWithId<DIDDocument> => {
-    const { did } = profile;
-
-    let didObject: { id: DIDString, ik?: string, ek?: string, signature?: string, endpoints?: SmashEndpoint[] };
-
-    if (typeof did === "string") {
-        didObject = {
-            id: did,
-        };
-    } else {
-        didObject = {
-            id: did.id,
-            ik: did.ik,
-            ek: did.ek,
-            signature: did.signature,
-            endpoints: did.endpoints,
-        };
-    }
-    return didObject
-};
-
-export const MapDidDocumentToContactInsert = (did: Partial<DIDDocument>): Partial<ContactInsert> => {
-    return {
-        ...addPrefixToObjectKeys(did, "did_"),
-    };
+export const ResolveDidAndMapToContactInsert = async (profile: IMProfile): Promise<ContactInsert> => {
+    const did = await SmashMessaging.resolve(profile.did);
+    return MapDidToContactInsert(did);
 };

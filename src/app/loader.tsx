@@ -18,7 +18,7 @@ import { ThemedText } from "@/src/ui/components/ThemedText";
 import { dev_nab_join_action, didId } from "@/data/dev";
 import { createTrustRelation } from "@/src/db/models/TrustRelation";
 import { saveContactToDb } from "@/src/db/models/Contacts";
-import { MapDidToContact } from "@/src/utils/mappers/contacts";
+import { MapDidToContactInsert } from "@/src/utils/mappers/contacts";
 import { Colors } from "@/src/constants/Colors";
 
 export default function LoaderScreen() {
@@ -31,7 +31,7 @@ export default function LoaderScreen() {
                 createTrustRelation(didId),
                 user.join(dev_nab_join_action),
                 saveContactToDb(
-                    MapDidToContact(dev_nab_join_action.did as DIDDocument)
+                    MapDidToContactInsert(dev_nab_join_action.did as DIDDocument)
                 ),
                 new Promise((resolve) => setTimeout(resolve, 3 * 1_000)),
             ]);

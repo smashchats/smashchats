@@ -1,4 +1,5 @@
 import {
+    DIDDocManager,
     DIDDocument,
     DIDString,
     EncapsulatedIMProtoMessage,
@@ -7,8 +8,10 @@ import {
     IM_PROFILE,
     ISO8601,
     Logger,
+    NBH_PROFILE_LIST,
     SMASH_PROFILE_LIST,
     SmashChatProfileListMessage,
+    SmashMessaging,
     SmashUser,
     sha256,
 } from "@smashchats/library";
@@ -37,7 +40,7 @@ jest.mock("@/src/db/models/Messages", () => ({
 }));
 
 describe("listeners", () => {
-    const EVENT_TYPES = [IM_CHAT_TEXT, IM_PROFILE, SMASH_PROFILE_LIST];
+    const EVENT_TYPES = [IM_CHAT_TEXT, IM_PROFILE, NBH_PROFILE_LIST];
 
     let logger: Logger;
     let user: SmashUser;
@@ -68,16 +71,28 @@ describe("listeners", () => {
     EVENT_TYPES.forEach((t) => {
         it(`sets a listener for ${t}`, async () => {
             const unsubscribe = await handleUserMessages(user, logger);
-
             expect(user.on).toHaveBeenCalledWith(t, expect.anything());
 
             unsubscribe();
-
             expect(user.removeListener).toHaveBeenCalled();
         });
     });
 
     describe("newProfilesMessagesListener", () => {
+        let didManager: DIDDocManager;
+        beforeAll(() => {
+            didManager = new DIDDocManager();
+            Object.defineProperty(didManager, 'method', {
+                value: 'smash',
+                writable: false,
+            });
+            SmashMessaging.use(didManager);
+        });
+
+        beforeEach(() => {
+            didManager.set(selfDid);
+        });
+
         it("saves new profiles to the database", async () => {
             const listener = newProfilesMessagesListener(selfDid);
 
@@ -99,6 +114,7 @@ describe("listeners", () => {
                 meta_avatar: undefined,
             } satisfies ContactInsert;
 
+            expect(saveContactToDb).toHaveBeenCalledTimes(1);
             expect(saveContactToDb).toHaveBeenCalledWith(contact);
         });
     });

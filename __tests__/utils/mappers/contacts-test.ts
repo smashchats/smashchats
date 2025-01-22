@@ -1,18 +1,30 @@
-import { DIDDocument, DIDString, IMProfile, SmashEndpoint, SmashProfileList } from "@smashchats/library";
+import { DIDDocManager, DIDDocument, DIDString, IMProfile, SmashEndpoint, SmashMessaging, SmashProfileList } from "@smashchats/library";
 import { Contact } from "@/src/db/models/Contacts";
-import { MapContactToDid, MapDidDocumentToContactInsert, MapDidToContact, MapImProfileToPartialDidDocument, SmashProfileToContactMapper } from "@/src/utils/mappers/contacts";
+import { MapContactToDidDocument, MapDidToContactInsert, ResolveDidAndMapToContactInsert, SmashProfileToContactMapper } from "@/src/utils/mappers/contacts";
+
+const did: DIDDocument = {
+    id: 'did:test:123' as DIDString,
+    ik: 'ik123',
+    ek: 'ek123',
+    signature: 'sig123',
+    endpoints: [{ url: "endpoint1" }] as SmashEndpoint[]
+}
 
 describe("contact mappers", () => {
+    let didManager: DIDDocManager;
+    beforeEach(() => {
+        didManager = new DIDDocManager();
+        Object.defineProperty(didManager, 'method', {
+            value: 'test',
+            writable: false,
+        });
+        SmashMessaging.use(didManager);
+    });
+
     describe("SmashProfileToContactMapper", () => {
-        it("maps profile to contact", () => {
+        it("maps profile to contact", async () => {
             const profile: SmashProfileList[0] = {
-                did: {
-                    id: "did:123" as DIDString,
-                    ik: "ik123",
-                    ek: "ek123",
-                    signature: "sig123",
-                    endpoints: [{ url: "endpoint1" }] as SmashEndpoint[]
-                },
+                did,
                 meta: {
                     title: "Test Title",
                     description: "Test Description",
@@ -20,10 +32,10 @@ describe("contact mappers", () => {
                 } as IMProfile
             };
 
-            const result = SmashProfileToContactMapper(profile);
+            const result = await SmashProfileToContactMapper(profile);
 
             expect(result).toEqual({
-                did_id: "did:123",
+                did_id: "did:test:123",
                 did_ik: "ik123",
                 did_ek: "ek123",
                 did_signature: "sig123",
@@ -34,17 +46,17 @@ describe("contact mappers", () => {
             });
         });
 
-        it("handles missing optional fields", () => {
+        it("handles missing optional fields", async () => {
             const profile = {
                 did: {
-                    id: "did:123" as DIDString,
+                    id: "did:test:123" as DIDString,
                     ik: "ik123",
                     ek: "ek123",
                     signature: "sig123"
                 },
             } as SmashProfileList[0];
 
-            const result = SmashProfileToContactMapper(profile);
+            const result = await SmashProfileToContactMapper(profile);
 
             expect(result.did_endpoints).toEqual([]);
             expect(result.meta_title).toBeUndefined();
@@ -56,7 +68,7 @@ describe("contact mappers", () => {
     describe("MapContactToDid", () => {
         it("maps contact to DID document", () => {
             const contact: Contact = {
-                did_id: "did:123" as DIDString,
+                did_id: "did:test:123" as DIDString,
                 did_ik: "ik123",
                 did_ek: "ek123",
                 did_signature: "sig123",
@@ -65,10 +77,10 @@ describe("contact mappers", () => {
                 updated_at: new Date()
             } as Contact;
 
-            const result = MapContactToDid(contact);
+            const result = MapContactToDidDocument(contact);
 
             expect(result).toEqual({
-                id: "did:123",
+                id: "did:test:123",
                 ik: "ik123",
                 ek: "ek123",
                 signature: "sig123",
@@ -78,7 +90,7 @@ describe("contact mappers", () => {
 
         it("handles missing endpoints", () => {
             const contact: Contact = {
-                did_id: "did:123" as DIDString,
+                did_id: "did:test:123" as DIDString,
                 did_ik: "ik123",
                 did_ek: "ek123",
                 did_signature: "sig123",
@@ -87,7 +99,7 @@ describe("contact mappers", () => {
                 updated_at: new Date()
             } as Contact;
 
-            const result = MapContactToDid(contact);
+            const result = MapContactToDidDocument(contact);
 
             expect(result.endpoints).toEqual([]);
         });
@@ -95,18 +107,10 @@ describe("contact mappers", () => {
 
     describe("MapDidToContact", () => {
         it("maps DID document to contact", () => {
-            const did: DIDDocument = {
-                id: "did:123" as DIDString,
-                ik: "ik123",
-                ek: "ek123",
-                signature: "sig123",
-                endpoints: [{ url: "endpoint1" }] as SmashEndpoint[]
-            };
-
-            const result = MapDidToContact(did);
+            const result = MapDidToContactInsert(did);
 
             expect(result).toEqual({
-                did_id: "did:123",
+                did_id: "did:test:123",
                 did_ik: "ik123",
                 did_ek: "ek123",
                 did_signature: "sig123",
@@ -116,32 +120,14 @@ describe("contact mappers", () => {
     });
 
     describe("MapImProfileToPartialDidDocument", () => {
-        it("maps IMProfile to Partial<DIDDocument>", () => {
+        it("maps IMProfile to Partial<DIDDocument>", async () => {
             const profile: IMProfile = {
-                did: { id: "did:123" as DIDString }
+                did: { id: "did:test:123" as DIDString }
             } as IMProfile;
 
-            const result = MapImProfileToPartialDidDocument(profile);
+            const result = await ResolveDidAndMapToContactInsert(profile);
 
-            expect(result).toEqual({ id: "did:123" });
-        });
-
-        it("maps IMProfile to Partial<DIDDocument> with did as string", () => {
-            const profile: IMProfile = {
-                did: "did:123" as DIDString
-            } as IMProfile;
-
-            const result = MapImProfileToPartialDidDocument(profile);
-
-            expect(result).toEqual({ id: "did:123" });
-        });
-    });
-
-    describe("MapDidDocumentToContactInsert", () => {
-        it("maps DIDDocument to ContactInsert", () => {
-            const did: Partial<DIDDocument> = { id: "did:123" as DIDString, ik: "ik123", ek: "ek123", signature: "sig123", endpoints: [{ url: "endpoint1" }] as SmashEndpoint[] };
-            const result = MapDidDocumentToContactInsert(did);
-            expect(result).toEqual({ did_id: "did:123", did_ik: "ik123", did_ek: "ek123", did_signature: "sig123", did_endpoints: [{ url: "endpoint1" }] });
+            expect(result).toEqual(expect.objectContaining({ did_id: "did:test:123" }));
         });
     });
 });

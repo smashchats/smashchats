@@ -9,7 +9,6 @@ import {
     DIDDocManager,
     IMPeerIdentity,
     LogLevel,
-    SMASH_PROFILE_LIST,
     SmashChatProfileListMessage,
     IMProfile,
     EncapsulatedIMProtoMessage,
@@ -20,6 +19,7 @@ import {
     IIMPeerIdentity,
     MessageStatus,
     sha256,
+    NBH_PROFILE_LIST,
 } from "@smashchats/library";
 
 import { IDENTITY_KEY, PROFILE_KEY, getData, saveObject } from "@/src/utils/StorageUtils.js";
@@ -30,7 +30,7 @@ import {
     updateContact,
 } from "@/src/db/models/Contacts";
 import { mapReceivedMessageToEnrichedMessage } from "@/src/utils/mappers/messages";
-import { MapContactToDid, SmashProfileToContactMapper } from "@/src/utils/mappers/contacts";
+import { MapContactToDidDocument, SmashProfileToContactMapper } from "@/src/utils/mappers/contacts";
 
 const getOrCreateIdentity = async (didDocumentManager: DIDDocManager, logger: Logger): Promise<IMPeerIdentity> => {
     let newIdentity: IMPeerIdentity;
@@ -77,7 +77,7 @@ export const loadIdentity = async (
         user.initChats(
             contacts.map((c) => {
                 return {
-                    with: MapContactToDid(c),
+                    with: MapContactToDidDocument(c),
                     lastMessageTimestamp: new Date().toISOString(),
                 };
             })
@@ -135,15 +135,9 @@ export const textMessagesListener = (logger: Logger) => async (senderDid: DIDStr
 }
 
 export const newProfilesMessagesListener = (selfDid: DIDDocument) => async (_sender: DIDString, { data: profiles }: SmashChatProfileListMessage) => {
-    for await (const profile of profiles.filter((p) => {
-        if (typeof p.did === "string") {
-            return p.did !== selfDid.id
-        }
-        return p.did.id !== selfDid.id
-    })) {
-        const contact = SmashProfileToContactMapper(profile);
-        await saveContactToDb(contact);
-    }
+    const contacts = await Promise.all(profiles.map(SmashProfileToContactMapper))
+
+    await Promise.all(contacts.filter(c => c.did_id !== selfDid.id).map(c => saveContactToDb(c)));
 }
 
 export const statusMessagesListener = (logger: Logger) => async (status: MessageStatus, messageIds: sha256[]) => {
@@ -160,7 +154,7 @@ export const handleUserMessages = async (
     const selfDid = await user.getDIDDocument();
 
     const listeners: Partial<Record<EventType, (...args: any[]) => Promise<void>>> = {
-        [SMASH_PROFILE_LIST]: newProfilesMessagesListener(selfDid),
+        [NBH_PROFILE_LIST]: newProfilesMessagesListener(selfDid),
         [IM_CHAT_TEXT]: textMessagesListener(logger),
         [IM_PROFILE]: profileMessagesListener(logger),
         "status": statusMessagesListener(logger),

@@ -36,6 +36,7 @@ import Animated, {
     withTiming,
     runOnJS,
     AnimatedRef,
+    clamp,
 } from "react-native-reanimated";
 
 import { Colors } from "@/src/constants/Colors.js";
@@ -58,11 +59,12 @@ import useScrollSync, {
     HeaderConfig,
     SCROLL_ANIMATION_DURATION,
     ScrollConfig,
-    scrollTo,
+    Scrollable,
     Visibility,
 } from "@/src/hooks/useScrollSync";
 import { useKeyboard } from "@/src/hooks/useKeyboard";
 import { useCollapsibleHeaderTab } from "@/src/hooks/useCollapsibleHeaderTab";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 
 type ProfileIdType = {
     profileId: string;
@@ -156,47 +158,51 @@ export const ProfileScreen = () => {
     //#endregion
 
     //#region Functions
-    const expand = () => {
-        const _expand = () => sync(scrollTo(0));
-
-        Keyboard.dismiss();
-        tabScrollConfigs[tabIndex].position.value = withTiming(0, {
+    const scrollToPosition = (position: number) => {
+        const config = tabScrollConfigs[tabIndex];
+        const scrollValue = config.virtual ? config.virtual : config.position;
+        
+        const syncScroll = () => sync(position);
+        
+        scrollValue.value = withTiming(position, {
             duration: SCROLL_ANIMATION_DURATION,
         });
-        setTimeout(_expand, SCROLL_ANIMATION_DURATION);
+        setTimeout(syncScroll, SCROLL_ANIMATION_DURATION);
+    };
+
+    const expand = () => {
+        Keyboard.dismiss();
+        scrollToPosition(0);
     };
 
     const collapse = () => {
-        const _collapse = () => sync(scrollTo(headerDiff));
-
-        tabScrollConfigs[tabIndex].position.value = withTiming(headerDiff, {
-            duration: SCROLL_ANIMATION_DURATION,
-        });
-        setTimeout(_collapse, SCROLL_ANIMATION_DURATION);
+        scrollToPosition(headerDiff); 
     };
     //#endregion
 
     //#region [Tabs] scroll handlers
     //#region Messages scroll handler
     const messagesRealScrollValue = useSharedValue(0);
-    const messagesVirtualScrollValue = useSharedValue(0);
+    const messagesVirtualScrollValue = useSharedValue(
+        isActive ? headerDiff : 0
+    );
     const messagesScrollHandler = useAnimatedScrollHandler((event) => {
         const {
             contentOffset: { y },
             contentSize: { height: contentHeight },
             layoutMeasurement: { height: layoutHeight },
         } = event;
-        const invertedScroll = contentHeight - layoutHeight - y;
-        messagesRealScrollValue.value = invertedScroll;
+        const scroll = contentHeight - layoutHeight - y;
+        messagesRealScrollValue.value = scroll;
 
-        if (invertedScroll < headerDiff) {
-            messagesVirtualScrollValue.value = invertedScroll;
+        if (scroll < headerDiff) {
+            messagesVirtualScrollValue.value = scroll;
             // TODO: sync-ish --> determine if this is a good place to sync and what happens when we change tabs and back (what scroll should we find etc).
-        } else {
+        } else if (messagesVirtualScrollValue.value < headerDiff) {
             runOnJS(collapse)();
         }
 
-        if (invertedScroll < heightExpanded && keyboardVisible) {
+        if (scroll < heightExpanded && keyboardVisible) {
             runOnJS(hideKeyboard)();
         }
     });
@@ -209,13 +215,16 @@ export const ProfileScreen = () => {
     //#endregion
 
     //#region Scroll sync
+    const messagesHeight = useSharedValue(0);
     const tabScrollConfigs = useMemo<ScrollConfig[]>(
         () => [
             {
-                scrollableRef: messagesTabRef,
-                position: messagesVirtualScrollValue,
-                virtual: true,
-            } as unknown as ScrollConfig,
+                scrollableRef:
+                    messagesTabRef as unknown as AnimatedRef<Scrollable>,
+                position: messagesRealScrollValue,
+                height: messagesHeight,
+                virtual: messagesVirtualScrollValue,
+            },
             picturesScrollConfig,
             badgesScrollConfig,
         ],
@@ -236,7 +245,7 @@ export const ProfileScreen = () => {
 
         // TODO: what position if user is active? length of message list?
         const setInitialScrollPosition = () => {
-            sync(scrollTo(isActive ? headerDiff : 0));
+            sync(isActive ? headerDiff : 0);
         };
 
         setInitialScrollPosition();
@@ -266,11 +275,12 @@ export const ProfileScreen = () => {
     );
 
     const сurrentScrollValue = useDerivedValue(() => {
-        return tabScrollConfigs[tabIndex].position.value;
+        const config = tabScrollConfigs[tabIndex];
+        return (config.virtual ? config.virtual : config.position).value;
     }, [tabIndex, tabScrollConfigs]);
 
     const translateY = useDerivedValue(
-        () => -Math.min(сurrentScrollValue.value, headerDiff)
+        () => clamp(сurrentScrollValue.value, 0, headerDiff)
     );
 
     useEffect(() => {
@@ -284,13 +294,13 @@ export const ProfileScreen = () => {
     }, [tabIndex]);
 
     const tabBarAnimatedStyle = useAnimatedStyle(() => ({
-        transform: [{ translateY: translateY.value }],
+        transform: [{ translateY: -translateY.value }],
     }));
 
     const headerAnimatedStyle = useAnimatedStyle(() => ({
-        transform: [{ translateY: translateY.value }],
+        transform: [{ translateY: -translateY.value }],
         opacity: interpolate(
-            translateY.value,
+            -translateY.value,
             [-headerDiff, (-headerDiff * 2) / 5, 0],
             [Visibility.Hidden, Visibility.Visible, Visibility.Visible]
         ),
@@ -333,14 +343,35 @@ export const ProfileScreen = () => {
     );
     //#endregion
 
+    const scrollValueOnInitPan = useSharedValue(0);
+
     //#region Renderers
+    const panGesture = Gesture.Pan()
+        .onUpdate((e) => {
+            const config = tabScrollConfigs[tabIndex];
+            const scroll = config.virtual ? config.virtual : config.position;
+            const newScrollValue = scrollValueOnInitPan.value - e.translationY;
+
+            scroll.value = clamp(newScrollValue, 0, headerDiff);
+
+            runOnJS(sync)(scroll.value);
+        })
+        .onStart(() => {
+            runOnJS(hideKeyboard)();
+            const config = tabScrollConfigs[tabIndex];
+            const scroll = config.virtual ? config.virtual : config.position;
+            scrollValueOnInitPan.value = scroll.value;
+        });
+
     const renderTabBar = useCallback<
         (props: MaterialTopTabBarProps) => React.ReactElement
     >(
         (props) => (
-            <Animated.View style={tabBarStyle}>
-                <ProfileTabBar onIndexChange={setTabIndex} {...props} />
-            </Animated.View>
+            <GestureDetector gesture={panGesture}>
+                <Animated.View style={tabBarStyle}>
+                    <ProfileTabBar onIndexChange={setTabIndex} {...props} />
+                </Animated.View>
+            </GestureDetector>
         ),
         [tabBarStyle]
     );
@@ -369,11 +400,12 @@ export const ProfileScreen = () => {
                 ref={messagesTabRef}
                 onCollapse={collapse}
                 onScroll={messagesScrollHandler}
+                onLayout={(event) =>
+                    (messagesHeight.value = event.nativeEvent.layout.height)
+                }
                 contentContainerStyle={contentContainerStyle}
                 scrollIndicatorInsets={scrollIndicatorInsets}
-                onMomentumScrollEnd={() =>
-                    sync(scrollTo(messagesRealScrollValue.value))
-                }
+                onMomentumScrollEnd={() => sync(messagesRealScrollValue.value)}
                 peer={peer}
             />
         );

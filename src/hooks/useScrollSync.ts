@@ -1,12 +1,10 @@
 import {
-    FlatListProps,
     NativeScrollEvent,
     NativeSyntheticEvent,
 } from "react-native";
 import Animated, {
     AnimatedRef,
     SharedValue,
-    withTiming,
 } from "react-native-reanimated";
 
 export const SCROLL_ANIMATION_DURATION = 250;
@@ -19,7 +17,8 @@ export type HeaderConfig = {
 export type ScrollConfig = {
     scrollableRef: AnimatedRef<Scrollable>;
     position: SharedValue<number>;
-    virtual?: boolean;
+    virtual?: SharedValue<number>;
+    height?: SharedValue<number>;
 };
 
 export enum Visibility {
@@ -27,33 +26,28 @@ export enum Visibility {
     Visible = 1,
 }
 
-export const scrollTo = (y: number) =>
-({
-    nativeEvent: { contentOffset: { y } },
-} as NativeSyntheticEvent<NativeScrollEvent>);
-
 export type Scrollable = Animated.ScrollView | Animated.FlatList<any>;
+
+export const delta = (a: number, b: number) => Math.abs(a - b);
 
 const useScrollSync = (
     scrollConfigs: ScrollConfig[],
     headerConfig: HeaderConfig
 ) => {
-    const sync: NonNullable<FlatListProps<any>["onMomentumScrollEnd"]> = (
-        event
+    const sync: (event: NativeSyntheticEvent<NativeScrollEvent> | number) => void = (
+        event: NativeSyntheticEvent<NativeScrollEvent> | number
     ) => {
-        const { y } = event.nativeEvent.contentOffset;
+        const y = typeof event === 'number' ? event : event.nativeEvent.contentOffset.y;
 
         const { heightCollapsed, heightExpanded } = headerConfig;
 
         const headerDiff = heightExpanded - heightCollapsed;
 
         for (const { scrollableRef, position, virtual } of scrollConfigs) {
-            const scrollPosition = position.value ?? 0;
+            const scrollPosition = virtual !== undefined ? virtual.value : position.value;
 
             if (virtual) {
-                position.value = withTiming(y, {
-                    duration: SCROLL_ANIMATION_DURATION,
-                });
+                virtual.value = y
                 continue;
             }
 

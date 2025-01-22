@@ -1,12 +1,11 @@
 import { InferInsertModel, InferSelectModel, eq } from "drizzle-orm";
 
-import { DIDDocument, IMProfile } from "@smashchats/library";
+import { IMProfile } from "@smashchats/library";
 
 import { contacts, trustRelations } from "@/src/db/schema.js";
 import { drizzle_db } from "@/src/db/database";
 import { SQLiteInsertOnConflictDoUpdateConfig } from "drizzle-orm/sqlite-core";
-import { MapDidDocumentToContactInsert, MapImProfileToPartialDidDocument } from "@/src/utils/mappers/contacts";
-import { PartialWithId } from "@/src/types/";
+import { ResolveDidAndMapToContactInsert } from "@/src/utils/mappers/contacts";
 
 export type Contact = InferSelectModel<typeof contacts>;
 export type TrustedContact = Contact & { trusted_name: string | undefined };
@@ -90,18 +89,17 @@ export const patchContact = async (did_id: string, updates: Partial<ContactInser
 export const updateContact = async (profile: IMProfile) => {
     const { title, description, avatar } = profile;
 
-    const did: PartialWithId<DIDDocument>
-        = MapImProfileToPartialDidDocument(profile);
+    const did: ContactInsert = await ResolveDidAndMapToContactInsert(profile);
 
     const data = {
-        ...MapDidDocumentToContactInsert(did),
+        ...did,
         meta_title: title,
         meta_description: description,
         meta_avatar: avatar,
         updated_at: new Date(),
     }
 
-    return genericUpdateContact(did.id, data, {
+    return genericUpdateContact(did.did_id, data, {
         onConflictDoUpdate: { set: data },
     });
 };

@@ -4,8 +4,6 @@ import { Pressable, View } from "react-native";
 import { useRouter } from "expo-router";
 import { Image } from "expo-image";
 
-import { SmashOrPass } from "@/src/ui/components/SmashOrPass";
-
 export const ProfileHeader = ({
     headerHeight,
     onExpand,
@@ -27,7 +25,6 @@ export const ProfileHeader = ({
                 height: totalHeight,
                 maxHeight: totalHeight,
                 zIndex: 10,
-                paddingTop: 10,
             }}
         >
             <View
@@ -36,7 +33,6 @@ export const ProfileHeader = ({
                     alignItems: "center",
                     justifyContent: "space-between",
                     paddingHorizontal: 20,
-                    paddingVertical: 5,
                 }}
             >
                 <Pressable
@@ -44,7 +40,6 @@ export const ProfileHeader = ({
                     style={{
                         padding: 20,
                         marginLeft: -20,
-                        marginVertical: -20,
                     }}
                 >
                     <Image
@@ -63,21 +58,6 @@ export const ProfileHeader = ({
                         marginVertical: -20,
                     }}
                 />
-
-                <View
-                    style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        gap: 8,
-                    }}
-                >
-                    {__DEV__ && (
-                        <SmashOrPass
-                            onPass={console.error}
-                            onSmash={console.log}
-                        />
-                    )}
-                </View>
             </View>
         </View>
     );

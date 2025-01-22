@@ -1,19 +1,6 @@
 import { renderHook } from "@testing-library/react-native";
 import { SharedValue } from "react-native-reanimated";
-import useScrollSync, { ScrollConfig, scrollTo } from "@/src/hooks/useScrollSync";
-
-describe("generating a NativeScrollEvent with `scrollTo`", () => {
-    it("should return an object with the correct properties", () => {
-        const result = scrollTo(100);
-        expect(result).toStrictEqual(expect.objectContaining({
-            nativeEvent: {
-                contentOffset: {
-                    y: 100
-                }
-            }
-        }));
-    });
-});
+import useScrollSync, { ScrollConfig } from "@/src/hooks/useScrollSync";
 
 describe("useScrollSync", () => {
     const mockScrollTo = jest.fn();
@@ -45,7 +32,7 @@ describe("useScrollSync", () => {
 
         const { result } = renderHook(() => useScrollSync(mockScrollConfigs, mockHeaderConfig));
 
-        result.current.sync(scrollTo(100));
+        result.current.sync(100);
 
         expect(mockScrollTo).toHaveBeenCalledWith({
             y: 100,
@@ -62,7 +49,7 @@ describe("useScrollSync", () => {
 
         const { result } = renderHook(() => useScrollSync(mockScrollConfigs, mockHeaderConfig));
 
-        result.current.sync(scrollTo(100));
+        result.current.sync(100);
 
         expect(mockScrollToOffset).not.toHaveBeenCalled();
     });
@@ -76,7 +63,7 @@ describe("useScrollSync", () => {
 
         const { result } = renderHook(() => useScrollSync(mockScrollConfigs, mockHeaderConfig));
 
-        result.current.sync(scrollTo(200));
+        result.current.sync(200);
 
         expect(mockScrollTo).not.toHaveBeenCalled();
     });
@@ -90,7 +77,7 @@ describe("useScrollSync", () => {
 
         const { result } = renderHook(() => useScrollSync(mockScrollConfigs, mockHeaderConfig));
 
-        result.current.sync(scrollTo(200));
+        result.current.sync(200);
 
         expect(mockScrollTo).toHaveBeenCalledWith({
             y: 150, // headerDiff = heightExpanded(200) - heightCollapsed(50) = 150

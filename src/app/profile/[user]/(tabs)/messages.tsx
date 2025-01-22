@@ -19,6 +19,7 @@ import {
     ViewStyle,
     NativeSyntheticEvent,
     NativeScrollEvent,
+    LayoutChangeEvent,
 } from "react-native";
 
 import { useLocalSearchParams } from "expo-router";
@@ -63,7 +64,7 @@ import { RenderMessageListItem } from "@/src/ui/fragments/MessagesList";
 import { Colors } from "@/src/constants/Colors";
 import { DisplayableMessage, EnrichedSmashMessage } from "@/src/types/";
 import { Box } from "@/src/ui/design-system/layout";
-import { MapContactToDid } from "@/src/utils/mappers/contacts";
+import { MapContactToDidDocument } from "@/src/utils/mappers/contacts";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TrustedContact } from "@/src/db/models/Contacts";
 
@@ -115,6 +116,7 @@ const ProfileMessages = forwardRef<
         ) => void;
         peer: TrustedContact;
         onScroll: ScrollHandlerProcessed;
+        onLayout: (event: LayoutChangeEvent) => void;
     }
 >((props, ref) => {
     const globalState = useGlobalState();
@@ -188,12 +190,11 @@ const ProfileMessages = forwardRef<
                 ? unread_count - DEFAULT_LOAD_LIMIT + 1
                 : DEFAULT_LOAD_LIMIT;
 
-            setMessages(
-                addSystemMessages(
-                    await getMessages(peerId, 0, loadLimit),
-                    globalState.selfDid.id
-                )
+            const enrichedMessages = addSystemMessages(
+                await getMessages(peerId, 0, loadLimit),
+                globalState.selfDid.id
             );
+            setMessages(enrichedMessages);
             setOffset(newOffset);
         })();
     }, []);
@@ -230,7 +231,7 @@ const ProfileMessages = forwardRef<
             appendMessageToDisplayableMessages(
                 {
                     type: IM_CHAT_TEXT,
-                    from_did_id: globalState.selfDid.id,
+                    from_did_id: from_self ? globalState.selfDid.id : peerId,
                     discussion_id: peerId,
                     data,
                     sha256,
@@ -352,7 +353,7 @@ const ProfileMessages = forwardRef<
 
         try {
             await globalState.selfSmashUser.send(
-                MapContactToDid(props.peer),
+                MapContactToDidDocument(props.peer),
                 message
             );
 

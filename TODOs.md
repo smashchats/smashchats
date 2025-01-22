@@ -38,7 +38,7 @@
     -   [ ] fix scrollIndicatorInsets for first tab
     -   [ ] fix transparency behind header
     -   [ ] fix buggy-ness
-    -   [ ] implement gesture handler on tabs & user bio so that we can scroll to the top
+    -   [~] implement gesture handler on tabs & user bio so that we can scroll to the top
 
 ## Done
 
