@@ -15,7 +15,7 @@ import { drizzle_db } from "@/src/db/database";
 import { ESMToMessageInsertMapper } from "@/src/utils/mappers/messages";
 import { EnrichedSmashMessage } from "@/src/types/";
 
-export type Message = InferSelectModel<typeof messages>;
+export type Message = InferSelectModel<typeof messages> & { status: MessageStatus };
 export type MessageInsert = InferInsertModel<typeof messages>;
 
 export const saveMessageToDb = async (

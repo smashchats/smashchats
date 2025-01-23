@@ -1,6 +1,7 @@
 import React from "react";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MessageStatus } from "@smashchats/library";
 
 import { Colors } from "@/src/constants/Colors.js";
 import { Box, HStack } from "@/src/ui/design-system/layout";
@@ -8,29 +9,37 @@ import { Text } from "@/src/ui/design-system/Text";
 import { DisplayableChatMessage, DisplayableMessage } from "@/src/types/";
 
 type MessageStatusProps = {
-    status: "read" | "delivered" | "pending" | undefined;
+    status: MessageStatus;
 };
 
-export function MessageStatus({ status }: Readonly<MessageStatusProps>) {
+export function MessageStatusIcon({ status }: Readonly<MessageStatusProps>) {
     const color = (() => {
         switch (status) {
-            case "pending":
+            // @ts-expect-error
+            case "sending":
             case "delivered":
                 return Colors.textLightGray;
             case "read":
                 return Colors.blue;
+            // @ts-expect-error
+            case "failed":
+                return Colors.red;
             default:
                 return Colors.yellow;
         }
     })();
     const name = (() => {
         switch (status) {
-            case "pending":
+            // @ts-expect-error
+            case "sending":
                 return "clock-outline";
             case "delivered":
                 return "check";
             case "read":
                 return "check-all";
+            // @ts-expect-error
+            case "failed":
+                return "alert-circle-outline";
             default:
                 return "crosshairs-question";
         }
@@ -80,7 +89,7 @@ export function ProfileMessagesScreenText({
                         })}
                     </Text>
                     {message.fromMe && message.hasOwnProperty("status") && (
-                        <MessageStatus
+                        <MessageStatusIcon
                             status={(message as DisplayableChatMessage).status}
                         />
                     )}

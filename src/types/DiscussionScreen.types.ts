@@ -1,3 +1,5 @@
+import { MessageStatus } from "@smashchats/library";
+
 export interface DisplayableSystemMessage {
     content: string | number;
     sha256: string;
@@ -14,7 +16,7 @@ export interface DisplayableChatMessage {
     fromMe: boolean;
     type: string;
     date: Date;
-    status?: "read" | "delivered" | "pending";
+    status: MessageStatus;
 }
 
 export type DisplayableMessage =

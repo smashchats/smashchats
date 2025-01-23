@@ -1,4 +1,4 @@
-import { IM_CHAT_TEXT } from "@smashchats/library";
+import { IM_CHAT_TEXT, MessageStatus as MS } from "@smashchats/library";
 
 import { Box } from "@/src/ui/design-system/layout";
 
@@ -51,66 +51,30 @@ export const MetadataMessage = {
 
 export const MessageStatus = {
     render: () => {
+        const contents = [
+            "Hey you",
+            "I like you too",
+            "And do you mind if I strut for you?",
+            "Baby, feel free to strut for me",
+            "You got a strut everybody should see",
+            "Watch that thing go side to side",
+        ];
+        const statuses = ["", "read", "delivered", "sending", "failed", ""];
         return (
             <Box>
-                <RenderMessageListItem
-                    message={{
-                        type: IM_CHAT_TEXT,
-                        content: "Hey you",
-                        from: "system",
-                        fromMe: false,
-                        sha256: "meta123",
-                        date: new Date("2024-01-01T11:34:00Z"),
-                    }}
-                />
-
-                <RenderMessageListItem
-                    message={{
-                        type: IM_CHAT_TEXT,
-                        content: "I like you too",
-                        from: "system",
-                        fromMe: true,
-                        sha256: "meta123",
-                        date: new Date("2024-01-01T16:14:00Z"),
-                        status: "read",
-                    }}
-                />
-
-                <RenderMessageListItem
-                    message={{
-                        type: IM_CHAT_TEXT,
-                        content: "And do you mind if I strut for you?",
-                        from: "system",
-                        fromMe: true,
-                        sha256: "meta123",
-                        date: new Date("2024-01-01T17:14:00Z"),
-                        status: "delivered",
-                    }}
-                />
-
-                <RenderMessageListItem
-                    message={{
-                        type: IM_CHAT_TEXT,
-                        content: "Baby, feel free to strut for me",
-                        from: "system",
-                        fromMe: true,
-                        sha256: "meta123",
-                        date: new Date("2024-01-01T18:14:00Z"),
-                        status: "pending",
-                    }}
-                />
-
-                <RenderMessageListItem
-                    message={{
-                        type: IM_CHAT_TEXT,
-                        content: "You got a strut everybody should see",
-                        from: "system",
-                        fromMe: true,
-                        sha256: "meta123",
-                        date: new Date("2024-01-01T18:14:00Z"),
-                        status: "" as "read",
-                    }}
-                />
+                {statuses.map((status, idx) => (
+                    <RenderMessageListItem
+                        message={{
+                            status: status as MS,
+                            content: contents[idx % contents.length],
+                            type: IM_CHAT_TEXT,
+                            from: "system",
+                            fromMe: idx !== 0,
+                            sha256: "meta123",
+                            date: new Date("2024-01-01T11:34:00Z"),
+                        }}
+                    />
+                ))}
             </Box>
         );
     },

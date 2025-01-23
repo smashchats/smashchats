@@ -30,7 +30,6 @@ const generateSystemUnreadMessage = (date: Date, unreadMessages: number) => {
 export const mapMessageToDisplayableMessage = (message: Message, selfDidString: DIDString): DisplayableMessage => {
     return {
         ...message,
-        status: message.status as "read" | "delivered" | "pending" | undefined,
         date: new Date(message.date_delivered ?? message.created_at),
         content: message.data,
         from: message.from_did_id,
