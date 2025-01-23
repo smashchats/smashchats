@@ -20,7 +20,7 @@ describe("RenderMessageListItem", () => {
                 fromMe: true,
                 sha256: "123",
                 from: "alice",
-                date: new Date(),
+                date: new Date("2024-01-01T08:48:00Z"),
             },
             {
                 type: IM_CHAT_TEXT,
@@ -28,7 +28,7 @@ describe("RenderMessageListItem", () => {
                 fromMe: false,
                 sha256: "124",
                 from: "bob",
-                date: new Date(),
+                date: new Date("2024-01-01T08:48:00Z"),
             },
         ];
         let tree;

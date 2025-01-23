@@ -1,9 +1,9 @@
 import React from "react";
 import { Pressable } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcon } from "@/src/ui/design-system/MaterialCommunityIconsType";
 
 import { Colors } from "@/src/constants/Colors.js";
-import { MaterialCommunityIcon } from "@/src/ui/design-system/MaterialCommunityIconsType";
 import { SCREEN_HEIGHT } from "@/src/ui/constants";
 
 type Props = {

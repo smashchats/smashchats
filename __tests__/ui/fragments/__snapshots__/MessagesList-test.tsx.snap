@@ -58,6 +58,67 @@ exports[`RenderMessageListItem renders messages 1`] = `
       Hello, bob!
     </Text>
   </View>
+  <View
+    style={
+      {
+        "backgroundColor": undefined,
+        "height": undefined,
+        "justifyContent": "flex-end",
+        "minHeight": 16.5,
+        "width": "100%",
+      }
+    }
+  >
+    <View
+      style={
+        {
+          "alignContent": undefined,
+          "alignItems": "center",
+          "backgroundColor": undefined,
+          "flex": undefined,
+          "flexDirection": "row",
+          "gap": undefined,
+          "height": undefined,
+          "justifyContent": "flex-end",
+          "marginBottom": undefined,
+          "marginHorizontal": undefined,
+          "marginVertical": undefined,
+        }
+      }
+    >
+      <View
+        style={
+          {
+            "backgroundColor": undefined,
+            "flex": undefined,
+            "flexDirection": undefined,
+            "height": undefined,
+            "marginHorizontal": undefined,
+            "marginLeft": undefined,
+            "paddingHorizontal": undefined,
+            "paddingVertical": undefined,
+            "position": undefined,
+            "width": undefined,
+          }
+        }
+      >
+        <Text
+          style={
+            {
+              "color": "#9B9B9B",
+              "fontSize": 12,
+              "textShadowColor": undefined,
+              "textShadowOffset": undefined,
+              "textShadowRadius": undefined,
+              "textTransform": undefined,
+            }
+          }
+        >
+          09:48
+        </Text>
+      </View>
+    </View>
+  </View>
 </View>
 `;
 
@@ -107,6 +168,67 @@ exports[`RenderMessageListItem renders messages 2`] = `
     >
       Hello, alice!
     </Text>
+  </View>
+  <View
+    style={
+      {
+        "backgroundColor": undefined,
+        "height": undefined,
+        "justifyContent": "flex-end",
+        "minHeight": 16.5,
+        "width": "100%",
+      }
+    }
+  >
+    <View
+      style={
+        {
+          "alignContent": undefined,
+          "alignItems": "center",
+          "backgroundColor": undefined,
+          "flex": undefined,
+          "flexDirection": "row",
+          "gap": undefined,
+          "height": undefined,
+          "justifyContent": "flex-end",
+          "marginBottom": undefined,
+          "marginHorizontal": undefined,
+          "marginVertical": undefined,
+        }
+      }
+    >
+      <View
+        style={
+          {
+            "backgroundColor": undefined,
+            "flex": undefined,
+            "flexDirection": undefined,
+            "height": undefined,
+            "marginHorizontal": undefined,
+            "marginLeft": undefined,
+            "paddingHorizontal": undefined,
+            "paddingVertical": undefined,
+            "position": undefined,
+            "width": undefined,
+          }
+        }
+      >
+        <Text
+          style={
+            {
+              "color": "#9B9B9B",
+              "fontSize": 12,
+              "textShadowColor": undefined,
+              "textShadowOffset": undefined,
+              "textShadowRadius": undefined,
+              "textTransform": undefined,
+            }
+          }
+        >
+          09:48
+        </Text>
+      </View>
+    </View>
   </View>
 </View>
 `;

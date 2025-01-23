@@ -14,6 +14,7 @@ export interface DisplayableChatMessage {
     fromMe: boolean;
     type: string;
     date: Date;
+    status?: "read" | "delivered" | "pending";
 }
 
 export type DisplayableMessage =
