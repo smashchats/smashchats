@@ -65,6 +65,7 @@ const CHAT_SORTER = (a: ChatListView, b: ChatListView) =>
 
 export const INITIAL_CHAT_LIST_STATE: ChatListParams = {
     selectedFilters: [],
+    drafts: {},
 };
 
 export const chatListReducer = (
