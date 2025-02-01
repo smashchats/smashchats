@@ -77,7 +77,6 @@ export function ChatItem({
             <HStack
                 gap={12}
                 alignItems="center"
-                // marginBottom={12}
                 alignContent="flex-start"
             >
                 <Avatar

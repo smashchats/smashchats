@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FlatList, Pressable } from "react-native";
 
+import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { Box } from "@/src/ui/design-system/layout";
@@ -11,7 +12,7 @@ import {
 } from "@/src/context/GlobalContext.jsx";
 import { NEIGHBOURHOOD_FILTERS } from "@/data/neighbourhood.js";
 import { countUniqueEmojisInNotes } from "@/src/utils/NotesUtils";
-import { getAllContactNotes } from "@/src/db/models/Contacts";
+import { getAllContactNotesQuery } from "@/src/db/models/Contacts";
 
 export const COMMON_FILTERS = ["unread", "smashed", "trusted"];
 
@@ -64,19 +65,24 @@ export function ChatListFilters() {
         Array.from(new Set([...COMMON_FILTERS, ...NEIGHBOURHOOD_FILTERS]))
     );
 
+    const { data: notes } = useLiveQuery(getAllContactNotesQuery, []);
+
     useEffect(() => {
-        const fetchEmojis = async () => {
-            const notes = await getAllContactNotes();
-            const emojis = countUniqueEmojisInNotes(notes);
-            const newFilters = [
-                ...COMMON_FILTERS,
-                ...NEIGHBOURHOOD_FILTERS,
-                ...emojis.map((e) => e.emoji),
-            ];
-            setFilters(Array.from(new Set(newFilters)));
-        };
-        fetchEmojis();
-    }, []);
+        if (!notes) return;
+        
+        const emojis = countUniqueEmojisInNotes(notes);
+        const newFilters = [
+            ...COMMON_FILTERS,
+            ...NEIGHBOURHOOD_FILTERS,
+            ...emojis.map((e) => e.emoji),
+        ];
+        const newFiltersSet = Array.from(new Set(newFilters));
+        
+        // Only update if the filters have actually changed
+        if (JSON.stringify(newFiltersSet) !== JSON.stringify(filters)) {
+            setFilters(newFiltersSet);
+        }
+    }, [notes, filters]);
 
     return (
         <Box marginBottom={10} paddingHorizontal={10}>

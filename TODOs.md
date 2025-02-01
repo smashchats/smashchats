@@ -11,7 +11,6 @@
 -   [ ] delete contacts / discussions
 -   [ ] delete own avatar
 -   [ ] mark as unread
--   [ ] filters based on notes
 -   [ ] hide screen on connecting and show connecting status
 -   [ ] copy telegram's fluidity (get inspiration from their animations)
 -   [ ] multiple-people discussions (groups)
@@ -41,6 +40,7 @@
     -   [x] handle LOTS of emojis (allow for scrolling)
     -   [x] duplicate emojis should be collapsed into one badge
     -   [ ] adding note to a contact
+    -   [ ] remove integers 0-9 from filters, unless it is emojis (i.e. 1 vs 1️⃣)
     -   [ ] refresh filters when notes change
 
 ## Done

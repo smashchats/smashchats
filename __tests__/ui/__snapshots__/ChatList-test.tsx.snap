@@ -17,6 +17,8 @@ exports[`ui renders correctly 1`] = `
         "unread",
         "trusted",
         "smashed",
+        "🐱",
+        "🐶",
       ]
     }
     getItem={[Function]}
@@ -278,6 +280,182 @@ exports[`ui renders correctly 1`] = `
                 }
               >
                 smashed
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+      <View
+        onFocusCapture={[Function]}
+        onLayout={[Function]}
+        style={
+          [
+            {
+              "flexDirection": "row",
+            },
+            null,
+          ]
+        }
+      >
+        <View
+          accessibilityState={
+            {
+              "busy": undefined,
+              "checked": undefined,
+              "disabled": undefined,
+              "expanded": undefined,
+              "selected": undefined,
+            }
+          }
+          accessibilityValue={
+            {
+              "max": undefined,
+              "min": undefined,
+              "now": undefined,
+              "text": undefined,
+            }
+          }
+          accessible={true}
+          collapsable={false}
+          focusable={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+        >
+          <View
+            style={
+              {
+                "alignItems": "center",
+                "backgroundColor": "#222222",
+                "borderColor": "#64189b",
+                "borderRadius": 16,
+                "borderWidth": 2,
+                "flex": undefined,
+                "flexDirection": "row",
+                "height": undefined,
+                "justifyContent": "center",
+                "marginHorizontal": undefined,
+                "marginRight": 6,
+                "paddingHorizontal": 8,
+                "paddingVertical": 1,
+                "width": undefined,
+              }
+            }
+          >
+            <View
+              style={
+                {
+                  "backgroundColor": undefined,
+                  "flex": undefined,
+                  "height": undefined,
+                }
+              }
+            >
+              <Text
+                style={
+                  {
+                    "color": "white",
+                    "fontFamily": "Cairo, apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif",
+                    "fontSize": 12,
+                    "textTransform": "uppercase",
+                  }
+                }
+              >
+                🐱
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+      <View
+        onFocusCapture={[Function]}
+        onLayout={[Function]}
+        style={
+          [
+            {
+              "flexDirection": "row",
+            },
+            null,
+          ]
+        }
+      >
+        <View
+          accessibilityState={
+            {
+              "busy": undefined,
+              "checked": undefined,
+              "disabled": undefined,
+              "expanded": undefined,
+              "selected": undefined,
+            }
+          }
+          accessibilityValue={
+            {
+              "max": undefined,
+              "min": undefined,
+              "now": undefined,
+              "text": undefined,
+            }
+          }
+          accessible={true}
+          collapsable={false}
+          focusable={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+        >
+          <View
+            style={
+              {
+                "alignItems": "center",
+                "backgroundColor": "#222222",
+                "borderColor": "#64189b",
+                "borderRadius": 16,
+                "borderWidth": 2,
+                "flex": undefined,
+                "flexDirection": "row",
+                "height": undefined,
+                "justifyContent": "center",
+                "marginHorizontal": undefined,
+                "marginRight": 6,
+                "paddingHorizontal": 8,
+                "paddingVertical": 1,
+                "width": undefined,
+              }
+            }
+          >
+            <View
+              style={
+                {
+                  "backgroundColor": undefined,
+                  "flex": undefined,
+                  "height": undefined,
+                }
+              }
+            >
+              <Text
+                style={
+                  {
+                    "color": "white",
+                    "fontFamily": "Cairo, apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif",
+                    "fontSize": 12,
+                    "textTransform": "uppercase",
+                  }
+                }
+              >
+                🐶
               </Text>
             </View>
           </View>
@@ -305,6 +483,8 @@ exports[`ui selects a filter when you click on it 1`] = `
         "unread",
         "trusted",
         "smashed",
+        "🐱",
+        "🐶",
       ]
     }
     getItem={[Function]}
@@ -566,6 +746,182 @@ exports[`ui selects a filter when you click on it 1`] = `
                 }
               >
                 smashed
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+      <View
+        onFocusCapture={[Function]}
+        onLayout={[Function]}
+        style={
+          [
+            {
+              "flexDirection": "row",
+            },
+            null,
+          ]
+        }
+      >
+        <View
+          accessibilityState={
+            {
+              "busy": undefined,
+              "checked": undefined,
+              "disabled": undefined,
+              "expanded": undefined,
+              "selected": undefined,
+            }
+          }
+          accessibilityValue={
+            {
+              "max": undefined,
+              "min": undefined,
+              "now": undefined,
+              "text": undefined,
+            }
+          }
+          accessible={true}
+          collapsable={false}
+          focusable={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+        >
+          <View
+            style={
+              {
+                "alignItems": "center",
+                "backgroundColor": "#222222",
+                "borderColor": "#64189b",
+                "borderRadius": 16,
+                "borderWidth": 2,
+                "flex": undefined,
+                "flexDirection": "row",
+                "height": undefined,
+                "justifyContent": "center",
+                "marginHorizontal": undefined,
+                "marginRight": 6,
+                "paddingHorizontal": 8,
+                "paddingVertical": 1,
+                "width": undefined,
+              }
+            }
+          >
+            <View
+              style={
+                {
+                  "backgroundColor": undefined,
+                  "flex": undefined,
+                  "height": undefined,
+                }
+              }
+            >
+              <Text
+                style={
+                  {
+                    "color": "white",
+                    "fontFamily": "Cairo, apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif",
+                    "fontSize": 12,
+                    "textTransform": "uppercase",
+                  }
+                }
+              >
+                🐱
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+      <View
+        onFocusCapture={[Function]}
+        onLayout={[Function]}
+        style={
+          [
+            {
+              "flexDirection": "row",
+            },
+            null,
+          ]
+        }
+      >
+        <View
+          accessibilityState={
+            {
+              "busy": undefined,
+              "checked": undefined,
+              "disabled": undefined,
+              "expanded": undefined,
+              "selected": undefined,
+            }
+          }
+          accessibilityValue={
+            {
+              "max": undefined,
+              "min": undefined,
+              "now": undefined,
+              "text": undefined,
+            }
+          }
+          accessible={true}
+          collapsable={false}
+          focusable={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+        >
+          <View
+            style={
+              {
+                "alignItems": "center",
+                "backgroundColor": "#222222",
+                "borderColor": "#64189b",
+                "borderRadius": 16,
+                "borderWidth": 2,
+                "flex": undefined,
+                "flexDirection": "row",
+                "height": undefined,
+                "justifyContent": "center",
+                "marginHorizontal": undefined,
+                "marginRight": 6,
+                "paddingHorizontal": 8,
+                "paddingVertical": 1,
+                "width": undefined,
+              }
+            }
+          >
+            <View
+              style={
+                {
+                  "backgroundColor": undefined,
+                  "flex": undefined,
+                  "height": undefined,
+                }
+              }
+            >
+              <Text
+                style={
+                  {
+                    "color": "white",
+                    "fontFamily": "Cairo, apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif",
+                    "fontSize": 12,
+                    "textTransform": "uppercase",
+                  }
+                }
+              >
+                🐶
               </Text>
             </View>
           </View>
@@ -593,6 +949,8 @@ exports[`ui selects a filter when you click on it 2`] = `
         "trusted",
         "unread",
         "smashed",
+        "🐱",
+        "🐶",
       ]
     }
     getItem={[Function]}
@@ -854,6 +1212,182 @@ exports[`ui selects a filter when you click on it 2`] = `
                 }
               >
                 smashed
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+      <View
+        onFocusCapture={[Function]}
+        onLayout={[Function]}
+        style={
+          [
+            {
+              "flexDirection": "row",
+            },
+            null,
+          ]
+        }
+      >
+        <View
+          accessibilityState={
+            {
+              "busy": undefined,
+              "checked": undefined,
+              "disabled": undefined,
+              "expanded": undefined,
+              "selected": undefined,
+            }
+          }
+          accessibilityValue={
+            {
+              "max": undefined,
+              "min": undefined,
+              "now": undefined,
+              "text": undefined,
+            }
+          }
+          accessible={true}
+          collapsable={false}
+          focusable={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+        >
+          <View
+            style={
+              {
+                "alignItems": "center",
+                "backgroundColor": "#222222",
+                "borderColor": "#64189b",
+                "borderRadius": 16,
+                "borderWidth": 2,
+                "flex": undefined,
+                "flexDirection": "row",
+                "height": undefined,
+                "justifyContent": "center",
+                "marginHorizontal": undefined,
+                "marginRight": 6,
+                "paddingHorizontal": 8,
+                "paddingVertical": 1,
+                "width": undefined,
+              }
+            }
+          >
+            <View
+              style={
+                {
+                  "backgroundColor": undefined,
+                  "flex": undefined,
+                  "height": undefined,
+                }
+              }
+            >
+              <Text
+                style={
+                  {
+                    "color": "white",
+                    "fontFamily": "Cairo, apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif",
+                    "fontSize": 12,
+                    "textTransform": "uppercase",
+                  }
+                }
+              >
+                🐱
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+      <View
+        onFocusCapture={[Function]}
+        onLayout={[Function]}
+        style={
+          [
+            {
+              "flexDirection": "row",
+            },
+            null,
+          ]
+        }
+      >
+        <View
+          accessibilityState={
+            {
+              "busy": undefined,
+              "checked": undefined,
+              "disabled": undefined,
+              "expanded": undefined,
+              "selected": undefined,
+            }
+          }
+          accessibilityValue={
+            {
+              "max": undefined,
+              "min": undefined,
+              "now": undefined,
+              "text": undefined,
+            }
+          }
+          accessible={true}
+          collapsable={false}
+          focusable={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+        >
+          <View
+            style={
+              {
+                "alignItems": "center",
+                "backgroundColor": "#222222",
+                "borderColor": "#64189b",
+                "borderRadius": 16,
+                "borderWidth": 2,
+                "flex": undefined,
+                "flexDirection": "row",
+                "height": undefined,
+                "justifyContent": "center",
+                "marginHorizontal": undefined,
+                "marginRight": 6,
+                "paddingHorizontal": 8,
+                "paddingVertical": 1,
+                "width": undefined,
+              }
+            }
+          >
+            <View
+              style={
+                {
+                  "backgroundColor": undefined,
+                  "flex": undefined,
+                  "height": undefined,
+                }
+              }
+            >
+              <Text
+                style={
+                  {
+                    "color": "white",
+                    "fontFamily": "Cairo, apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif",
+                    "fontSize": 12,
+                    "textTransform": "uppercase",
+                  }
+                }
+              >
+                🐶
               </Text>
             </View>
           </View>

@@ -12,10 +12,6 @@ import {
 } from "@/src/context/GlobalContext.jsx";
 import { ChatListView } from "@/src/types/";
 
-jest.mock("@/src/db/models/Contacts", () => ({
-    getAllContactNotes: jest.fn(() => ["note 1 🐱", "note 2 🐶"]),
-}));
-
 const DEFAULT_VALUES: Partial<ChatListView> = {
     most_recent_message: "string",
     most_recent_message_type: "text",

@@ -112,12 +112,14 @@ export const updateContact = async (profile: IMProfile) => {
     });
 };
 
+export const getAllContactNotesQuery = drizzle_db
+    .select({
+        notes: contacts.notes,
+    })
+    .from(contacts)
+    .where(isNotNull(contacts.notes));
+
 export const getAllContactNotes = async (): Promise<string[]> => {
-    const notes = await drizzle_db
-        .select({
-            notes: contacts.notes,
-        })
-        .from(contacts)
-        .where(isNotNull(contacts.notes));
+    const notes = await getAllContactNotesQuery;
     return notes.map((note) => note.notes) as string[];
 };
