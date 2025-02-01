@@ -117,6 +117,9 @@ exports[`RenderMessageListItem renders messages 1`] = `
           09:48
         </Text>
       </View>
+      <Text>
+        check
+      </Text>
     </View>
   </View>
 </View>

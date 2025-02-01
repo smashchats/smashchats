@@ -2,7 +2,7 @@ import { render } from "@testing-library/react-native";
 
 import { RenderMessageListItem } from "@/src/ui/fragments/MessagesList";
 import { DisplayableMessage } from "@/src/types/";
-import { IM_CHAT_TEXT } from "@smashchats/library";
+import { IM_CHAT_TEXT, MessageStatus } from "@smashchats/library";
 
 describe("RenderMessageListItem", () => {
     it("renders correctly", () => {
@@ -21,6 +21,7 @@ describe("RenderMessageListItem", () => {
                 sha256: "123",
                 from: "alice",
                 date: new Date("2024-01-01T08:48:00Z"),
+                status: "delivered" as MessageStatus,
             },
             {
                 type: IM_CHAT_TEXT,
@@ -29,6 +30,7 @@ describe("RenderMessageListItem", () => {
                 sha256: "124",
                 from: "bob",
                 date: new Date("2024-01-01T08:48:00Z"),
+                status: "delivered" as MessageStatus,
             },
         ];
         let tree;

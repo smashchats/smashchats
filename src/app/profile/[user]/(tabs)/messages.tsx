@@ -42,6 +42,7 @@ import {
     undefinedString,
     encapsulateMessage,
     IMProtoMessage,
+    MessageStatus,
 } from "@smashchats/library";
 
 import {
@@ -88,7 +89,7 @@ const getMessages = async (
         .orderBy(desc(MessagesSchema.created_at))
         .offset(offset)
         .limit(limit)
-        .execute();
+        .execute() as Message[];
 };
 
 const getUnreadMessagesCount = async (peerId: string): Promise<number> => {
@@ -254,7 +255,7 @@ const ProfileMessages = forwardRef<
                     date_read: now,
                     timestamp: now,
                     reply_to_sha256: null,
-                    status: from_self ? "sending" : "received",
+                    status: from_self ? "sending" as MessageStatus : "received",
                 } satisfies Message,
                 messages,
                 globalState.selfDid.id
