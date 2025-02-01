@@ -2,7 +2,6 @@
 
 ## Pending
 
--   [ ] (BUG) lastMessageId not correctly initialized
 -   [~] Contact notes
     -   [ ] dynamically generate filters
     -   [ ] use filters to search in notes & user bio.{title, description}
@@ -42,6 +41,7 @@
 
 ## Done
 
+-   [x] (BUG) lastMessageId not correctly initialized
 -   [x] mark messages as received / read
 -   [x] profile scroll / collapsible header
     -   [x] fix padding tabs hidden behind tabbar & header

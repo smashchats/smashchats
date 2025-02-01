@@ -190,8 +190,21 @@ const ProfileMessages = forwardRef<
                 ? unread_count - DEFAULT_LOAD_LIMIT + 1
                 : DEFAULT_LOAD_LIMIT;
 
+            const databaseMessages = await getMessages(peerId, 0, loadLimit);
+
+            if (databaseMessages.length > 0) {
+                const lastMessageId = databaseMessages[
+                    databaseMessages.length - 1
+                ].sha256 as sha256;
+                dispatch({
+                    type: "LATEST_MESSAGE_ID_IN_DISCUSSION_ACTION",
+                    discussionId: peerId,
+                    messageId: lastMessageId,
+                });
+            }
+
             const enrichedMessages = addSystemMessages(
-                await getMessages(peerId, 0, loadLimit),
+                databaseMessages,
                 globalState.selfDid.id
             );
             setMessages(enrichedMessages);
