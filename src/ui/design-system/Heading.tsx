@@ -23,6 +23,7 @@ export function Heading({
     color,
     fontSize,
     fontFamily,
+    ...rest
 }: Props): JSX.Element {
     return (
         <View style={{ backgroundColor: bg, height: h, flex, marginBottom }}>
@@ -34,6 +35,7 @@ export function Heading({
                     fontSize,
                     fontFamily,
                     ...style,
+                    ...rest,
                 }}
             >
                 {children}

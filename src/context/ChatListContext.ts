@@ -42,13 +42,22 @@ interface ToggleFilterAction extends ChatListActionBase {
     filter: string;
 }
 
-export type ChatListAction = ToggleFilterAction;
+interface DraftAction extends ChatListActionBase {
+    type: "CHAT_LIST_DRAFT_ACTION";
+    draft: string;
+    did_id: string;
+}
+
+export type ChatListAction = ToggleFilterAction | DraftAction;
 
 //
 // CONTEXT
 //
 export type ChatListParams = {
     selectedFilters: string[];
+    drafts: {
+        [key: string]: string;
+    };
 };
 
 const CHAT_SORTER = (a: ChatListView, b: ChatListView) =>
@@ -62,17 +71,44 @@ export const chatListReducer = (
     state: ChatListParams,
     action: ChatListAction | Action
 ): ChatListParams => {
+    if (
+        !["CHAT_LIST_TOGGLE_FILTER_ACTION", "CHAT_LIST_DRAFT_ACTION"].includes(
+            action.type
+        )
+    ) {
+        return state;
+    }
+
+    return {
+        ...state,
+        selectedFilters: selectedFiltersReducer(state.selectedFilters, action),
+        drafts: draftReducer(state.drafts, action),
+    };
+};
+
+export const selectedFiltersReducer = (
+    state: string[],
+    action: ToggleFilterAction | Action
+): string[] => {
     if (action.type !== "CHAT_LIST_TOGGLE_FILTER_ACTION") {
         return state;
     }
 
-    const isUserAddingFilter = !state.selectedFilters.includes(action.filter);
+    const isUserAddingFilter = !state.includes(action.filter);
     const selectedFilters = isUserAddingFilter
-        ? [...state.selectedFilters, action.filter]
-        : [...state.selectedFilters.filter((f) => f != action.filter)];
+        ? [...state, action.filter]
+        : [...state.filter((f) => f != action.filter)];
 
-    return {
-        ...state,
-        selectedFilters,
-    };
+    return selectedFilters;
+};
+
+export const draftReducer = (
+    state: { [key: string]: string },
+    action: DraftAction | Action
+): { [key: string]: string } => {
+    if (action.type !== "CHAT_LIST_DRAFT_ACTION") {
+        return state;
+    }
+
+    return { ...state, [action.did_id]: action.draft };
 };

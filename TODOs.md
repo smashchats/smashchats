@@ -2,7 +2,6 @@
 
 ## Pending
 
--   [ ] drafts (in-memory)
 -   [ ] save "active" contact --> display as purple ; active here is like "dirty" in an angular form
 -   [ ] fix chat list ordering (see with @xsbfh for algorithm?)
 -   [ ] DID set (when contact sends profile) vs DID patch (when resolving? & when nab sends profiles)
@@ -45,6 +44,7 @@
 
 ## Done
 
+-   [x] drafts (in-memory)
 -   [x] (BUG) lastMessageId not correctly initialized
 -   [x] mark messages as received / read
 -   [x] profile scroll / collapsible header

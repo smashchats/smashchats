@@ -73,6 +73,27 @@ describe(`chat item`, () => {
             expect(result).toBe("05/01/2024");
         });
     });
+
+    test("draft is shown in italics", () => {
+        const tree = render(
+            <ChatItem
+                did_id="did_id"
+                draft="draft"
+                meta_title="displayName"
+                most_recent_message="excerpt"
+                most_recent_message_date={new Date().getTime()}
+                unread_count={0}
+                most_recent_message_type="message_type"
+                trusted_name="trusted_name"
+                meta_avatar="avatar"
+                smashed={false}
+                active={false}
+                created_at={new Date()}
+            />
+        ).toJSON();
+
+        expect(tree).toMatchSnapshot();
+    });
 });
 
 describe("getExcerpt", () => {

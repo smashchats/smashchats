@@ -67,18 +67,20 @@ export function ChatItem({
     most_recent_message_date,
     active,
     meta_avatar,
+    draft,
 }: ChatItemProps): React.JSX.Element {
     const date = dateToShowableString(new Date(most_recent_message_date));
 
     const VERTICAL_PADDING = 8;
 
+    const text =
+        (draft && `Draft: ${draft}`) ??
+        getExcerpt(most_recent_message, most_recent_message_type) ??
+        "(new contact)";
+
     return (
         <Box flex={1} paddingHorizontal={10} marginTop={VERTICAL_PADDING}>
-            <HStack
-                gap={12}
-                alignItems="center"
-                alignContent="flex-start"
-            >
+            <HStack gap={12} alignItems="center" alignContent="flex-start">
                 <Avatar
                     contact={
                         {
@@ -107,15 +109,13 @@ export function ChatItem({
                         )}
                     </SerifHeading>
                     <Heading
+                        fontStyle={draft ? "italic" : "normal"}
                         fontWeight={"400"}
-                        color="white"
+                        color={draft ? Colors.textLightGray : "white"}
                         fontSize={12}
                         isTruncated={true}
                     >
-                        {getExcerpt(
-                            most_recent_message,
-                            most_recent_message_type
-                        ) ?? "new contact"}
+                        {text}
                     </Heading>
                 </VStack>
                 <VStack alignItems="flex-end" gap={12}>

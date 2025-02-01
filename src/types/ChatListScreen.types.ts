@@ -16,4 +16,5 @@ export interface ChatListView {
     trusted_name?: TrustRelation["name"];
     most_recent_message_date: number;
     unread_count: number;
+    draft?: string;
 }

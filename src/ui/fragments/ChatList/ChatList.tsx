@@ -17,7 +17,7 @@ interface Props {
 
 export function ChatList({ chats }: Readonly<Props>) {
     const {
-        chatList: { selectedFilters },
+        chatList: { selectedFilters, drafts },
     } = useGlobalState();
 
     const [shownChats, setShownChats] = useState<ChatListView[]>(chats);
@@ -52,7 +52,7 @@ export function ChatList({ chats }: Readonly<Props>) {
                         asChild
                     >
                         <TouchableOpacity activeOpacity={0.8}>
-                            <ChatItem {...d} />
+                            <ChatItem {...d} draft={drafts?.[d.did_id]} />
                         </TouchableOpacity>
                     </Link>
                 ))}

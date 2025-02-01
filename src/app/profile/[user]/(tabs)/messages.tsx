@@ -125,7 +125,7 @@ const ProfileMessages = forwardRef<
 
     const { user: peerId }: { user: string } = useLocalSearchParams();
 
-    const [newMessage, setNewMessage] = useState("");
+    const [newMessage, setNewMessage] = useState(globalState.chatList.drafts[peerId] ?? "");
     const [shouldShowSendIcon, setShouldShowSendIcon] = useState(true);
     const inputFieldRef = useRef<TextInput>(null);
 
@@ -434,6 +434,13 @@ const ProfileMessages = forwardRef<
                         placeholderTextColor={Colors.textGray}
                         value={newMessage}
                         onChangeText={setNewMessage}
+                        onBlur={() => {
+                            dispatch({
+                                type: "CHAT_LIST_DRAFT_ACTION",
+                                draft: newMessage,
+                                did_id: peerId,
+                            });
+                        }}
                         onSubmitEditing={handleSendMessage}
                         style={{
                             color: "white",

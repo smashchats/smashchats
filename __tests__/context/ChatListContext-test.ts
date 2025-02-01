@@ -1,4 +1,5 @@
 import {
+    draftReducer,
     filterChatsBasedOnFilters,
     getShownChats,
 } from "@/src/context/ChatListContext";
@@ -36,6 +37,43 @@ describe("ChatListContext", () => {
             const filters = ["note 1"];
 
             expect(getShownChats(chats, filters)).toHaveLength(1);
+        });
+    });
+
+    describe("draftReducer", () => {
+        it("should add a draft", () => {
+            const state = {};
+            const action = {
+                type: "CHAT_LIST_DRAFT_ACTION" as const,
+                draft: "draft",
+                did_id: "did_id",
+            };
+            expect(draftReducer(state, action)).toEqual({ did_id: "draft" });
+        });
+
+        it("should replace draft", () => {
+            const state = { did_id: "draft" };
+            const action = {
+                type: "CHAT_LIST_DRAFT_ACTION" as const,
+                draft: "draft2",
+                did_id: "did_id",
+            };
+            expect(draftReducer(state, action)).toEqual({ did_id: "draft2" });
+        });
+
+        it("shoudl append another user's draft", () => {
+            const state = {
+                did_id_2: "draft_2",
+            };
+            const action = {
+                type: "CHAT_LIST_DRAFT_ACTION" as const,
+                draft: "draft",
+                did_id: "did_id",
+            };
+            expect(draftReducer(state, action)).toEqual({
+                did_id_2: "draft_2",
+                did_id: "draft",
+            });
         });
     });
 });
