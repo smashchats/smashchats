@@ -1,3 +1,5 @@
+import { fireEvent, render } from "@testing-library/react-native";
+
 import { ChatListFilters } from "@/src/ui/fragments/ChatList";
 import {
     filterChatsBasedOnFilters,
@@ -9,7 +11,10 @@ import {
     INITIAL_GLOBAL_STATE,
 } from "@/src/context/GlobalContext.jsx";
 import { ChatListView } from "@/src/types/";
-import { fireEvent, render } from "@testing-library/react-native";
+
+jest.mock("@/src/db/models/Contacts", () => ({
+    getAllContactNotes: jest.fn(() => ["note 1 🐱", "note 2 🐶"]),
+}));
 
 const DEFAULT_VALUES: Partial<ChatListView> = {
     most_recent_message: "string",
