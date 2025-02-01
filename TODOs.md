@@ -1,29 +1,32 @@
 # TODOs
 
-## Pending
+## Icebox
 
--   [ ] save "active" contact --> display as purple ; active here is like "dirty" in an angular form
--   [ ] fix chat list ordering (see with @xsbfh for algorithm?)
--   [ ] DID set (when contact sends profile) vs DID patch (when resolving? & when nab sends profiles)
--   [ ] replace Pressable with TouchableOpacity where needed
+-   [ ] replace routing? https://github.com/expo/router/issues/723
 -   [ ] animations?
--   [ ] delete contacts / discussions
--   [ ] delete own avatar
--   [ ] mark as unread
--   [ ] hide screen on connecting and show connecting status
 -   [ ] copy telegram's fluidity (get inspiration from their animations)
 -   [ ] multiple-people discussions (groups)
 -   [ ] multiple identities
--   [ ] send media messages
-    -   [ ] media organizer à la stash
--   [ ] cache images on device
--   [ ] bio max 140chars
--   [ ] replace routing? https://github.com/expo/router/issues/723
 -   [ ] fastlane android bump version
 -   [ ] fastlane android upload
 -   [ ] follow https://www.runway.team/blog/how-to-set-up-a-ci-cd-pipeline-for-your-ios-app-fastlane-github-actions
     -   [ ] fastlane ios
     -   [ ] fastlane ios bump version
+
+## Pending
+
+-   [ ] save "active" contact --> display as purple ; active here is like "dirty" in an angular form
+-   [ ] fix chat list ordering (see with @xsbfh for algorithm?)
+-   [ ] bio max 140chars
+-   [ ] replace Pressable with TouchableOpacity where needed
+-   [ ] DID set (when contact sends profile) vs DID patch (when resolving? & when nab sends profiles)
+-   [ ] delete contacts / discussions
+-   [ ] delete own avatar
+-   [ ] mark as unread
+-   [ ] hide screen on connecting and show connecting status
+-   [ ] send media messages
+    -   [ ] media organizer à la stash
+-   [ ] cache images on device
 
 ## In progress
 
