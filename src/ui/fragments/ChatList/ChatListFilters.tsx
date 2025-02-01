@@ -60,20 +60,20 @@ export function ChatListFilters() {
         chatList: { selectedFilters },
     } = useGlobalState();
 
-    const [filters, setFilters] = useState<string[]>([
-        ...COMMON_FILTERS,
-        ...NEIGHBOURHOOD_FILTERS,
-    ]);
+    const [filters, setFilters] = useState<string[]>(
+        Array.from(new Set([...COMMON_FILTERS, ...NEIGHBOURHOOD_FILTERS]))
+    );
 
     useEffect(() => {
         const fetchEmojis = async () => {
             const notes = await getAllContactNotes();
             const emojis = countUniqueEmojisInNotes(notes);
-            setFilters([
+            const newFilters = [
                 ...COMMON_FILTERS,
                 ...NEIGHBOURHOOD_FILTERS,
                 ...emojis.map((e) => e.emoji),
-            ]);
+            ];
+            setFilters(Array.from(new Set(newFilters)));
         };
         fetchEmojis();
     }, []);
@@ -84,7 +84,11 @@ export function ChatListFilters() {
                 horizontal
                 data={[
                     ...selectedFilters,
-                    ...filters.filter((f) => !selectedFilters.includes(f)),
+                    ...Array.from(
+                        new Set(
+                            filters.filter((f) => !selectedFilters.includes(f))
+                        )
+                    ),
                 ]}
                 renderItem={({ item: filter }) => {
                     return (
