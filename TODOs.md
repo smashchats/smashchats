@@ -3,7 +3,7 @@
 ## Pending
 
 -   [~] Contact notes
-    -   [ ] dynamically generate filters
+    -   [~] dynamically generate filters
     -   [ ] use filters to search in notes & user bio.{title, description}
 -   [ ] drafts
 -   [ ] save "active" contact --> display as purple

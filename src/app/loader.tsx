@@ -31,7 +31,9 @@ export default function LoaderScreen() {
                 createTrustRelation(didId),
                 user.join(dev_nab_join_action),
                 saveContactToDb(
-                    MapDidToContactInsert(dev_nab_join_action.did as DIDDocument)
+                    MapDidToContactInsert(
+                        dev_nab_join_action.did as DIDDocument
+                    )
                 ),
                 new Promise((resolve) => setTimeout(resolve, 3 * 1_000)),
             ]);

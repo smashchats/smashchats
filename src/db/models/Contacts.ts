@@ -1,10 +1,10 @@
-import { InferInsertModel, InferSelectModel, eq } from "drizzle-orm";
+import { InferInsertModel, InferSelectModel, eq, isNotNull } from "drizzle-orm";
+import { SQLiteInsertOnConflictDoUpdateConfig } from "drizzle-orm/sqlite-core";
 
 import { IMProfile } from "@smashchats/library";
 
 import { contacts, trustRelations } from "@/src/db/schema.js";
 import { drizzle_db } from "@/src/db/database";
-import { SQLiteInsertOnConflictDoUpdateConfig } from "drizzle-orm/sqlite-core";
 import { ResolveDidAndMapToContactInsert } from "@/src/utils/mappers/contacts";
 
 export type Contact = InferSelectModel<typeof contacts>;
@@ -56,16 +56,21 @@ export const getContactsFromDb = async (): Promise<Contact[]> => {
 
 interface UpdateOptions {
     onConflictDoNothing?: boolean;
-    onConflictDoUpdate?: Omit<SQLiteInsertOnConflictDoUpdateConfig<any>, "target">;
+    onConflictDoUpdate?: Omit<
+        SQLiteInsertOnConflictDoUpdateConfig<any>,
+        "target"
+    >;
 }
 
-const genericUpdateContact = async (did_id: string, updates: Partial<ContactInsert>, options: UpdateOptions = {}) => {
-    let query = drizzle_db
-        .insert(contacts)
-        .values({
-            ...updates,
-            did_id,
-        });
+const genericUpdateContact = async (
+    did_id: string,
+    updates: Partial<ContactInsert>,
+    options: UpdateOptions = {}
+) => {
+    let query = drizzle_db.insert(contacts).values({
+        ...updates,
+        did_id,
+    });
 
     if (options.onConflictDoNothing) {
         query = query.onConflictDoNothing();
@@ -80,11 +85,14 @@ const genericUpdateContact = async (did_id: string, updates: Partial<ContactInse
     return updatedContact;
 };
 
-export const patchContact = async (did_id: string, updates: Partial<ContactInsert>) => {
+export const patchContact = async (
+    did_id: string,
+    updates: Partial<ContactInsert>
+) => {
     return genericUpdateContact(did_id, updates, {
         onConflictDoUpdate: { set: updates },
     });
-}
+};
 
 export const updateContact = async (profile: IMProfile) => {
     const { title, description, avatar } = profile;
@@ -97,9 +105,19 @@ export const updateContact = async (profile: IMProfile) => {
         meta_description: description,
         meta_avatar: avatar,
         updated_at: new Date(),
-    }
+    };
 
     return genericUpdateContact(did.did_id, data, {
         onConflictDoUpdate: { set: data },
     });
+};
+
+export const getAllContactNotes = async (): Promise<string[]> => {
+    const notes = await drizzle_db
+        .select({
+            notes: contacts.notes,
+        })
+        .from(contacts)
+        .where(isNotNull(contacts.notes));
+    return notes.map((note) => note.notes) as string[];
 };

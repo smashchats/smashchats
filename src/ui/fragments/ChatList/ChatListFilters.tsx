@@ -1,21 +1,35 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Pressable } from "react-native";
+
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+
 import { Box } from "@/src/ui/design-system/layout";
 import { Badge, BadgeText } from "@/src/ui/design-system/Badge";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {
     useGlobalDispatch,
     useGlobalState,
 } from "@/src/context/GlobalContext.jsx";
 import { NEIGHBOURHOOD_FILTERS } from "@/data/neighbourhood.js";
+import { countUniqueEmojisInNotes } from "@/src/utils/NotesUtils";
+import { getAllContactNotes } from "@/src/db/models/Contacts";
 
 export const COMMON_FILTERS = ["unread", "smashed", "trusted"];
 
 export function ChatListFilters() {
     const { chatList } = useGlobalState();
     const dispatch = useGlobalDispatch();
+    const [emojis, setEmojis] = useState<string[]>([]);
 
-    const filters = [...COMMON_FILTERS, ...NEIGHBOURHOOD_FILTERS];
+    const filters = [...COMMON_FILTERS, ...NEIGHBOURHOOD_FILTERS, ...emojis];
+
+    useEffect(() => {
+        const fetchEmojis = async () => {
+            const notes = await getAllContactNotes();
+            const emojis = countUniqueEmojisInNotes(notes);
+            setEmojis(emojis.map((e) => e.emoji));
+        };
+        fetchEmojis();
+    }, []);
 
     return (
         <Box flexDirection="row" marginBottom={10} paddingHorizontal={10}>
