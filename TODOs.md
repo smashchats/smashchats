@@ -38,9 +38,10 @@
 -   [~] Contact notes
     -   [x] dynamically generate filters
     -   [x] use filters to search in notes & user bio.{title, description}
-    -   [ ] handle LOTS of emojis (allow for scrolling)
+    -   [x] handle LOTS of emojis (allow for scrolling)
     -   [ ] duplicate emojis should be collapsed into one badge
     -   [ ] adding note to a contact
+    -   [ ] refresh filters when notes change
 
 ## Done
 

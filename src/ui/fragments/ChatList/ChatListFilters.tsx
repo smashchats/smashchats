@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Pressable } from "react-native";
+import { FlatList, Pressable } from "react-native";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -15,58 +15,88 @@ import { getAllContactNotes } from "@/src/db/models/Contacts";
 
 export const COMMON_FILTERS = ["unread", "smashed", "trusted"];
 
-export function ChatListFilters() {
-    const { chatList } = useGlobalState();
+const FilterItem = ({
+    filter,
+    selectedFilters,
+}: {
+    filter: string;
+    selectedFilters: string[];
+}) => {
     const dispatch = useGlobalDispatch();
-    const [emojis, setEmojis] = useState<string[]>([]);
 
-    const filters = [...COMMON_FILTERS, ...NEIGHBOURHOOD_FILTERS, ...emojis];
+    return (
+        <Pressable
+            onPress={() =>
+                dispatch({
+                    type: "CHAT_LIST_TOGGLE_FILTER_ACTION",
+                    filter,
+                })
+            }
+        >
+            <Badge
+                type={
+                    selectedFilters.includes(filter) ? "selected" : "unselected"
+                }
+                size="lg"
+                marginRight={6}
+            >
+                {filter !== "trusted" && (
+                    <BadgeText color="white">{filter}</BadgeText>
+                )}
+                {filter === "trusted" && (
+                    <MaterialCommunityIcons
+                        name="check-circle"
+                        size={14}
+                        color="white"
+                    />
+                )}
+            </Badge>
+        </Pressable>
+    );
+};
+
+export function ChatListFilters() {
+    const {
+        chatList: { selectedFilters },
+    } = useGlobalState();
+
+    const [filters, setFilters] = useState<string[]>([
+        ...COMMON_FILTERS,
+        ...NEIGHBOURHOOD_FILTERS,
+    ]);
 
     useEffect(() => {
         const fetchEmojis = async () => {
             const notes = await getAllContactNotes();
             const emojis = countUniqueEmojisInNotes(notes);
-            setEmojis(emojis.map((e) => e.emoji));
+            setFilters([
+                ...COMMON_FILTERS,
+                ...NEIGHBOURHOOD_FILTERS,
+                ...emojis.map((e) => e.emoji),
+            ]);
         };
         fetchEmojis();
     }, []);
 
     return (
-        <Box flexDirection="row" marginBottom={10} paddingHorizontal={10}>
-            {[
-                ...chatList.selectedFilters,
-                ...filters.filter((f) => !chatList.selectedFilters.includes(f)),
-            ].map((filter) => {
-                const selected = chatList.selectedFilters.includes(filter);
-                return (
-                    <Pressable
-                        key={filter}
-                        onPress={() =>
-                            dispatch({
-                                type: "CHAT_LIST_TOGGLE_FILTER_ACTION",
-                                filter,
-                            })
-                        }
-                    >
-                        <Badge
-                            type={selected ? "selected" : "unselected"}
-                            size="lg"
-                            marginRight={6}
-                        >
-                            {filter !== "trusted" && (
-                                <BadgeText color="white">{filter}</BadgeText>
-                            )}
-                            {filter === "trusted" && (
-                                <MaterialCommunityIcons
-                                    name="check-circle"
-                                    size={14}
-                                    color="white"
-                                />
-                            )}
-                        </Badge>
-                    </Pressable>
-                );
-            })}
+        <Box marginBottom={10} paddingHorizontal={10}>
+            <FlatList
+                horizontal
+                data={[
+                    ...selectedFilters,
+                    ...filters.filter((f) => !selectedFilters.includes(f)),
+                ]}
+                renderItem={({ item: filter }) => {
+                    return (
+                        <FilterItem
+                            filter={filter}
+                            selectedFilters={selectedFilters}
+                        />
+                    );
+                }}
+                keyExtractor={(filter) => filter}
+                showsHorizontalScrollIndicator={false}
+            />
         </Box>
     );
 }
