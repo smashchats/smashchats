@@ -16,7 +16,9 @@ export const filterChatsBasedOnFilters = (
             default:
                 return (
                     (chat.meta_title ?? "").includes(filter) ||
-                    (chat.trusted_name ?? "").includes(filter)
+                    (chat.trusted_name ?? "").includes(filter) ||
+                    (chat.meta_description ?? "").includes(filter) ||
+                    (chat.notes ?? "").includes(filter)
                 );
         }
     });

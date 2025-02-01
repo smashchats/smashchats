@@ -6,6 +6,8 @@ export interface ChatListView {
     did_id: Contact["did_id"];
     meta_title: Contact["meta_title"];
     meta_avatar?: Contact["meta_avatar"];
+    meta_description?: Contact["meta_description"];
+    notes?: Contact["notes"];
     active: Contact["active"];
     smashed: Contact["smashed"];
     created_at: Contact["created_at"];

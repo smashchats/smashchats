@@ -2,12 +2,9 @@
 
 ## Pending
 
--   [~] Contact notes
-    -   [~] dynamically generate filters
-    -   [ ] use filters to search in notes & user bio.{title, description}
--   [ ] drafts
--   [ ] save "active" contact --> display as purple
--   [ ] fix chat list ordering (see with xsbfh for algorithm?)
+-   [ ] drafts (in-memory)
+-   [ ] save "active" contact --> display as purple ; active here is like "dirty" in an angular form
+-   [ ] fix chat list ordering (see with @xsbfh for algorithm?)
 -   [ ] DID set (when contact sends profile) vs DID patch (when resolving? & when nab sends profiles)
 -   [ ] replace Pressable with TouchableOpacity where needed
 -   [ ] animations?
@@ -38,6 +35,12 @@
     -   [ ] fix transparency behind header
     -   [ ] fix buggy-ness
     -   [~] implement gesture handler on tabs & user bio so that we can scroll to the top
+-   [~] Contact notes
+    -   [x] dynamically generate filters
+    -   [x] use filters to search in notes & user bio.{title, description}
+    -   [ ] handle LOTS of emojis (allow for scrolling)
+    -   [ ] duplicate emojis should be collapsed into one badge
+    -   [ ] adding note to a contact
 
 ## Done
 

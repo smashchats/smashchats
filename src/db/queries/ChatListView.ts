@@ -8,6 +8,8 @@ export const chatListView = drizzle_db
         did_id: contacts.did_id,
         meta_title: contacts.meta_title,
         meta_avatar: contacts.meta_avatar,
+        meta_description: contacts.meta_description,
+        notes: contacts.notes,
         smashed: contacts.smashed,
         active: contacts.active,
         most_recent_message: messages.data,
