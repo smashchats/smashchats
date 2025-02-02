@@ -6,6 +6,7 @@ import {
     StyleSheet,
     Text,
     View,
+    Image,
 } from "react-native";
 
 import {
@@ -44,10 +45,7 @@ import {
     SAFE_AREA_PADDING,
 } from "@/src/ui/fragments/Camera/Constants";
 import { useIsForeground } from "@/src/ui/fragments/Camera/hooks";
-import {
-    CaptureButton,
-    StatusBarBlurBackground,
-} from "@/src/ui/fragments/Camera/views";
+import { CaptureButton } from "@/src/ui/fragments/Camera/views";
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from "@/src/ui/constants";
 
 const ReanimatedCamera = Reanimated.createAnimatedComponent(Camera);
@@ -64,6 +62,8 @@ export default function CameraLayout() {
     const location = useLocationPermission();
     const zoom = useSharedValue(1);
     const isPressingButton = useSharedValue(false);
+
+    const [mediaPath, setMediaPath] = useState<string | null>(null);
 
     const devices = useCameraDevices();
     useEffect(() => {
@@ -147,6 +147,7 @@ export default function CameraLayout() {
     const onMediaCaptured = useCallback(
         (media: PhotoFile | VideoFile, type: "photo" | "video") => {
             console.info(`Media (${type}) captured! ${JSON.stringify(media)}`);
+            setMediaPath(media.path);
         },
         []
     );
@@ -234,9 +235,27 @@ export default function CameraLayout() {
         location.requestPermission();
     }, [location]);
 
+    const mode: "no-camera" | "camera" | "media" = (() => {
+        switch (true) {
+            case device == null:
+                return "no-camera";
+            case mediaPath == null:
+                return "camera";
+            default:
+                return "media";
+        }
+    })();
+
     return (
         <View style={styles.container}>
-            {device != null ? (
+            {mode == "no-camera" && (
+                <View style={styles.container}>
+                    <Text style={styles.text}>
+                        Your phone does not have a camera
+                    </Text>
+                </View>
+            )}
+            {mode == "camera" && device != null && (
                 <GestureDetector gesture={pinchGesture}>
                     <Reanimated.View
                         onTouchEnd={onFocusTap}
@@ -299,58 +318,99 @@ export default function CameraLayout() {
                         </TapGestureHandler>
                     </Reanimated.View>
                 </GestureDetector>
-            ) : (
-                <View style={styles.emptyContainer}>
-                    <Text style={styles.text}>
-                        Your phone does not have a Camera.
-                    </Text>
+            )}
+            {(mode == "media" && mediaPath != null) && (
+                <View style={StyleSheet.absoluteFill}>
+                    <Image
+                        source={{
+                            uri: mediaPath,
+                        }}
+                        style={StyleSheet.absoluteFill}
+                    />
                 </View>
             )}
 
-            <CaptureButton
-                style={styles.captureButton}
-                camera={camera}
-                onMediaCaptured={onMediaCaptured}
-                cameraZoom={zoom}
-                minZoom={minZoom}
-                maxZoom={maxZoom}
-                flash={supportsFlash ? flash : "off"}
-                enabled={isCameraInitialized && isActive}
-                setIsPressingButton={setIsPressingButton}
-            />
+            {mode == "camera" && (
+                <CaptureButton
+                    style={styles.captureButton}
+                    camera={camera}
+                    onMediaCaptured={onMediaCaptured}
+                    cameraZoom={zoom}
+                    minZoom={minZoom}
+                    maxZoom={maxZoom}
+                    flash={supportsFlash ? flash : "off"}
+                    enabled={isCameraInitialized && isActive}
+                    setIsPressingButton={setIsPressingButton}
+                />
+            )}
 
-            <StatusBarBlurBackground />
-
-            <View style={styles.rightButtonRow}>
-                <Pressable style={styles.button} onPress={onFlipCameraPressed}>
-                    <MaterialCommunityIcons
-                        name={"camera-flip"}
-                        size={28}
-                        color={"white"}
-                    />
-                </Pressable>
-                {supportsFlash && (
-                    <Pressable style={styles.button} onPress={onFlashPressed}>
-                        <MaterialCommunityIcons
-                            name={flash === "on" ? "flash" : "flash-off"}
-                            size={28}
-                            color={"white"}
-                        />
-                    </Pressable>
-                )}
-                {canToggleNightMode && (
+            {mode == "camera" && (
+                <View style={styles.rightButtonRow}>
                     <Pressable
                         style={styles.button}
-                        onPress={() => setEnableNightMode(!enableNightMode)}
+                        onPress={onFlipCameraPressed}
                     >
                         <MaterialCommunityIcons
-                            name={enableNightMode ? "moon-full" : "moon-new"}
+                            name={"camera-flip"}
                             size={28}
                             color={"white"}
                         />
                     </Pressable>
-                )}
-            </View>
+                    {supportsFlash && (
+                        <Pressable
+                            style={styles.button}
+                            onPress={onFlashPressed}
+                        >
+                            <MaterialCommunityIcons
+                                name={flash === "on" ? "flash" : "flash-off"}
+                                size={28}
+                                color={"white"}
+                            />
+                        </Pressable>
+                    )}
+                    {canToggleNightMode && (
+                        <Pressable
+                            style={styles.button}
+                            onPress={() => setEnableNightMode(!enableNightMode)}
+                        >
+                            <MaterialCommunityIcons
+                                name={
+                                    enableNightMode ? "moon-full" : "moon-new"
+                                }
+                                size={28}
+                                color={"white"}
+                            />
+                        </Pressable>
+                    )}
+                </View>
+            )}
+
+            {mode == "media" && (
+                <View style={styles.leftButtonRow}>
+                    <Pressable
+                        style={styles.button}
+                        onPress={() => setMediaPath(null)}
+                    >
+                        <MaterialCommunityIcons
+                            name="close"
+                            size={28}
+                            color="white"
+                        />
+                    </Pressable>
+                </View>
+            )}
+
+            {mode == "media" && (
+                <View style={styles.bottomButtonRow}>
+                    <Pressable style={styles.button} onPress={() => {}}>
+                        <MaterialCommunityIcons
+                            name="send"
+                            size={28}
+                            color="white"
+                        />
+                    </Pressable>
+                </View>
+            )}
         </View>
     );
 }
@@ -378,6 +438,16 @@ const styles = StyleSheet.create({
         position: "absolute",
         right: SAFE_AREA_PADDING.paddingRight,
         top: SAFE_AREA_PADDING.paddingTop,
+    },
+    leftButtonRow: {
+        position: "absolute",
+        left: SAFE_AREA_PADDING.paddingLeft,
+        top: SAFE_AREA_PADDING.paddingTop,
+    },
+    bottomButtonRow: {
+        position: "absolute",
+        bottom: SAFE_AREA_PADDING.paddingBottom,
+        right: SAFE_AREA_PADDING.paddingRight,
     },
     text: {
         color: "white",

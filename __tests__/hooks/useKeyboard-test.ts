@@ -3,16 +3,29 @@ import { renderHook } from "@testing-library/react-native";
 import { useKeyboard } from "@/src/hooks/useKeyboard";
 import { Keyboard } from "react-native";
 
+let mockMasterUnsubscription = jest.fn();
+
 jest.mock("react-native", () => ({
     Keyboard: {
         dismiss: jest.fn(),
         addListener: jest.fn()
+            .mockImplementation(() => ({ remove: mockMasterUnsubscription })),
     },
 }));
 
 describe("useKeyboard", () => {
+    beforeEach(() => {
+        mockMasterUnsubscription = jest.fn();
+    });
+
     afterEach(() => {
         jest.resetAllMocks();
+    });
+
+    it("should remove the keyboardDidShow listener", () => {
+        const { unmount } = renderHook(useKeyboard);
+        unmount();
+        expect(mockMasterUnsubscription).toHaveBeenCalled();
     });
 
     it("should return the keyboardVisible state", () => {
