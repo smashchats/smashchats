@@ -2,14 +2,13 @@ import * as React from "react";
 import { useRef, useState, useCallback, useEffect } from "react";
 import {
     GestureResponderEvent,
-    Pressable,
     StyleSheet,
     Text,
     View,
     Image,
 } from "react-native";
 
-import { Video } from "expo-av";
+import { ResizeMode, Video } from "expo-av";
 import {
     Gesture,
     GestureDetector,
@@ -36,18 +35,20 @@ import Reanimated, {
     useAnimatedProps,
     useSharedValue,
 } from "react-native-reanimated";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/core";
 // ==============================
 import {
-    CONTENT_SPACING,
-    CONTROL_BUTTON_SIZE,
     MAX_ZOOM_FACTOR,
     SAFE_AREA_PADDING,
 } from "@/src/ui/fragments/Camera/Constants";
 import { useIsForeground } from "@/src/ui/fragments/Camera/hooks";
 import { CaptureButton } from "@/src/ui/fragments/Camera/views";
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from "@/src/ui/constants";
+import {
+    CameraButton,
+    CameraButtonProps,
+} from "@/src/ui/fragments/Camera/CameraButton";
+import { useNavigation } from "expo-router";
 
 const ReanimatedCamera = Reanimated.createAnimatedComponent(Camera);
 Reanimated.addWhitelistedNativeProps({
@@ -58,6 +59,7 @@ const SCALE_FULL_ZOOM = 3;
 
 export default function CameraLayout() {
     const camera = useRef<Camera>(null);
+    const navigation = useNavigation();
     const [isCameraInitialized, setIsCameraInitialized] = useState(false);
     const microphone = useMicrophonePermission();
     const location = useLocationPermission();
@@ -68,6 +70,8 @@ export default function CameraLayout() {
         type: "photo" | "video";
         path: string;
     } | null>(null);
+
+    const [muteVideo, setMuteVideo] = useState(false);
 
     const devices = useCameraDevices();
     useEffect(() => {
@@ -251,6 +255,50 @@ export default function CameraLayout() {
         }
     })();
 
+    const rightCameraButtons: CameraButtonProps[] = [
+        {
+            icon: "camera-flip",
+            onPress: onFlipCameraPressed,
+            display: mode === "camera",
+        },
+        {
+            icon: flash === "on" ? "flash" : "flash-off",
+            onPress: onFlashPressed,
+            display: supportsFlash && mode === "camera",
+        },
+        {
+            icon: enableNightMode ? "moon-full" : "moon-new",
+            onPress: () => setEnableNightMode(!enableNightMode),
+            display: canToggleNightMode && mode === "camera",
+        },
+        {
+            icon: muteVideo ? "volume-off" : "volume-high",
+            onPress: () => setMuteVideo(!muteVideo),
+            display: mode === "media" && mediaPath?.type === "video",
+        },
+    ];
+
+    const leftCameraButtons: CameraButtonProps[] = [
+        {
+            icon: "close",
+            onPress: () => setMediaPath(null),
+            display: mode === "media",
+        },
+        {
+            icon: "chevron-left",
+            onPress: () => navigation.goBack(),
+            display: mode !== "media",
+        },
+    ];
+
+    const bottomCameraButtons: CameraButtonProps[] = [
+        {
+            icon: "send",
+            onPress: () => {},
+            display: mode === "media",
+        },
+    ];
+
     return (
         <View style={styles.container}>
             {mode == "no-camera" && (
@@ -340,6 +388,8 @@ export default function CameraLayout() {
                             isLooping
                             useNativeControls={false}
                             shouldPlay
+                            isMuted={muteVideo}
+                            resizeMode={ResizeMode.COVER}
                             style={StyleSheet.absoluteFill}
                         />
                     )}
@@ -360,73 +410,23 @@ export default function CameraLayout() {
                 />
             )}
 
-            {mode == "camera" && (
-                <View style={styles.rightButtonRow}>
-                    <Pressable
-                        style={styles.button}
-                        onPress={onFlipCameraPressed}
-                    >
-                        <MaterialCommunityIcons
-                            name={"camera-flip"}
-                            size={28}
-                            color={"white"}
-                        />
-                    </Pressable>
-                    {supportsFlash && (
-                        <Pressable
-                            style={styles.button}
-                            onPress={onFlashPressed}
-                        >
-                            <MaterialCommunityIcons
-                                name={flash === "on" ? "flash" : "flash-off"}
-                                size={28}
-                                color={"white"}
-                            />
-                        </Pressable>
-                    )}
-                    {canToggleNightMode && (
-                        <Pressable
-                            style={styles.button}
-                            onPress={() => setEnableNightMode(!enableNightMode)}
-                        >
-                            <MaterialCommunityIcons
-                                name={
-                                    enableNightMode ? "moon-full" : "moon-new"
-                                }
-                                size={28}
-                                color={"white"}
-                            />
-                        </Pressable>
-                    )}
-                </View>
-            )}
+            <View style={styles.rightButtonRow}>
+                {rightCameraButtons.map((icon) => (
+                    <CameraButton key={icon.icon} {...icon} />
+                ))}
+            </View>
 
-            {mode == "media" && (
-                <View style={styles.leftButtonRow}>
-                    <Pressable
-                        style={styles.button}
-                        onPress={() => setMediaPath(null)}
-                    >
-                        <MaterialCommunityIcons
-                            name="close"
-                            size={28}
-                            color="white"
-                        />
-                    </Pressable>
-                </View>
-            )}
+            <View style={styles.leftButtonRow}>
+                {leftCameraButtons.map((icon) => (
+                    <CameraButton key={icon.icon} {...icon} />
+                ))}
+            </View>
 
-            {mode == "media" && (
-                <View style={styles.bottomButtonRow}>
-                    <Pressable style={styles.button} onPress={() => {}}>
-                        <MaterialCommunityIcons
-                            name="send"
-                            size={28}
-                            color="white"
-                        />
-                    </Pressable>
-                </View>
-            )}
+            <View style={styles.bottomButtonRow}>
+                {bottomCameraButtons.map((icon) => (
+                    <CameraButton key={icon.icon} {...icon} />
+                ))}
+            </View>
         </View>
     );
 }
@@ -440,15 +440,6 @@ const styles = StyleSheet.create({
         position: "absolute",
         alignSelf: "center",
         bottom: SAFE_AREA_PADDING.paddingBottom,
-    },
-    button: {
-        marginBottom: CONTENT_SPACING,
-        width: CONTROL_BUTTON_SIZE,
-        height: CONTROL_BUTTON_SIZE,
-        borderRadius: CONTROL_BUTTON_SIZE / 2,
-        backgroundColor: "rgba(140, 140, 140, 0.3)",
-        justifyContent: "center",
-        alignItems: "center",
     },
     rightButtonRow: {
         position: "absolute",
