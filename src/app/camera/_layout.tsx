@@ -9,6 +9,7 @@ import {
     Image,
 } from "react-native";
 
+import { Video } from "expo-av";
 import {
     Gesture,
     GestureDetector,
@@ -63,7 +64,10 @@ export default function CameraLayout() {
     const zoom = useSharedValue(1);
     const isPressingButton = useSharedValue(false);
 
-    const [mediaPath, setMediaPath] = useState<string | null>(null);
+    const [mediaPath, setMediaPath] = useState<{
+        type: "photo" | "video";
+        path: string;
+    } | null>(null);
 
     const devices = useCameraDevices();
     useEffect(() => {
@@ -147,7 +151,7 @@ export default function CameraLayout() {
     const onMediaCaptured = useCallback(
         (media: PhotoFile | VideoFile, type: "photo" | "video") => {
             console.info(`Media (${type}) captured! ${JSON.stringify(media)}`);
-            setMediaPath(media.path);
+            setMediaPath({ type, path: media.path });
         },
         []
     );
@@ -175,15 +179,8 @@ export default function CameraLayout() {
     }, [onFlipCameraPressed]);
     //#endregion
 
-    //#region Effects
-    useEffect(() => {
-        // Reset zoom to it's default everytime the `device` changes.
-        zoom.value = device?.neutralZoom ?? 1;
-    }, [zoom, device]);
-    //#endregion
-
     //#region Pinch to Zoom Gesture
-    const [startZoom, setStartZoom] = useState(zoom.value);
+    const [startZoom, setStartZoom] = useState(1);
     // The gesture handler maps the linear pinch gesture (0 - 1) to an exponential curve since a camera's zoom
     // function does not appear linear to the user. (aka zoom 0.1 -> 0.2 does not look equal in difference as 0.8 -> 0.9)
     const onPinchGestureChange = (eventScale: number) => {
@@ -221,6 +218,13 @@ export default function CameraLayout() {
         });
     //#endregion
 
+    //#region Effects
+    useEffect(() => {
+        // Reset zoom to it's default everytime the `device` changes.
+        zoom.value = device?.neutralZoom ?? 1;
+        setStartZoom(zoom.value);
+    }, [zoom, device]);
+
     useEffect(() => {
         const f =
             format != null
@@ -234,6 +238,7 @@ export default function CameraLayout() {
     useEffect(() => {
         location.requestPermission();
     }, [location]);
+    //#endregion
 
     const mode: "no-camera" | "camera" | "media" = (() => {
         switch (true) {
@@ -319,14 +324,25 @@ export default function CameraLayout() {
                     </Reanimated.View>
                 </GestureDetector>
             )}
-            {(mode == "media" && mediaPath != null) && (
+            {mode == "media" && mediaPath != null && (
                 <View style={StyleSheet.absoluteFill}>
-                    <Image
-                        source={{
-                            uri: mediaPath,
-                        }}
-                        style={StyleSheet.absoluteFill}
-                    />
+                    {mediaPath.type == "photo" && (
+                        <Image
+                            source={{
+                                uri: mediaPath.path,
+                            }}
+                            style={StyleSheet.absoluteFill}
+                        />
+                    )}
+                    {mediaPath.type == "video" && (
+                        <Video
+                            source={{ uri: mediaPath.path }}
+                            isLooping
+                            useNativeControls={false}
+                            shouldPlay
+                            style={StyleSheet.absoluteFill}
+                        />
+                    )}
                 </View>
             )}
 

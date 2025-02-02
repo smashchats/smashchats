@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "smashchats",
+    "name": "Smashchats",
     "slug": "smashchats",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "smash",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -13,10 +13,28 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
+      "buildNumber": "10",
+      "appleTeamId": "5P8Z824PGN",
+      "associatedDomains": [
+        "webcredentials:smashchats.com"
+      ],
       "supportsTablet": true,
-      "bundleIdentifier": "com.unstaticlabs.smashchats"
+      "bundleIdentifier": "com.smashchats.app",
+      "config": {
+        "usesNonExemptEncryption": false
+      },
+      "entitlements": {
+        "aps-environment": "development",
+        "com.apple.developer.default-data-protection": "NSFileProtectionComplete",
+        "com.apple.developer.networking.multipath": true,
+        "com.apple.developer.usernotifications.communication": true,
+        "keychain-access-groups": [
+          "$(AppIdentifierPrefix)com.smashchats"
+        ]
+      }
     },
     "android": {
+      "versionCode": 10,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -32,7 +50,8 @@
       "expo-router",
       "react-native-vision-camera",
       "expo-localization",
-      "expo-image-picker"
+      "expo-image-picker",
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true
