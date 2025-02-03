@@ -2,121 +2,75 @@
 
 exports[`SelectableContact renders correctly 1`] = `
 <View
+  accessibilityValue={
+    {
+      "max": undefined,
+      "min": undefined,
+      "now": undefined,
+      "text": undefined,
+    }
+  }
+  accessible={true}
+  focusable={true}
+  onClick={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
   style={
     {
+      "alignItems": "center",
       "borderBottomColor": "#292929",
       "borderBottomWidth": 1,
+      "flexDirection": "row",
+      "justifyContent": "space-between",
       "padding": 15,
     }
   }
+  testID="SelectableContact::Pressable"
 >
   <View
-    accessibilityState={
-      {
-        "busy": undefined,
-        "checked": undefined,
-        "disabled": undefined,
-        "expanded": undefined,
-        "selected": undefined,
-      }
-    }
-    accessibilityValue={
-      {
-        "max": undefined,
-        "min": undefined,
-        "now": undefined,
-        "text": undefined,
-      }
-    }
-    accessible={true}
-    collapsable={false}
-    focusable={true}
-    onClick={[Function]}
-    onResponderGrant={[Function]}
-    onResponderMove={[Function]}
-    onResponderRelease={[Function]}
-    onResponderTerminate={[Function]}
-    onResponderTerminationRequest={[Function]}
-    onStartShouldSetResponder={[Function]}
     style={
       {
+        "alignContent": undefined,
         "alignItems": "center",
+        "backgroundColor": undefined,
+        "flex": undefined,
         "flexDirection": "row",
-        "justifyContent": "space-between",
-        "opacity": 1,
+        "gap": undefined,
+        "height": undefined,
+        "justifyContent": undefined,
+        "marginBottom": undefined,
+        "marginHorizontal": undefined,
+        "marginVertical": undefined,
       }
     }
-    testID="SelectableContact::Pressable"
   >
     <View
       style={
         {
-          "alignContent": undefined,
-          "alignItems": "center",
-          "backgroundColor": undefined,
+          "backgroundColor": "#64189b",
+          "borderRadius": 10,
           "flex": undefined,
-          "flexDirection": "row",
-          "gap": undefined,
-          "height": undefined,
-          "justifyContent": undefined,
-          "marginBottom": undefined,
-          "marginHorizontal": undefined,
-          "marginVertical": undefined,
+          "height": 40,
+          "maxHeight": 40,
+          "maxWidth": 40,
+          "minHeight": 40,
+          "minWidth": 40,
+          "overflow": "hidden",
+          "width": 40,
         }
       }
     >
       <View
         style={
           {
-            "backgroundColor": "#64189b",
-            "borderRadius": 10,
-            "flex": undefined,
-            "height": 40,
-            "maxHeight": 40,
-            "maxWidth": 40,
-            "minHeight": 40,
-            "minWidth": 40,
-            "overflow": "hidden",
-            "width": 40,
-          }
-        }
-      >
-        <View
-          style={
-            {
-              "alignItems": "center",
-              "height": "100%",
-              "justifyContent": "center",
-              "width": "100%",
-            }
-          }
-        >
-          <Text
-            style={
-              {
-                "color": "white",
-                "fontSize": 24,
-                "fontWeight": "bold",
-              }
-            }
-          >
-            JD
-          </Text>
-        </View>
-      </View>
-      <View
-        style={
-          {
-            "backgroundColor": undefined,
-            "flex": 1,
-            "flexDirection": undefined,
-            "height": undefined,
-            "marginHorizontal": undefined,
-            "marginLeft": 10,
-            "paddingHorizontal": undefined,
-            "paddingVertical": undefined,
-            "position": undefined,
-            "width": undefined,
+            "alignItems": "center",
+            "height": "100%",
+            "justifyContent": "center",
+            "width": "100%",
           }
         }
       >
@@ -124,29 +78,49 @@ exports[`SelectableContact renders correctly 1`] = `
           style={
             {
               "color": "white",
-              "textShadowColor": undefined,
-              "textShadowOffset": undefined,
-              "textShadowRadius": undefined,
-              "textTransform": undefined,
+              "fontSize": 24,
+              "fontWeight": "bold",
             }
           }
         >
-          John Doe
+          JD
         </Text>
       </View>
-      <View
+    </View>
+    <View
+      style={
+        {
+          "backgroundColor": undefined,
+          "flex": 1,
+          "flexDirection": undefined,
+          "height": undefined,
+          "marginHorizontal": undefined,
+          "marginLeft": 10,
+          "paddingHorizontal": undefined,
+          "paddingVertical": undefined,
+          "position": undefined,
+          "width": undefined,
+        }
+      }
+    >
+      <Text
         style={
           {
-            "backgroundColor": "transparent",
-            "borderColor": "#64189b",
-            "borderRadius": 140,
+            "color": "white",
+            "textShadowColor": undefined,
+            "textShadowOffset": undefined,
+            "textShadowRadius": undefined,
+            "textTransform": undefined,
           }
         }
       >
-        <Text>
-          circle-outline
-        </Text>
-      </View>
+        John Doe
+      </Text>
+    </View>
+    <View>
+      <Text>
+        circle-outline
+      </Text>
     </View>
   </View>
 </View>

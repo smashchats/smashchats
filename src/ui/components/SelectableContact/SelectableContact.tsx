@@ -1,4 +1,4 @@
-import { TouchableOpacity, StyleSheet, View } from "react-native";
+import { StyleSheet, TouchableHighlight } from "react-native";
 
 import { Text } from "@/src/ui/design-system/Text";
 import { HStack } from "@/src/ui/design-system/layout";
@@ -19,23 +19,23 @@ export const SelectableContact = ({
     onPress,
 }: Readonly<Props>) => {
     return (
-        <View style={styles.container}>
-            <TouchableOpacity
-                testID="SelectableContact::Pressable"
-                style={styles.contact}
-                onPress={onPress}
-            >
-                <HStack alignItems="center">
-                    <Avatar variant="small" contact={contact} />
-                    <Text marginLeft={10} flex={1}>
-                        {contact.trusted_name ??
-                            contact.meta_title ??
-                            "Unnamed contact"}
-                    </Text>
-                    <Checkbox checked={selected} />
-                </HStack>
-            </TouchableOpacity>
-        </View>
+        <TouchableHighlight
+            activeOpacity={0.6}
+            underlayColor={Colors.darkerGray}
+            testID="SelectableContact::Pressable"
+            style={styles.container}
+            onPress={onPress}
+        >
+            <HStack alignItems="center">
+                <Avatar variant="small" contact={contact} />
+                <Text marginLeft={10} flex={1}>
+                    {contact.trusted_name ??
+                        contact.meta_title ??
+                        "Unnamed contact"}
+                </Text>
+                <Checkbox checked={selected} />
+            </HStack>
+        </TouchableHighlight>
     );
 };
 
@@ -44,8 +44,6 @@ const styles = StyleSheet.create({
         padding: 15,
         borderBottomColor: Colors.darkerGray,
         borderBottomWidth: 1,
-    },
-    contact: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",

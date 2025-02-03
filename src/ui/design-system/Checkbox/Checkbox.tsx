@@ -9,13 +9,7 @@ export interface Props {
 
 export const Checkbox = ({ checked }: Readonly<Props>) => {
     return (
-        <View
-            style={{
-                borderRadius: 140,
-                borderColor: Colors.purple,
-                backgroundColor: checked ? "white" : "transparent",
-            }}
-        >
+        <View>
             {checked ? (
                 <MaterialCommunityIcons
                     name="check-circle"
