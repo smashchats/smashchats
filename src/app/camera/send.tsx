@@ -1,18 +1,26 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, FlatList, View } from "react-native";
 
 import { useLocalSearchParams } from "expo-router";
 
 import { SelectableContact } from "@/src/ui/components/SelectableContact";
+import { drizzle_db } from "@/src/db/database";
+import { Contact } from "@/src/db/models/Contacts";
 
 export default function CameraSend() {
     const { mediaPath, mediaType, isMuted } = useLocalSearchParams();
     const isVideoMuted = isMuted === "true";
 
-    // TODO: get contacts from the db ; sorted by most recent(?)
-    const contacts = ["John Doe", "Jane Doe", "John Smith", "Jane Smith"];
-
+    const [contacts, setContacts] = useState<Contact[]>([]);
     const [selectedContacts, setSelectedContacts] = useState<string[]>([]);
+
+    useEffect(() => {
+        const fetchContacts = async () => {
+            const contacts = await drizzle_db.query.contacts.findMany();
+            setContacts(contacts);
+        };
+        fetchContacts();
+    }, []);
 
     const toggleContact = (contact: string) => {
         if (selectedContacts.includes(contact)) {
@@ -39,11 +47,9 @@ export default function CameraSend() {
                 renderItem={({ item }) => {
                     return (
                         <SelectableContact
-                            contact={{
-                                meta_title: item,
-                            }}
-                            selected={selectedContacts.includes(item)}
-                            onPress={() => toggleContact(item)}
+                            contact={item}
+                            selected={selectedContacts.includes(item.did_id)}
+                            onPress={() => toggleContact(item.did_id)}
                         />
                     );
                 }}
