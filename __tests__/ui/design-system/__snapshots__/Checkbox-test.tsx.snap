@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Checkbox renders correctly 1`] = `
+<View
+  style={
+    {
+      "backgroundColor": "transparent",
+      "borderColor": "#64189b",
+      "borderRadius": 140,
+    }
+  }
+>
+  <Text>
+    circle-outline
+  </Text>
+</View>
+`;
+
+exports[`Checkbox renders correctly when checked 1`] = `
+<View
+  style={
+    {
+      "backgroundColor": "white",
+      "borderColor": "#64189b",
+      "borderRadius": 140,
+    }
+  }
+>
+  <Text>
+    check-circle
+  </Text>
+</View>
+`;

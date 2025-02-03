@@ -46,7 +46,6 @@ import ProfilePictures from "@/src/app/profile/[user]/(tabs)/pictures.jsx";
 import ProfileBadges from "@/src/app/profile/[user]/(tabs)/badges.jsx";
 import { useGlobalState } from "@/src/context/GlobalContext.js";
 import {
-    TrustedContact,
     getContactWithTrustRelation,
 } from "@/src/db/models/Contacts";
 import {
@@ -65,6 +64,7 @@ import useScrollSync, {
 import { useKeyboard } from "@/src/hooks/useKeyboard";
 import { useCollapsibleHeaderTab } from "@/src/hooks/useCollapsibleHeaderTab";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { TrustedContact } from "@/src/types/Contacts.types";
 
 type ProfileIdType = {
     profileId: string;

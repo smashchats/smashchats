@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 
-import { TrustedContact } from "@/src/db/models/Contacts";
+import { TrustedContact } from "@/src/types/Contacts.types";
 import { Avatar } from "@/src/ui/components/Avatar";
 import { Text } from "@/src/ui/design-system/Text";
 
@@ -16,10 +16,7 @@ export const ProfileHeaderCollapsed = ({
 }: Readonly<Props>) => {
     return (
         <View style={[styles.container, { marginHorizontal }]}>
-            <Avatar
-                contact={peer ?? ({ meta_title: "" } as TrustedContact)}
-                variant={"small"}
-            />
+            <Avatar contact={peer ?? { meta_title: "" }} variant={"small"} />
             <Text
                 fontWeight="bold"
                 color="white"

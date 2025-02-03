@@ -13,7 +13,6 @@ import {
 import { ThemedText } from "@/src/ui/components/ThemedText";
 import { Colors } from "@/src/constants/Colors";
 import { Avatar } from "@/src/ui/components/Avatar";
-import { TrustedContact } from "@/src/db/models/Contacts";
 import { PickImage } from "@/src/utils/ImageUtils";
 import { useThemeColor } from "@/src/hooks/useThemeColor";
 
@@ -199,13 +198,10 @@ export default function Wizard() {
                         }}
                     >
                         <Avatar
-                            contact={
-                                {
-                                    meta_title: identityMeta.title,
-                                    meta_description: identityMeta.description,
-                                    meta_avatar: identityMeta.avatar,
-                                } as TrustedContact
-                            }
+                            contact={{
+                                meta_title: identityMeta.title,
+                                meta_avatar: identityMeta.avatar,
+                            }}
                             variant="xlarge"
                         />
                         <View style={{ marginTop: 15 }}>

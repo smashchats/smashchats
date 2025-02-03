@@ -4,7 +4,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ThemedText } from "@/src/ui/components/ThemedText";
 import { Avatar } from "@/src/ui/components/Avatar";
-import { TrustedContact } from "@/src/db/models/Contacts";
 import { useGlobalState, useGlobalDispatch } from "@/src/context/GlobalContext";
 import { Colors } from "@/src/constants/Colors";
 import { PickImage } from "@/src/utils/ImageUtils";
@@ -71,11 +70,9 @@ export default function ProfileLayout() {
                     style={{ alignItems: "center", justifyContent: "center" }}
                 >
                     <Avatar
-                        contact={
-                            {
-                                meta_avatar: state.userMeta.avatar,
-                            } as TrustedContact
-                        }
+                        contact={{
+                            meta_avatar: state.userMeta.avatar,
+                        }}
                         variant="xlarge"
                     />
                     <View style={{ marginTop: 15 }}>

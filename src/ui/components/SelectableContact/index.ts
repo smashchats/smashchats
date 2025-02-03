@@ -1,0 +1,1 @@
+export { SelectableContact } from "./SelectableContact";

@@ -4,10 +4,10 @@ import {
     AvatarImage,
     AvatarWrapper,
 } from "@/src/ui/design-system/Avatar";
-import { Contact } from "@/src/db/models/Contacts";
+import { ContactPreview } from "@/src/types/Contacts.types";
 
 type AvatarProps = {
-    contact: Contact & { trusted_name: string | undefined };
+    contact: ContactPreview;
     variant?: "small" | "large" | "xlarge";
 };
 

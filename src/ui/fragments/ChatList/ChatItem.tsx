@@ -10,7 +10,6 @@ import { Heading } from "@/src/ui/design-system/Heading";
 import { Badge, BadgeText } from "@/src/ui/design-system/Badge";
 import { daysBetweenTwoDates } from "@/src/utils/Utils.js";
 import { ChatListView } from "@/src/types/";
-import { TrustedContact } from "@/src/db/models/Contacts";
 import { IM_CHAT_TEXT } from "@smashchats/library";
 
 type ChatItemProps = PropsWithChildren<ChatListView>;
@@ -82,14 +81,11 @@ export function ChatItem({
         <Box flex={1} paddingHorizontal={10} marginTop={VERTICAL_PADDING}>
             <HStack gap={12} alignItems="center" alignContent="flex-start">
                 <Avatar
-                    contact={
-                        {
-                            did_id,
-                            meta_title,
-                            meta_avatar,
-                            trusted_name,
-                        } as TrustedContact
-                    }
+                    contact={{
+                        meta_title,
+                        meta_avatar,
+                        trusted_name,
+                    }}
                     variant={"large"}
                 />
                 <VStack flex={1} gap={4} marginBottom={12}>

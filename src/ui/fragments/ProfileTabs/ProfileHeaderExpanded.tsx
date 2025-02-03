@@ -3,7 +3,7 @@ import { View, StyleSheet } from "react-native";
 
 import { Image } from "expo-image";
 
-import { TrustedContact } from "@/src/db/models/Contacts";
+import { TrustedContact } from "@/src/types/Contacts.types";
 import { Text } from "@/src/ui/design-system/Text";
 import { Colors } from "@/src/constants/Colors";
 import { SCREEN_WIDTH } from "@/src/ui/constants";

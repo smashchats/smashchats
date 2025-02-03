@@ -67,7 +67,7 @@ import { DisplayableMessage, EnrichedSmashMessage } from "@/src/types/";
 import { Box } from "@/src/ui/design-system/layout";
 import { MapContactToDidDocument } from "@/src/utils/mappers/contacts";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { TrustedContact } from "@/src/db/models/Contacts";
+import { TrustedContact } from "@/src/types/Contacts.types";
 
 const DEFAULT_LOAD_LIMIT = __DEV__ ? 10 : 100;
 

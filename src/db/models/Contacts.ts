@@ -6,9 +6,9 @@ import { IMProfile } from "@smashchats/library";
 import { contacts, trustRelations } from "@/src/db/schema.js";
 import { drizzle_db } from "@/src/db/database";
 import { ResolveDidAndMapToContactInsert } from "@/src/utils/mappers/contacts";
+import { TrustedContact } from "@/src/types/Contacts.types";
 
 export type Contact = InferSelectModel<typeof contacts>;
-export type TrustedContact = Contact & { trusted_name: string | undefined };
 export type ContactInsert = InferInsertModel<typeof contacts>;
 
 export const saveContactToDb = async (contact: ContactInsert) => {
