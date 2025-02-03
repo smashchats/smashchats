@@ -123,3 +123,7 @@ export const getAllContactNotes = async (): Promise<string[]> => {
     const notes = await getAllContactNotesQuery;
     return notes.map((note) => note.notes) as string[];
 };
+
+export const markContactAsActive = async (did_id: string) => {
+    await drizzle_db.update(contacts).set({ active: true }).where(eq(contacts.did_id, did_id));
+};

@@ -68,6 +68,7 @@ import { Box } from "@/src/ui/design-system/layout";
 import { MapContactToDidDocument } from "@/src/utils/mappers/contacts";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TrustedContact } from "@/src/types/Contacts.types";
+import { markContactAsActive } from "@/src/db/models/Contacts";
 
 const DEFAULT_LOAD_LIMIT = __DEV__ ? 10 : 100;
 
@@ -329,6 +330,8 @@ const ProfileMessages = forwardRef<
         }
         setNewMessage("");
 
+        markContactAsActive(peerId).then();
+
         const lastMessageId: sha256 | undefinedString =
             globalState.latestMessageIdInDiscussion[peerId] ?? "0";
 
@@ -392,6 +395,7 @@ const ProfileMessages = forwardRef<
         if (canceled) {
             return;
         }
+        markContactAsActive(peerId).then();
         globalState.logger.info("assets", assets);
     };
 

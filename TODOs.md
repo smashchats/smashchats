@@ -15,10 +15,9 @@
 
 ## Pending
 
--   [ ] save "active" contact --> display as purple ; active here is like "dirty" in an angular form
 -   [ ] fix chat list ordering (see with @xsbfh for algorithm?)
 -   [ ] bio max 140chars
--   [ ] replace Pressable with TouchableOpacity where needed
+-   [ ] replace Pressable with TouchableHighlight where needed
 -   [ ] DID set (when contact sends profile) vs DID patch (when resolving? & when nab sends profiles)
 -   [ ] delete contacts / discussions
 -   [ ] delete own avatar
@@ -47,6 +46,7 @@
 
 ## Done
 
+-   [x] save "active" contact --> display as purple ; active here is like "dirty" in an angular form
 -   [x] drafts (in-memory)
 -   [x] (BUG) lastMessageId not correctly initialized
 -   [x] mark messages as received / read
