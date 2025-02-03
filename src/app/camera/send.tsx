@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Button, FlatList, View } from "react-native";
+import { Button, FlatList, StyleSheet } from "react-native";
 
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { SelectableContact } from "@/src/ui/components/SelectableContact";
 import { drizzle_db } from "@/src/db/database";
@@ -35,14 +36,20 @@ export default function CameraSend() {
                 isVideoMuted ? "muted" : "not muted"
             }`
         );
+        // BUG: for some reason, the router.dismissAll() doesn't work
+        // so we need to do it manually several times ; does it have to do with the nested navigation?
+        do {
+            router.dismissAll();
+        } while (router.canGoBack());
     };
 
     return (
-        <View
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        <SafeAreaView
+            edges={["right", "bottom", "left"]}
+            style={styles.container}
         >
             <FlatList
-                style={{ flex: 1, width: "100%" }}
+                style={styles.container}
                 data={contacts}
                 renderItem={({ item }) => {
                     return (
@@ -54,7 +61,17 @@ export default function CameraSend() {
                     );
                 }}
             />
-            <Button title="Send" onPress={handleSend} />
-        </View>
+            <Button
+                disabled={selectedContacts.length === 0}
+                title="Send"
+                onPress={handleSend}
+            />
+        </SafeAreaView>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
+});
