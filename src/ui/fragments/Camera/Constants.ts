@@ -10,10 +10,16 @@ const SAFE_BOTTOM =
     }) ?? 0;
 
 export const SAFE_AREA_PADDING = {
+    paddingTop: Math.max(
+        Math.max(
+            StaticSafeAreaInsets.safeAreaInsetsTop,
+            initialWindowMetrics?.insets?.top ?? 0 // https://github.com/AppAndFlow/react-native-safe-area-context/issues/124#issuecomment-1018323396
+        ),
+        CONTENT_SPACING
+    ),
+    paddingBottom: Math.max(SAFE_BOTTOM, CONTENT_SPACING),
     paddingLeft: StaticSafeAreaInsets.safeAreaInsetsLeft + CONTENT_SPACING,
-    paddingTop: Math.max(StaticSafeAreaInsets.safeAreaInsetsTop, initialWindowMetrics?.insets?.top ?? 0) + CONTENT_SPACING, // https://github.com/th3rdwave/react-native-safe-area-context/issues/124#issuecomment-1018323396
     paddingRight: StaticSafeAreaInsets.safeAreaInsetsRight + CONTENT_SPACING,
-    paddingBottom: SAFE_BOTTOM + CONTENT_SPACING,
 };
 
 // The maximum zoom _factor_ you should be able to zoom in

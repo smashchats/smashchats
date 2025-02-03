@@ -45,7 +45,7 @@ import { useIsForeground } from "@/src/ui/fragments/Camera/hooks";
 import { CaptureButton } from "@/src/ui/fragments/Camera/views";
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from "@/src/ui/constants";
 import {
-    CameraButton,
+    CameraButtonGroup,
     CameraButtonProps,
 } from "@/src/ui/fragments/Camera/CameraButton";
 import { useNavigation } from "expo-router";
@@ -410,23 +410,18 @@ export default function CameraLayout() {
                 />
             )}
 
-            <View style={styles.rightButtonRow}>
-                {rightCameraButtons.map((icon) => (
-                    <CameraButton key={icon.icon} {...icon} />
-                ))}
-            </View>
-
-            <View style={styles.leftButtonRow}>
-                {leftCameraButtons.map((icon) => (
-                    <CameraButton key={icon.icon} {...icon} />
-                ))}
-            </View>
-
-            <View style={styles.bottomButtonRow}>
-                {bottomCameraButtons.map((icon) => (
-                    <CameraButton key={icon.icon} {...icon} />
-                ))}
-            </View>
+            <CameraButtonGroup
+                buttons={leftCameraButtons}
+                style={styles.leftButtonRow}
+            />
+            <CameraButtonGroup
+                buttons={rightCameraButtons}
+                style={styles.rightButtonRow}
+            />
+            <CameraButtonGroup
+                buttons={bottomCameraButtons}
+                style={styles.bottomButtonRow}
+            />
         </View>
     );
 }

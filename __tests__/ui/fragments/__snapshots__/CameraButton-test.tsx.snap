@@ -32,15 +32,19 @@ exports[`CameraButton render renders correctly 1`] = `
   onResponderTerminationRequest={[Function]}
   onStartShouldSetResponder={[Function]}
   style={
-    {
-      "alignItems": "center",
-      "backgroundColor": "rgba(140, 140, 140, 0.3)",
-      "borderRadius": 20,
-      "height": 40,
-      "justifyContent": "center",
-      "marginBottom": 15,
-      "width": 40,
-    }
+    [
+      {
+        "alignItems": "center",
+        "backgroundColor": "rgba(140, 140, 140, 0.3)",
+        "borderRadius": 20,
+        "height": 40,
+        "justifyContent": "center",
+        "width": 40,
+      },
+      {
+        "marginBottom": 0,
+      },
+    ]
   }
   testID="CameraButton::Pressable"
 >
