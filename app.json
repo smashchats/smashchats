@@ -2,7 +2,8 @@
   "expo": {
     "name": "Smashchats",
     "slug": "smashchats",
-    "version": "1.0.0",
+    "version": "1.1.0",
+    "runtimeVersion": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "smash",
@@ -31,6 +32,9 @@
         "keychain-access-groups": [
           "$(AppIdentifierPrefix)com.smashchats"
         ]
+      },
+      "infoPlist": {
+        "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access your camera"
       }
     },
     "android": {
@@ -39,7 +43,11 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.unstaticlabs.smashchats"
+      "package": "com.unstaticlabs.smashchats",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -55,6 +63,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "updates": {
+      "codeSigningCertificate": "./certs/certificate.pem",
+      "codeSigningMetadata": {
+        "keyid": "main",
+        "alg": "rsa-v1_5-sha256"
+      },
+      "url": "https://updates.smashchats.com/api/manifest"
     }
   }
 }
