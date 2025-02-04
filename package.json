@@ -23,6 +23,7 @@
     "@react-native-community/slider": "^4.5.5",
     "@react-navigation/material-top-tabs": "^6.6.14",
     "@react-navigation/native": "^6.0.2",
+    "@shopify/react-native-skia": "^1.11.3",
     "@smashchats/library": "^0.0.0-alpha-928947a",
     "@storybook/addon-ondevice-actions": "^8.4.4",
     "@storybook/addon-ondevice-controls": "^8.4.4",
@@ -31,6 +32,7 @@
     "drizzle-orm": "^0.36.4",
     "expo": "~51.0.21",
     "expo-application": "~5.9.1",
+    "expo-av": "~14.0.7",
     "expo-constants": "~16.0.2",
     "expo-dev-client": "~4.0.29",
     "expo-device": "~6.0.2",
@@ -47,6 +49,7 @@
     "expo-sqlite": "~14.0.6",
     "expo-status-bar": "~1.12.1",
     "expo-system-ui": "~3.0.7",
+    "expo-updates": "~0.25.28",
     "expo-web-browser": "~13.0.3",
     "node-libs-react-native": "^1.2.1",
     "posthog-react-native": "^3.5.0",
@@ -66,9 +69,7 @@
     "react-native-vision-camera": "^4.6.3",
     "react-native-web": "~0.19.10",
     "react-native-webview": "^13.12.3",
-    "react-native-webview-crypto": "^0.0.26",
-    "expo-av": "~14.0.7",
-    "expo-updates": "~0.25.28"
+    "react-native-webview-crypto": "^0.0.26"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",

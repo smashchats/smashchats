@@ -31,6 +31,7 @@ import {
 } from "@/src/db/models/Contacts";
 import { mapReceivedMessageToEnrichedMessage } from "@/src/utils/mappers/messages";
 import { MapContactToDidDocument, SmashProfileToContactMapper } from "@/src/utils/mappers/contacts";
+import { SMASH_MEDIA_PHOTO, SMASH_MEDIA_VIDEO, SmashMediaMessage } from "@/src/types/smash/lexicons";
 
 const getOrCreateIdentity = async (didDocumentManager: DIDDocManager, logger: Logger): Promise<IMPeerIdentity> => {
     let newIdentity: IMPeerIdentity;
@@ -145,6 +146,10 @@ export const statusMessagesListener = (logger: Logger) => async (status: Message
     await updateMessagesStatus(messageIds, status);
 }
 
+export const mediaMessagesListener = (logger: Logger) => async (senderDid: DIDString, originalMessage: SmashMediaMessage) => {
+    logger.debug("parsing media message from", senderDid, originalMessage);
+}
+
 type EventType = (`${string}.${string}.${string}` | keyof MessagingEventMap)
 
 export const handleUserMessages = async (
@@ -157,6 +162,8 @@ export const handleUserMessages = async (
         [NBH_PROFILE_LIST]: newProfilesMessagesListener(selfDid),
         [IM_CHAT_TEXT]: textMessagesListener(logger),
         [IM_PROFILE]: profileMessagesListener(logger),
+        [SMASH_MEDIA_PHOTO]: mediaMessagesListener(logger),
+        [SMASH_MEDIA_VIDEO]: mediaMessagesListener(logger),
         "status": statusMessagesListener(logger),
         "data": firehoseListener(logger)
     }

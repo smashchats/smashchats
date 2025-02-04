@@ -69,6 +69,11 @@ import { MapContactToDidDocument } from "@/src/utils/mappers/contacts";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TrustedContact } from "@/src/types/Contacts.types";
 import { markContactAsActive } from "@/src/db/models/Contacts";
+import {
+    SMASH_MEDIA_VIDEO,
+    SMASH_MEDIA_PHOTO,
+    SmashMediaPhotoMessage,
+} from "@/src/types/smash/lexicons";
 
 const DEFAULT_LOAD_LIMIT = __DEV__ ? 10 : 100;
 
@@ -83,14 +88,14 @@ const getMessages = async (
     offset: number,
     limit: number
 ): Promise<Message[]> => {
-    return await drizzle_db
+    return (await drizzle_db
         .select()
         .from(MessagesSchema)
         .where(eq(MessagesSchema.discussion_id, peerId))
         .orderBy(desc(MessagesSchema.created_at))
         .offset(offset)
         .limit(limit)
-        .execute() as Message[];
+        .execute()) as Message[];
 };
 
 const getUnreadMessagesCount = async (peerId: string): Promise<number> => {
@@ -126,7 +131,9 @@ const ProfileMessages = forwardRef<
 
     const { user: peerId }: { user: string } = useLocalSearchParams();
 
-    const [newMessage, setNewMessage] = useState(globalState.chatList.drafts[peerId] ?? "");
+    const [newMessage, setNewMessage] = useState(
+        globalState.chatList.drafts[peerId] ?? ""
+    );
     const [shouldShowSendIcon, setShouldShowSendIcon] = useState(true);
     const inputFieldRef = useRef<TextInput>(null);
 
@@ -256,7 +263,9 @@ const ProfileMessages = forwardRef<
                     date_read: now,
                     timestamp: now,
                     reply_to_sha256: null,
-                    status: from_self ? "sending" as MessageStatus : "received",
+                    status: from_self
+                        ? ("sending" as MessageStatus)
+                        : "received",
                 } satisfies Message,
                 messages,
                 globalState.selfDid.id
@@ -323,39 +332,38 @@ const ProfileMessages = forwardRef<
         onScroll,
     ]);
 
-    const handleSendMessage = async () => {
-        const dataToSend = newMessage.trim();
-        if (dataToSend.length === 0) {
-            return;
-        }
-        setNewMessage("");
-
-        markContactAsActive(peerId).then();
-
-        const lastMessageId: sha256 | undefinedString =
-            globalState.latestMessageIdInDiscussion[peerId] ?? "0";
-
-        const message = await encapsulateMessage(
-            new IMText(dataToSend, lastMessageId)
-        );
-        const { sha256, timestamp } = message;
-
+    const sendMessage = async (message: IMProtoMessage) => {
         appendMessage({
-            data: dataToSend,
-            sha256,
-            after_sha256: lastMessageId,
+            data: message.data as string,
+            sha256: message.sha256 as sha256,
+            after_sha256: message.after as sha256,
             from_self: true,
         });
+
+        let db_data: string;
+
+        switch (message.type) {
+            case IM_CHAT_TEXT:
+                db_data = message.data as string;
+                break;
+            // TODO: save media somewhere permanent, return uri
+            case SMASH_MEDIA_PHOTO:
+            case SMASH_MEDIA_VIDEO:
+                db_data = (message.data as { base64: string }).base64;
+                break;
+            default:
+                throw new Error(`Unknown message type: ${message.type}`);
+        }
 
         saveMessageToDb(
             {
                 fromDid: globalState.selfDid.id,
                 toDiscussionId: peerId as DIDString,
-                data: dataToSend,
-                sha256,
-                timestamp,
-                type: IM_CHAT_TEXT,
-                after: lastMessageId,
+                data: db_data,
+                sha256: message.sha256 as sha256,
+                timestamp: message.timestamp!,
+                type: message.type,
+                after: message.after as sha256,
             } satisfies EnrichedSmashMessage,
             {
                 date_read: new Date(),
@@ -365,7 +373,7 @@ const ProfileMessages = forwardRef<
         dispatch({
             type: "LATEST_MESSAGE_ID_IN_DISCUSSION_ACTION",
             discussionId: peerId,
-            messageId: sha256,
+            messageId: message.sha256 as sha256,
         });
 
         try {
@@ -383,6 +391,24 @@ const ProfileMessages = forwardRef<
         }
     };
 
+    const handleSendMessage = async () => {
+        const dataToSend = newMessage.trim();
+        if (dataToSend.length === 0) {
+            return;
+        }
+        setNewMessage("");
+
+        markContactAsActive(peerId).then();
+
+        const lastMessageId: sha256 | undefinedString =
+            globalState.latestMessageIdInDiscussion[peerId] ?? "0";
+
+        const message = await encapsulateMessage(
+            new IMText(dataToSend, lastMessageId)
+        );
+        sendMessage(message);
+    };
+
     const handleSendMedia = async () => {
         if (!FEATURE_FLAGS.send_media) {
             return;
@@ -391,12 +417,27 @@ const ProfileMessages = forwardRef<
         let { canceled, assets } = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.All,
             quality: 0.2,
+            base64: true,
         });
-        if (canceled) {
+        if (canceled || !assets) {
             return;
         }
         markContactAsActive(peerId).then();
+
+        const dataToSend = {
+            base64: assets[0].base64!,
+            mimeType: assets[0].mimeType!,
+        };
         globalState.logger.info("assets", assets);
+
+        const lastMessageId: sha256 | undefinedString =
+            globalState.latestMessageIdInDiscussion[peerId] ?? "0";
+
+        const message = await encapsulateMessage(
+            new SmashMediaPhotoMessage(dataToSend, lastMessageId)
+        );
+
+        sendMessage(message);
     };
 
     if (!globalState.selfDid) {

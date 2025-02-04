@@ -36,7 +36,7 @@ RhRzvvrBAEHlqiIEewI1Mw0=&#xD;
     <key>EXUpdatesLaunchWaitMs</key>
     <integer>0</integer>
     <key>EXUpdatesRuntimeVersion</key>
-    <string>1.1.0</string>
+    <string>1.2.0</string>
     <key>EXUpdatesURL</key>
     <string>https://updates.smashchats.com/api/manifest</string>
   </dict>
