@@ -29,6 +29,12 @@
 
 ## In progress
 
+-   [~] drawing feature on camera w/ Skia
+    -   [ ] allow user to change drawing colors
+    -   [ ] videos on ios are sideways
+    -   [ ] merge drawing and media before sending
+    -   [ ] drawing path is sharp at the end of the path, make rounded
+    -   [ ] add an "undo" button to the camera
 -   [~] Profile screen
     -   [x] fix transparency behind tab bar
     -   [ ] fix scrollIndicatorInsets for first tab
