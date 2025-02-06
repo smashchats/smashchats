@@ -60,7 +60,8 @@ import {
     CameraButtonGroup,
     CameraButtonProps,
 } from "@/src/ui/fragments/Camera/CameraButton";
-import { Colors } from "@/src/constants/Colors";
+import { MediaPath } from "@/src/types/";
+import { MediaArtboard } from "@/src/ui/fragments/Camera/views/MediaArtboard";
 
 const ReanimatedCamera = Reanimated.createAnimatedComponent(Camera);
 Reanimated.addWhitelistedNativeProps({
@@ -77,10 +78,7 @@ export default function CameraLayout() {
     const zoom = useSharedValue(1);
     const isPressingButton = useSharedValue(false);
 
-    const [mediaPath, setMediaPath] = useState<{
-        type: "photo" | "video";
-        path: string;
-    } | null>(null);
+    const [mediaPath, setMediaPath] = useState<MediaPath | null>(null);
 
     const [muteVideo, setMuteVideo] = useState(false);
 
@@ -233,53 +231,6 @@ export default function CameraLayout() {
         });
     //#endregion
 
-    //#region Drawing - Pan Gesture
-    type DrawingPath = {
-        path: SkPath;
-        color: string;
-        id: string;
-    };
-    const [paths, setPaths] = useState<DrawingPath[]>([]);
-    const currentDrawingPath = useSharedValue<SkPath>(Skia.Path.Make());
-    const [current, setCurrent] = useState<SkPath>(Skia.Path.Make());
-
-    const appendPath = (path: SkPath, color: string) => {
-        const uuid = uuidv7();
-        setPaths([...paths, { path, color, id: uuid }]);
-        setCurrent(Skia.Path.Make());
-    };
-
-    const drawing = Gesture.Pan()
-        .onStart((g) => {
-            currentDrawingPath.value.moveTo(g.x, g.y);
-            runOnJS(setCurrent)(currentDrawingPath.value);
-        })
-        .onChange((g) => {
-            const currentPath = currentDrawingPath.value;
-            if (currentPath == null) return;
-            const lastPoint = currentPath.getLastPt();
-            const xMid = (lastPoint.x + g.x) / 2;
-            const yMid = (lastPoint.y + g.y) / 2;
-
-            currentPath.quadTo(lastPoint.x, lastPoint.y, xMid, yMid);
-
-            currentDrawingPath.value = currentPath;
-            runOnJS(setCurrent)(currentPath);
-        })
-        .onEnd(() => {
-            runOnJS(appendPath)(currentDrawingPath.value, Colors.purple);
-            currentDrawingPath.value = Skia.Path.Make();
-        })
-        .minDistance(1);
-
-    const paused = useSharedValue(false);
-    const { width, height } = useWindowDimensions();
-    const image = useImage(mediaPath?.path);
-    const { currentFrame } = useVideo(mediaPath?.path!, {
-        paused,
-    });
-    //#endregion
-
     //#region Effects
     useEffect(() => {
         // Reset zoom to it's default everytime the `device` changes.
@@ -330,13 +281,6 @@ export default function CameraLayout() {
             display: canToggleNightMode && mode === "camera",
         },
         {
-            icon: "undo",
-            onPress: () => {
-                setPaths(paths.slice(0, -1));
-            },
-            display: mode === "media" && paths.length > 0,
-        },
-        {
             icon: muteVideo ? "volume-off" : "volume-high",
             onPress: () => setMuteVideo(!muteVideo),
             display: mode === "media" && mediaPath?.type === "video",
@@ -344,15 +288,6 @@ export default function CameraLayout() {
     ];
 
     const leftCameraButtons: CameraButtonProps[] = [
-        {
-            icon: "close",
-            onPress: () => {
-                setMediaPath(null);
-                setPaths([]);
-                setCurrent(Skia.Path.Make());
-            },
-            display: mode === "media",
-        },
         {
             icon: "chevron-left",
             onPress: () => router.back(),
@@ -451,50 +386,10 @@ export default function CameraLayout() {
                 </GestureDetector>
             )}
             {mode == "media" && mediaPath != null && (
-                <GestureDetector gesture={drawing}>
-                    <Canvas style={{ flex: 1 }}>
-                        {mediaPath.type == "photo" && (
-                            <Image
-                                image={image}
-                                fit="cover"
-                                x={0}
-                                y={0}
-                                width={width}
-                                height={height}
-                            />
-                        )}
-                        {mediaPath.type == "video" && (
-                            <Fill>
-                                <ImageShader
-                                    image={currentFrame}
-                                    x={0}
-                                    y={0}
-                                    width={width}
-                                    height={height}
-                                    fit="cover"
-                                />
-                            </Fill>
-                        )}
-
-                        {paths.map(({ id, path, color }) => (
-                            <Path
-                                key={id}
-                                path={path}
-                                strokeWidth={5}
-                                style="stroke"
-                                color={color}
-                            />
-                        ))}
-                        {current && (
-                            <Path
-                                path={current}
-                                strokeWidth={5}
-                                style="stroke"
-                                color={Colors.purple}
-                            />
-                        )}
-                    </Canvas>
-                </GestureDetector>
+                <MediaArtboard
+                    mediaPath={mediaPath}
+                    onClose={() => setMediaPath(null)}
+                />
             )}
 
             {mode == "camera" && (
