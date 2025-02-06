@@ -68,8 +68,8 @@ export function MediaArtboard({ mediaPath, onClose }: Readonly<Props>) {
 
     const paused = useSharedValue(false);
     const { width, height } = useWindowDimensions();
-    const image = useImage(mediaPath?.path);
-    const { currentFrame } = useVideo(mediaPath?.path!, {
+    const image = useImage(mediaPath.path);
+    const { currentFrame } = useVideo(mediaPath.path, {
         paused,
     });
     //#endregion

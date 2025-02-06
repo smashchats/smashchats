@@ -5,22 +5,9 @@ import {
     StyleSheet,
     Text,
     View,
-    useWindowDimensions,
 } from "react-native";
 
-import { v7 as uuidv7 } from "uuid";
 import { router } from "expo-router";
-import {
-    Canvas,
-    Image,
-    ImageShader,
-    Fill,
-    useImage,
-    useVideo,
-    Path,
-    SkPath,
-    Skia,
-} from "@shopify/react-native-skia";
 import {
     Gesture,
     GestureDetector,
