@@ -134,12 +134,10 @@ export function Home() {
             style={{ backgroundColor: Colors.background, minHeight: "100%" }}
         >
             <ChatList chats={chats} />
-            {__DEV__ && (
-                <FloatingActionButton
-                    icon="camera"
-                    onPress={handleFABCameraPress}
-                />
-            )}
+            <FloatingActionButton
+                icon="camera"
+                onPress={handleFABCameraPress}
+            />
         </SafeAreaView>
     );
 }
