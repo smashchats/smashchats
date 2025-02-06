@@ -2,6 +2,7 @@
 
 ## Icebox
 
+-   [ ] fix black flash between camera and media preview
 -   [ ] replace routing? https://github.com/expo/router/issues/723
 -   [ ] animations?
 -   [ ] copy telegram's fluidity (get inspiration from their animations)
@@ -34,7 +35,8 @@
     -   [ ] videos on ios are sideways
     -   [ ] merge drawing and media before sending
     -   [ ] drawing path is sharp at the end of the path, make rounded
-    -   [ ] add an "undo" button to the camera
+    -   [x] add an "undo" button to the camera
+    -   [ ] add text on a horizontal line on top of image
 -   [~] Profile screen
     -   [x] fix transparency behind tab bar
     -   [ ] fix scrollIndicatorInsets for first tab

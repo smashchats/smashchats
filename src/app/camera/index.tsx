@@ -8,6 +8,7 @@ import {
     useWindowDimensions,
 } from "react-native";
 
+import { v7 as uuidv7 } from "uuid";
 import { router } from "expo-router";
 import {
     Canvas,
@@ -59,6 +60,7 @@ import {
     CameraButtonGroup,
     CameraButtonProps,
 } from "@/src/ui/fragments/Camera/CameraButton";
+import { Colors } from "@/src/constants/Colors";
 
 const ReanimatedCamera = Reanimated.createAnimatedComponent(Camera);
 Reanimated.addWhitelistedNativeProps({
@@ -232,9 +234,20 @@ export default function CameraLayout() {
     //#endregion
 
     //#region Drawing - Pan Gesture
-    const [paths, setPaths] = useState<SkPath[]>([]);
+    type DrawingPath = {
+        path: SkPath;
+        color: string;
+        id: string;
+    };
+    const [paths, setPaths] = useState<DrawingPath[]>([]);
     const currentDrawingPath = useSharedValue<SkPath>(Skia.Path.Make());
     const [current, setCurrent] = useState<SkPath>(Skia.Path.Make());
+
+    const appendPath = (path: SkPath, color: string) => {
+        const uuid = uuidv7();
+        setPaths([...paths, { path, color, id: uuid }]);
+        setCurrent(Skia.Path.Make());
+    };
 
     const drawing = Gesture.Pan()
         .onStart((g) => {
@@ -254,7 +267,7 @@ export default function CameraLayout() {
             runOnJS(setCurrent)(currentPath);
         })
         .onEnd(() => {
-            runOnJS(setPaths)([...paths, currentDrawingPath.value]);
+            runOnJS(appendPath)(currentDrawingPath.value, Colors.purple);
             currentDrawingPath.value = Skia.Path.Make();
         })
         .minDistance(1);
@@ -315,6 +328,13 @@ export default function CameraLayout() {
             icon: enableNightMode ? "moon-full" : "moon-new",
             onPress: () => setEnableNightMode(!enableNightMode),
             display: canToggleNightMode && mode === "camera",
+        },
+        {
+            icon: "undo",
+            onPress: () => {
+                setPaths(paths.slice(0, -1));
+            },
+            display: mode === "media" && paths.length > 0,
         },
         {
             icon: muteVideo ? "volume-off" : "volume-high",
@@ -456,15 +476,23 @@ export default function CameraLayout() {
                             </Fill>
                         )}
 
-                        {[...paths, current].map((p, index) => (
+                        {paths.map(({ id, path, color }) => (
                             <Path
-                                key={index}
-                                path={p}
+                                key={id}
+                                path={path}
                                 strokeWidth={5}
                                 style="stroke"
-                                color={"black"}
+                                color={color}
                             />
                         ))}
+                        {current && (
+                            <Path
+                                path={current}
+                                strokeWidth={5}
+                                style="stroke"
+                                color={Colors.purple}
+                            />
+                        )}
                     </Canvas>
                 </GestureDetector>
             )}
