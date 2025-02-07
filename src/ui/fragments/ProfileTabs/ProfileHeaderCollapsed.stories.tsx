@@ -1,5 +1,5 @@
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Box } from "../../design-system/layout";
+import { Box } from "@/src/ui/design-system/layout";
 import { ProfileHeaderCollapsed } from "./ProfileHeaderCollapsed";
 
 const meta = {

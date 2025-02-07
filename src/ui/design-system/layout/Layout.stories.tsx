@@ -1,7 +1,7 @@
 import { Box as B } from "./Box";
 import { HStack as H } from "./HStack";
 import { VStack as V } from "./VStack";
-import { ThemedText } from "../../components/ThemedText";
+import { ThemedText } from "@/src/ui/components/ThemedText";
 import { Colors } from "@/src/constants/Colors";
 
 const meta = {

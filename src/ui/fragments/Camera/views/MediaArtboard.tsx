@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useState } from "react";
-import { View, StyleSheet, useWindowDimensions } from "react-native";
+import { View, StyleSheet } from "react-native";
 
 import { v7 as uuidv7 } from "uuid";
 import {
@@ -15,7 +15,7 @@ import {
     Skia,
 } from "@shopify/react-native-skia";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import { runOnJS, useSharedValue } from "react-native-reanimated";
+import { SharedValue, runOnJS, useSharedValue } from "react-native-reanimated";
 // ==============================
 import { Colors } from "@/src/constants/Colors";
 import { DrawingPath, MediaPath } from "@/src/types/";
@@ -24,10 +24,55 @@ import {
     CameraButtonProps,
 } from "@/src/ui/fragments/Camera/CameraButton";
 import { SAFE_AREA_PADDING } from "@/src/ui/fragments/Camera/Constants";
+import { SCREEN_HEIGHT, SCREEN_WIDTH } from "@/src/ui/constants";
 
 type Props = {
     mediaPath: MediaPath;
     onClose: () => void;
+};
+
+const ImageArtboard = ({ path }: { path: string }) => {
+    const image = useImage(`file://${path}`);
+
+    return (
+        <Image
+            image={image}
+            fit="cover"
+            x={0}
+            y={0}
+            width={SCREEN_WIDTH}
+            height={SCREEN_HEIGHT}
+        />
+    );
+};
+
+const VideoArtboard = ({
+    path,
+    paused,
+}: {
+    path: string;
+    paused: SharedValue<boolean>;
+}) => {
+    const { currentFrame, rotation } = useVideo(`file://${path}`, {
+        paused,
+    });
+
+    console.log("rotation", rotation);
+
+    return (
+        <View style={{ transform: [{ rotate: `${rotation}deg` }] }}>
+            <Fill>
+                <ImageShader
+                    image={currentFrame}
+                    fit="cover"
+                    x={0}
+                    y={0}
+                    width={SCREEN_WIDTH}
+                    height={SCREEN_HEIGHT}
+                />
+            </Fill>
+        </View>
+    );
 };
 
 export function MediaArtboard({ mediaPath, onClose }: Readonly<Props>) {
@@ -67,11 +112,6 @@ export function MediaArtboard({ mediaPath, onClose }: Readonly<Props>) {
         .minDistance(1);
 
     const paused = useSharedValue(false);
-    const { width, height } = useWindowDimensions();
-    const image = useImage(mediaPath.path);
-    const { currentFrame } = useVideo(mediaPath.path, {
-        paused,
-    });
     //#endregion
 
     const rightCameraButtons: CameraButtonProps[] = [
@@ -100,26 +140,10 @@ export function MediaArtboard({ mediaPath, onClose }: Readonly<Props>) {
             <GestureDetector gesture={drawing}>
                 <Canvas style={{ flex: 1 }}>
                     {mediaPath.type == "photo" && (
-                        <Image
-                            image={image}
-                            fit="cover"
-                            x={0}
-                            y={0}
-                            width={width}
-                            height={height}
-                        />
+                        <ImageArtboard path={mediaPath.path} />
                     )}
                     {mediaPath.type == "video" && (
-                        <Fill>
-                            <ImageShader
-                                image={currentFrame}
-                                x={0}
-                                y={0}
-                                width={width}
-                                height={height}
-                                fit="cover"
-                            />
-                        </Fill>
+                        <VideoArtboard path={mediaPath.path} paused={paused} />
                     )}
 
                     {paths.map(({ id, path, color }) => (

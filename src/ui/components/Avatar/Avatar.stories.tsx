@@ -1,6 +1,6 @@
-import { Box } from "../../design-system/layout";
-import { Avatar } from "./Avatar";
-import { ThemedText } from "../ThemedText";
+import { Box } from "@/src/ui/design-system/layout";
+import { Avatar } from "@/src/ui/components/Avatar";
+import { ThemedText } from "@/src/ui/components/ThemedText";
 const meta = {
     title: "Components/Avatar",
     component: Avatar,

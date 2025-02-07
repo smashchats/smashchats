@@ -32,7 +32,7 @@
 
 -   [~] drawing feature on camera w/ Skia
     -   [ ] allow user to change drawing colors
-    -   [ ] videos on ios are sideways
+    -   [~] videos on ios are sideways
     -   [ ] merge drawing and media before sending
     -   [ ] drawing path is sharp at the end of the path, make rounded
     -   [x] add an "undo" button to the camera

@@ -1,11 +1,6 @@
 import * as React from "react";
 import { useRef, useState, useCallback, useEffect } from "react";
-import {
-    GestureResponderEvent,
-    StyleSheet,
-    Text,
-    View,
-} from "react-native";
+import { GestureResponderEvent, StyleSheet, Text, View } from "react-native";
 
 import { router } from "expo-router";
 import {
@@ -359,6 +354,7 @@ export default function CameraLayout() {
                                     device.supportsLowLightBoost &&
                                     enableNightMode
                                 }
+                                videoStabilizationMode={"off"}
                                 enableZoomGesture={false}
                                 animatedProps={cameraAnimatedProps}
                                 exposure={0}
