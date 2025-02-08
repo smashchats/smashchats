@@ -1,6 +1,6 @@
 import * as React from "react";
-import { useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { useRef, useState } from "react";
+import { View, StyleSheet, TextInput, Pressable, Keyboard } from "react-native";
 
 import { v7 as uuidv7 } from "uuid";
 import {
@@ -57,8 +57,6 @@ const VideoArtboard = ({
         paused,
     });
 
-    console.log("rotation", rotation);
-
     return (
         <View style={{ transform: [{ rotate: `${rotation}deg` }] }}>
             <Fill>
@@ -76,8 +74,23 @@ const VideoArtboard = ({
 };
 
 export function MediaArtboard({ mediaPath, onClose }: Readonly<Props>) {
-    //#region Drawing - Pan Gesture
+    const [mode, setMode] = useState<"text" | "draw" | "none">("none");
+    const [text, setText] = useState("");
+    const inputRef = useRef<TextInput>(null);
+    const [minInputHeight, setMinInputHeight] = useState(18);
 
+    const paused = useSharedValue(false);
+
+    const setTextMode = () => {
+        setMode("text");
+        inputRef.current?.focus();
+    };
+
+    const tapGesture = Gesture.Tap().onStart(() => {
+        runOnJS(setTextMode)();
+    });
+
+    //#region Drawing - Pan Gesture
     const [paths, setPaths] = useState<DrawingPath[]>([]);
     const currentDrawingPath = useSharedValue<SkPath>(Skia.Path.Make());
     const [current, setCurrent] = useState<SkPath>(Skia.Path.Make());
@@ -110,17 +123,28 @@ export function MediaArtboard({ mediaPath, onClose }: Readonly<Props>) {
             currentDrawingPath.value = Skia.Path.Make();
         })
         .minDistance(1);
-
-    const paused = useSharedValue(false);
     //#endregion
 
     const rightCameraButtons: CameraButtonProps[] = [
         {
+            icon: "check",
+            onPress: () => setMode("none"),
+            display: mode === "draw",
+        },
+        {
             icon: "undo",
-            onPress: () => {
-                setPaths(paths.slice(0, -1));
-            },
-            display: paths.length > 0,
+            onPress: () => setPaths(paths.slice(0, -1)),
+            display: paths.length > 0 && mode === "draw",
+        },
+        {
+            icon: "lead-pencil",
+            onPress: () => setMode("draw"),
+            display: mode === "none",
+        },
+        {
+            icon: "format-color-text",
+            onPress: () => setTextMode(),
+            display: mode === "none" && text.length === 0,
         },
     ];
 
@@ -137,7 +161,7 @@ export function MediaArtboard({ mediaPath, onClose }: Readonly<Props>) {
 
     return (
         <View style={{ flex: 1 }}>
-            <GestureDetector gesture={drawing}>
+            <GestureDetector gesture={mode === "draw" ? drawing : tapGesture}>
                 <Canvas style={{ flex: 1 }}>
                     {mediaPath.type == "photo" && (
                         <ImageArtboard path={mediaPath.path} />
@@ -175,6 +199,42 @@ export function MediaArtboard({ mediaPath, onClose }: Readonly<Props>) {
                 buttons={rightCameraButtons}
                 style={styles.rightButtonRow}
             />
+
+            {mode === "text" && (
+                <Pressable
+                    onPress={() => {
+                        Keyboard.dismiss();
+                        setMode("none");
+                    }}
+                    style={styles.overlay}
+                />
+            )}
+
+            <TextInput
+                ref={inputRef}
+                style={[
+                    styles.textInput,
+                    {
+                        minHeight: Math.max(minInputHeight, 18) + 20,
+                        opacity: mode === "text" || text.length > 0 ? 1 : 0,
+                        bottom:
+                            minInputHeight +
+                            SAFE_AREA_PADDING.paddingBottom +
+                            300,
+                    },
+                ]}
+                multiline={true}
+                value={text}
+                onChangeText={setText}
+                onFocus={() => {
+                    setMode("text");
+                }}
+                onContentSizeChange={(e) => {
+                    setMinInputHeight(e.nativeEvent.contentSize.height);
+                }}
+                onBlur={() => setMode("none")}
+                blurOnSubmit={true}
+            />
         </View>
     );
 }
@@ -194,5 +254,28 @@ const styles = StyleSheet.create({
         position: "absolute",
         bottom: SAFE_AREA_PADDING.paddingBottom,
         right: SAFE_AREA_PADDING.paddingRight,
+    },
+
+    textInput: {
+        position: "absolute",
+        bottom: SAFE_AREA_PADDING.paddingBottom + 300,
+        left: 0,
+        right: 0,
+        textAlign: "center",
+        textAlignVertical: "center",
+        height: 40,
+        paddingHorizontal: 10,
+        paddingVertical: 8,
+        color: "white",
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+    },
+
+    overlay: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
     },
 });
