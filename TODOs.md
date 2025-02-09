@@ -27,6 +27,9 @@
 -   [ ] send media messages
     -   [ ] media organizer à la stash
 -   [ ] cache images on device
+-   [ ] fetch badges from somewhere(?)
+-   [ ] add unit preferences to settings screen
+-   [ ] add interests somewhere(?)
 
 ## In progress
 
@@ -36,7 +39,7 @@
     -   [ ] merge drawing and media before sending
     -   [ ] drawing path is sharp at the end of the path, make rounded
     -   [x] add an "undo" button to the camera
-    -   [ ] add text on a horizontal line on top of image
+    -   [x] add text on a horizontal line on top of image
 -   [~] Profile screen
     -   [x] fix transparency behind tab bar
     -   [ ] fix scrollIndicatorInsets for first tab
@@ -54,6 +57,7 @@
 
 ## Done
 
+-   [x] (UI) add badges to profile
 -   [x] save "active" contact --> display as purple ; active here is like "dirty" in an angular form
 -   [x] drafts (in-memory)
 -   [x] (BUG) lastMessageId not correctly initialized
