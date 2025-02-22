@@ -96,7 +96,7 @@ export const ProfileBadges = forwardRef<Animated.ScrollView, ScrollViewProps>(
                         color={Colors.textLightGray}
                     >
                         <MaterialIcons name="verified" size={16} /> badges with
-                        this icon are signed by an autjority you marked as
+                        this icon are signed by an authority you marked as
                         trusted.
                     </Text>
                 </View>
