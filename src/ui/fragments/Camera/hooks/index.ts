@@ -1,1 +1,0 @@
-export { useIsForeground } from "./useIsForeground";

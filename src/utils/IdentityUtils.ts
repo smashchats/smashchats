@@ -19,7 +19,7 @@ import {
     IIMPeerIdentity,
     MessageStatus,
     sha256,
-    NBH_PROFILE_LIST,
+    SMASH_PROFILE_LIST,
 } from "@smashchats/library";
 
 import { IDENTITY_KEY, PROFILE_KEY, getData, saveObject } from "@/src/utils/StorageUtils.js";
@@ -135,8 +135,8 @@ export const textMessagesListener = (logger: Logger) => async (senderDid: DIDStr
     }
 }
 
-export const newProfilesMessagesListener = (selfDid: DIDDocument) => async (_sender: DIDString, { data: profiles }: SmashChatProfileListMessage) => {
-    const contacts = await Promise.all(profiles.map(SmashProfileToContactMapper))
+export const newProfilesMessagesListener = (selfDid: DIDDocument) => async (_sender: DIDString, { data }: SmashChatProfileListMessage) => {
+    const contacts = await Promise.all(data.map(SmashProfileToContactMapper))
 
     await Promise.all(contacts.filter(c => c.did_id !== selfDid.id).map(c => saveContactToDb(c)));
 }
@@ -159,7 +159,7 @@ export const handleUserMessages = async (
     const selfDid = await user.getDIDDocument();
 
     const listeners: Partial<Record<EventType, (...args: any[]) => Promise<void>>> = {
-        [NBH_PROFILE_LIST]: newProfilesMessagesListener(selfDid),
+        [SMASH_PROFILE_LIST]: newProfilesMessagesListener(selfDid),
         [IM_CHAT_TEXT]: textMessagesListener(logger),
         [IM_PROFILE]: profileMessagesListener(logger),
         [SMASH_MEDIA_PHOTO]: mediaMessagesListener(logger),

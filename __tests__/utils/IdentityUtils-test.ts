@@ -8,7 +8,6 @@ import {
     IM_PROFILE,
     ISO8601,
     Logger,
-    NBH_PROFILE_LIST,
     SMASH_PROFILE_LIST,
     SmashChatProfileListMessage,
     SmashMessaging,
@@ -40,7 +39,7 @@ jest.mock("@/src/db/models/Messages", () => ({
 }));
 
 describe("listeners", () => {
-    const EVENT_TYPES = [IM_CHAT_TEXT, IM_PROFILE, NBH_PROFILE_LIST];
+    const EVENT_TYPES = [IM_CHAT_TEXT, IM_PROFILE, SMASH_PROFILE_LIST];
 
     let logger: Logger;
     let user: SmashUser;

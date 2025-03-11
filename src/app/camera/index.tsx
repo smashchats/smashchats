@@ -35,7 +35,7 @@ import {
     MAX_ZOOM_FACTOR,
     SAFE_AREA_PADDING,
 } from "@/src/ui/fragments/Camera/Constants";
-import { useIsForeground } from "@/src/ui/fragments/Camera/hooks";
+import { useIsForeground } from "@/src/hooks/useIsForeground";
 import { CaptureButton } from "@/src/ui/fragments/Camera/views";
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from "@/src/ui/constants";
 import {

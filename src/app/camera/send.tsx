@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, FlatList, StyleSheet } from "react-native";
+import { Button, FlatList, StyleSheet, Image } from "react-native";
 
 import { router, useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -9,7 +9,7 @@ import { drizzle_db } from "@/src/db/database";
 import { Contact } from "@/src/db/models/Contacts";
 
 export default function CameraSend() {
-    const { mediaPath, mediaType, isMuted } = useLocalSearchParams();
+    const { mediaPath, mediaType, isMuted, image } = useLocalSearchParams();
     const isVideoMuted = isMuted === "true";
 
     const [contacts, setContacts] = useState<Contact[]>([]);
@@ -48,6 +48,10 @@ export default function CameraSend() {
             edges={["right", "bottom", "left"]}
             style={styles.container}
         >
+            <Image
+                source={{ uri: `data:image/png;base64,${image}` }}
+                style={{ width: 100, height: 100, zIndex: 1000 }}
+            />
             <FlatList
                 style={styles.container}
                 data={contacts}

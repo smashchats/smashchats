@@ -30,6 +30,7 @@
 -   [ ] fetch badges from somewhere(?)
 -   [ ] add unit preferences to settings screen
 -   [ ] add interests somewhere(?)
+-   [ ] fix collapsed header on profile screen
 
 ## In progress
 
@@ -37,6 +38,7 @@
     -   [ ] allow user to change drawing colors
     -   [~] videos on ios are sideways
     -   [ ] merge drawing and media before sending
+    -   [ ] this is SLOOOOW pls fix
     -   [ ] drawing path is sharp at the end of the path, make rounded
     -   [x] add an "undo" button to the camera
     -   [x] add text on a horizontal line on top of image

@@ -44,7 +44,7 @@ export default function Wizard() {
                 type: "SET_SELF_DID_ACTION",
                 selfDid: await user.getDIDDocument(),
             });
-            handleUserMessages(user, globalState.logger);
+            await handleUserMessages(user, globalState.logger);
         })();
     }, []);
 
