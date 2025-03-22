@@ -12,6 +12,30 @@ import {
 } from "@/src/context/GlobalContext.jsx";
 import { ChatListView } from "@/src/types/";
 
+jest.mock("drizzle-orm/expo-sqlite", () => ({
+    useLiveQuery: () => ({
+        data: [{ notes: "note one 🐱" }, { notes: "note two 🐶" }],
+    }),
+    drizzle: jest.fn(() => {
+        class Db {
+            _fn = jest.fn();
+            select() {
+                this._fn();
+                return this;
+            }
+            from() {
+                this._fn();
+                return this;
+            }
+            where() {
+                this._fn();
+                return this;
+            }
+        }
+        return new Db();
+    }),
+}));
+
 const DEFAULT_VALUES: Partial<ChatListView> = {
     most_recent_message: "string",
     most_recent_message_type: "text",
@@ -108,9 +132,12 @@ describe("ui", () => {
         initialState = { ...INITIAL_STATE };
     });
 
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+
     it("renders correctly", () => {
         initialState.chatList.selectedFilters = ["unread", "trusted"];
-
         const tree = render(
             <GlobalProvider initialState={initialState}>
                 <ChatListFilters />

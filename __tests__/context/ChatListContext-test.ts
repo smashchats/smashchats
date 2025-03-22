@@ -75,5 +75,15 @@ describe("ChatListContext", () => {
                 did_id: "draft",
             });
         });
+
+        it("should clear draft", () => {
+            const state = { did_id: "draft" };
+            const action = {
+                type: "CHAT_LIST_DRAFT_CLEAR_ACTION" as const,
+                did_id: "did_id",
+            };
+
+            expect(draftReducer(state, action)).toEqual({});
+        });
     });
 });

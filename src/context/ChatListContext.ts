@@ -48,7 +48,15 @@ interface DraftAction extends ChatListActionBase {
     did_id: string;
 }
 
-export type ChatListAction = ToggleFilterAction | DraftAction;
+interface DraftClearAction extends ChatListActionBase {
+    type: "CHAT_LIST_DRAFT_CLEAR_ACTION";
+    did_id: string;
+}
+
+export type ChatListAction =
+    | ToggleFilterAction
+    | DraftAction
+    | DraftClearAction;
 
 //
 // CONTEXT
@@ -105,11 +113,28 @@ export const selectedFiltersReducer = (
 
 export const draftReducer = (
     state: { [key: string]: string },
-    action: DraftAction | Action
+    action: DraftAction | DraftClearAction | Action
 ): { [key: string]: string } => {
+    if (action.type === "CHAT_LIST_DRAFT_CLEAR_ACTION") {
+        return draftClearReducer(state, action);
+    }
+
     if (action.type !== "CHAT_LIST_DRAFT_ACTION") {
         return state;
     }
 
     return { ...state, [action.did_id]: action.draft };
+};
+
+export const draftClearReducer = (
+    state: { [key: string]: string },
+    action: DraftClearAction | Action
+): { [key: string]: string } => {
+    if (action.type !== "CHAT_LIST_DRAFT_CLEAR_ACTION") {
+        return state;
+    }
+
+    return Object.fromEntries(
+        Object.entries(state).filter(([key]) => key !== action.did_id)
+    );
 };

@@ -4,6 +4,30 @@ import { RenderMessageListItem } from "@/src/ui/fragments/MessagesList";
 import { DisplayableMessage } from "@/src/types/";
 import { IM_CHAT_TEXT, MessageStatus } from "@smashchats/library";
 
+jest.mock("drizzle-orm/expo-sqlite", () => ({
+    useLiveQuery: () => ({
+        data: [{ message: { status: "delivered" } }],
+    }),
+    drizzle: jest.fn(() => {
+        class Db {
+            _fn = jest.fn();
+            select() {
+                this._fn();
+                return this;
+            }
+            from() {
+                this._fn();
+                return this;
+            }
+            where() {
+                this._fn();
+                return this;
+            }
+        }
+        return new Db();
+    }),
+}));
+
 describe("RenderMessageListItem", () => {
     it("renders correctly", () => {
         const tree = render(
