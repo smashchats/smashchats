@@ -10,8 +10,22 @@ import { Colors } from "@/src/constants/Colors.js";
 import { Box, HStack } from "@/src/ui/design-system/layout";
 import { NEIGHBOURHOOD_DOMAIN } from "@/data/neighbourhood.js";
 import { useGlobalState } from "@/src/context/GlobalContext";
+import { ChatListView } from "@/src/types/ChatListScreen.types";
+import { Text } from "@/src/ui/design-system/Text";
 
-export function ChatListHeader(): JSX.Element {
+type ChatListHeaderProps = {
+    selectionEnabled: boolean;
+    selectedChats: ChatListView[];
+    onDone: () => void;
+    onDelete: () => void;
+};
+
+export function ChatListHeader({
+    selectionEnabled,
+    selectedChats,
+    onDone,
+    onDelete,
+}: Readonly<ChatListHeaderProps>): JSX.Element {
     const globalState = useGlobalState();
     const [count, setCount] = useState(0);
     const [qrCode, setQrCode] = useState<string | undefined>(undefined);
@@ -40,44 +54,65 @@ export function ChatListHeader(): JSX.Element {
     }, [count]);
     return (
         <Box>
-            <HStack
-                marginHorizontal={10}
-                marginVertical={16}
-                justifyContent="space-between"
-            >
-                <HStack alignItems="center">
-                    <NeonBadge title={NEIGHBOURHOOD_DOMAIN} />
-                    <Link href="https://smashchats.com" asChild>
-                        <Feather
-                            name="external-link"
-                            size={18}
-                            color={Colors.purple}
-                            style={{ marginLeft: 10 }}
-                        />
-                    </Link>
-                    <Pressable
-                        onPress={handlePress}
-                        style={{
-                            width: 40,
-                            height: 25,
-                        }}
-                    />
+            {selectionEnabled && (
+                <HStack
+                    marginHorizontal={10}
+                    marginVertical={16}
+                    justifyContent="space-between"
+                >
+                    <Pressable style={{ minHeight: 28 }} onPress={onDone}>
+                        <Text fontWeight={500}>Done</Text>
+                    </Pressable>
+                    <Text fontWeight={"bold"}>
+                        {selectedChats.length} selected
+                    </Text>
+                    <Pressable style={{ minHeight: 28 }} onPress={onDelete}>
+                        <Text fontWeight={500} color="red">
+                            Delete
+                        </Text>
+                    </Pressable>
                 </HStack>
-
-                <HStack>
-                    {/* <Feather name="plus" size={28} color={Colors.purple} /> */}
-                    {/* <Feather name="search" size={28} color={Colors.purple} /> */}
-                    <Link href="/settings" asChild>
-                        <Pressable>
+            )}
+            {!selectionEnabled && (
+                <HStack
+                    marginHorizontal={10}
+                    marginVertical={16}
+                    justifyContent="space-between"
+                >
+                    <HStack alignItems="center">
+                        <NeonBadge title={NEIGHBOURHOOD_DOMAIN} />
+                        <Link href="https://smashchats.com" asChild>
                             <Feather
-                                name="menu"
-                                size={28}
+                                name="external-link"
+                                size={18}
                                 color={Colors.purple}
+                                style={{ marginLeft: 10 }}
                             />
-                        </Pressable>
-                    </Link>
+                        </Link>
+                        <Pressable
+                            onPress={handlePress}
+                            style={{
+                                width: 40,
+                                height: 25,
+                            }}
+                        />
+                    </HStack>
+
+                    <HStack>
+                        {/* <Feather name="plus" size={28} color={Colors.purple} /> */}
+                        {/* <Feather name="search" size={28} color={Colors.purple} /> */}
+                        <Link href="/settings" asChild>
+                            <Pressable>
+                                <Feather
+                                    name="menu"
+                                    size={28}
+                                    color={Colors.purple}
+                                />
+                            </Pressable>
+                        </Link>
+                    </HStack>
                 </HStack>
-            </HStack>
+            )}
             {qrCode && (
                 <Pressable
                     style={{

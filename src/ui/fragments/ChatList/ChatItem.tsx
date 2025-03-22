@@ -11,6 +11,7 @@ import { Badge, BadgeText } from "@/src/ui/design-system/Badge";
 import { daysBetweenTwoDates } from "@/src/utils/Utils.js";
 import { ChatListView } from "@/src/types/";
 import { IM_CHAT_TEXT } from "@smashchats/library";
+import { Checkbox } from "@/src/ui/design-system/Checkbox/Checkbox";
 
 type ChatItemProps = PropsWithChildren<ChatListView>;
 
@@ -67,6 +68,8 @@ export function ChatItem({
     active,
     meta_avatar,
     draft,
+    selected,
+    selectionEnabled,
 }: ChatItemProps): React.JSX.Element {
     const date = dateToShowableString(new Date(most_recent_message_date));
 
@@ -80,6 +83,8 @@ export function ChatItem({
     return (
         <Box flex={1} paddingHorizontal={10} marginTop={VERTICAL_PADDING}>
             <HStack gap={12} alignItems="center" alignContent="flex-start">
+                {selectionEnabled && <Checkbox checked={selected ?? false} />}
+
                 <Avatar
                     contact={{
                         meta_title,

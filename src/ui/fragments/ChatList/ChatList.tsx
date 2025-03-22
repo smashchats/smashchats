@@ -10,6 +10,8 @@ import { useGlobalState } from "@/src/context/GlobalContext.jsx";
 import { getShownChats } from "@/src/context/ChatListContext";
 import { SCREEN_HEIGHT } from "@/src/ui/constants";
 import { ChatListView } from "@/src/types/ChatListScreen.types";
+import { deleteAllMessagesInDiscussion } from "@/src/db/models/Messages";
+import { deleteContact } from "@/src/db/models/Contacts";
 
 interface Props {
     chats: ChatListView[];
@@ -22,13 +24,37 @@ export function ChatList({ chats }: Readonly<Props>) {
 
     const [shownChats, setShownChats] = useState<ChatListView[]>(chats);
 
+    const [selectedChats, setSelectedChats] = useState<ChatListView[]>([]);
+
     useEffect(() => {
         setShownChats(getShownChats(chats, selectedFilters));
     }, [chats, selectedFilters]);
 
+    const handleChatLongPress = (chat: ChatListView) => {
+        if (selectedChats.length === 0) {
+            setSelectedChats([chat]);
+        }
+    };
+
+    const handleDeleteChats = async () => {
+        await Promise.all(
+            selectedChats.map(async (chat) => {
+                await deleteAllMessagesInDiscussion(chat.did_id);
+                await deleteContact(chat.did_id);
+            })
+        );
+    };
+
     return (
         <Box height={SCREEN_HEIGHT}>
-            <ChatListHeader />
+            <ChatListHeader
+                selectionEnabled={selectedChats.length > 0}
+                selectedChats={selectedChats}
+                onDone={() => {
+                    setSelectedChats([]);
+                }}
+                onDelete={handleDeleteChats}
+            />
             <ChatListFilters />
             <ScrollView
                 contentInsetAdjustmentBehavior="automatic"
@@ -51,8 +77,29 @@ export function ChatList({ chats }: Readonly<Props>) {
                         }
                         asChild
                     >
-                        <TouchableOpacity activeOpacity={0.8}>
-                            <ChatItem {...d} draft={drafts?.[d.did_id]} />
+                        <TouchableOpacity
+                            activeOpacity={0.8}
+                            onPress={(e) => {
+                                if (selectedChats.length > 0) {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    if (selectedChats.includes(d)) {
+                                        setSelectedChats(
+                                            selectedChats.filter((c) => c !== d)
+                                        );
+                                    } else {
+                                        setSelectedChats([...selectedChats, d]);
+                                    }
+                                }
+                            }}
+                            onLongPress={() => handleChatLongPress(d)}
+                        >
+                            <ChatItem
+                                {...d}
+                                draft={drafts?.[d.did_id]}
+                                selected={selectedChats.includes(d)}
+                                selectionEnabled={selectedChats.length > 0}
+                            />
                         </TouchableOpacity>
                     </Link>
                 ))}

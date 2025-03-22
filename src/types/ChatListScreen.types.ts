@@ -17,4 +17,6 @@ export interface ChatListView {
     most_recent_message_date: number;
     unread_count: number;
     draft?: string;
+    selected?: boolean;
+    selectionEnabled?: boolean;
 }

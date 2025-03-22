@@ -127,3 +127,7 @@ export const getAllContactNotes = async (): Promise<string[]> => {
 export const markContactAsActive = async (did_id: string) => {
     await drizzle_db.update(contacts).set({ active: true }).where(eq(contacts.did_id, did_id));
 };
+
+export const deleteContact = async (did_id: string) => {
+    await drizzle_db.delete(contacts).where(eq(contacts.did_id, did_id));
+};

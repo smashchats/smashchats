@@ -20,7 +20,6 @@
 -   [ ] bio max 140chars
 -   [ ] replace Pressable with TouchableHighlight where needed
 -   [ ] DID set (when contact sends profile) vs DID patch (when resolving? & when nab sends profiles)
--   [ ] delete contacts / discussions
 -   [ ] delete own avatar
 -   [ ] mark as unread
 -   [ ] hide screen on connecting and show connecting status
@@ -56,6 +55,12 @@
     -   [ ] adding note to a contact
     -   [x] remove integers 0-9 from filters, unless it is emojis (i.e. 1 vs 1️⃣)
     -   [x] refresh filters when notes change
+-   [~] delete contacts / discussions
+    -   [x] selection mode
+    -   [x] exit selection mode
+    -   [x] delete button
+    -   [ ] confirmation modal(?)
+    -   [ ] when enabling selection mode, ChatItem content should move animatedly away from the selection marker
 
 ## Done
 

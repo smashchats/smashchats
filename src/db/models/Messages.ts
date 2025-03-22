@@ -8,14 +8,21 @@ import {
     not,
 } from "drizzle-orm";
 
-import { DIDString, IM_CHAT_TEXT, MessageStatus, sha256 } from "@smashchats/library";
+import {
+    DIDString,
+    IM_CHAT_TEXT,
+    MessageStatus,
+    sha256,
+} from "@smashchats/library";
 
 import { messages } from "@/src/db/schema.js";
 import { drizzle_db } from "@/src/db/database";
 import { ESMToMessageInsertMapper } from "@/src/utils/mappers/messages";
 import { EnrichedSmashMessage } from "@/src/types/";
 
-export type Message = InferSelectModel<typeof messages> & { status: MessageStatus };
+export type Message = InferSelectModel<typeof messages> & {
+    status: MessageStatus;
+};
 export type MessageInsert = InferInsertModel<typeof messages>;
 
 export const saveMessageToDb = async (
@@ -41,7 +48,12 @@ export const markAllMessagesNotFromSelfInDiscussionAsRead = async (
     const unreadMessages = await drizzle_db
         .select({ id: messages.sha256 })
         .from(messages)
-        .where(and(eq(messages.discussion_id, discussionId), isNull(messages.date_read)));
+        .where(
+            and(
+                eq(messages.discussion_id, discussionId),
+                isNull(messages.date_read)
+            )
+        );
     await drizzle_db
         .update(messages)
         .set({ date_read: new Date() })
@@ -55,15 +67,15 @@ export const markAllMessagesNotFromSelfInDiscussionAsRead = async (
     return unreadMessages.map((m) => m.id as sha256);
 };
 
-
-
-export const updateMessagesStatus = async (messageIds: sha256[], status: MessageStatus) => {
-    const target = drizzle_db
-        .update(messages);
+export const updateMessagesStatus = async (
+    messageIds: sha256[],
+    status: MessageStatus
+) => {
+    const target = drizzle_db.update(messages);
 
     const set: Partial<MessageInsert> = {
         status: status,
-    }
+    };
 
     switch (status) {
         case "received":
@@ -74,4 +86,10 @@ export const updateMessagesStatus = async (messageIds: sha256[], status: Message
             break;
     }
     await target.set(set).where(inArray(messages.sha256, messageIds));
+};
+
+export const deleteAllMessagesInDiscussion = async (discussionId: string) => {
+    await drizzle_db
+        .delete(messages)
+        .where(eq(messages.discussion_id, discussionId));
 };
