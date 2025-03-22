@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MessageStatus } from "@smashchats/library";
@@ -7,6 +7,10 @@ import { Colors } from "@/src/constants/Colors.js";
 import { Box, HStack } from "@/src/ui/design-system/layout";
 import { Text } from "@/src/ui/design-system/Text";
 import { DisplayableChatMessage, DisplayableMessage } from "@/src/types/";
+import { useLiveQuery } from "drizzle-orm/expo-sqlite";
+import { eq } from "drizzle-orm";
+import { drizzle_db } from "@/src/db/database";
+import { messages } from "@/src/db/schema";
 
 type MessageStatusProps = {
     status: MessageStatus;
@@ -17,9 +21,10 @@ export function MessageStatusIcon({ status }: Readonly<MessageStatusProps>) {
         switch (status) {
             // @ts-expect-error
             case "sending":
-            case "delivered":
+            case "delivered": // to SME
+            case "received": // by peer
                 return Colors.textLightGray;
-            case "read":
+            case "read": // by peer
                 return Colors.blue;
             // @ts-expect-error
             case "failed":
@@ -33,9 +38,11 @@ export function MessageStatusIcon({ status }: Readonly<MessageStatusProps>) {
             // @ts-expect-error
             case "sending":
                 return "clock-outline";
-            case "delivered":
+            case "delivered": // to SME
                 return "check";
-            case "read":
+            case "received": // by peer
+                return "check";
+            case "read": // by peer
                 return "check-all";
             // @ts-expect-error
             case "failed":
@@ -65,6 +72,27 @@ export function ProfileMessagesScreenText({
     const backgroundColor = message.fromMe ? Colors.purple : Colors.darkGray;
     const alignSelf = message.fromMe ? "flex-end" : "flex-start";
 
+    const [status, setStatus] = useState<MessageStatus>(
+        (message.fromMe &&
+            message.hasOwnProperty("status") &&
+            (message as DisplayableChatMessage).status) ||
+            "sending" as MessageStatus
+    );
+
+    const { data: messageData } = useLiveQuery(
+        drizzle_db
+            .select({ message: messages })
+            .from(messages)
+            .where(eq(messages.sha256, message.sha256))
+    );
+
+    useEffect(() => {
+        if (messageData && messageData.length > 0) {
+            setStatus(messageData[0].message.status as MessageStatus);
+            console.log(messageData[0].message.status);
+        }
+    }, [messageData]);
+
     return (
         <Box
             backgroundColor={backgroundColor}
@@ -89,9 +117,7 @@ export function ProfileMessagesScreenText({
                         })}
                     </Text>
                     {message.fromMe && message.hasOwnProperty("status") && (
-                        <MessageStatusIcon
-                            status={(message as DisplayableChatMessage).status}
-                        />
+                        <MessageStatusIcon status={status} />
                     )}
                 </HStack>
             </Box>

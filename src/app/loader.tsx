@@ -103,7 +103,7 @@ export default function LoaderScreen() {
         dispatch: Dispatch<Action>,
         user: SmashUser
     ) => {
-        handleUserMessages(user, state.logger);
+        await handleUserMessages(user, state.logger);
         await initializeUserAndDiscoverNetwork(user);
         dispatch({
             type: "SET_APP_WORKFLOW_ACTION",
