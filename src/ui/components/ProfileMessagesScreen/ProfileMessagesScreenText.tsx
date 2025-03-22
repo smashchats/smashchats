@@ -89,7 +89,6 @@ export function ProfileMessagesScreenText({
     useEffect(() => {
         if (messageData && messageData.length > 0) {
             setStatus(messageData[0].message.status as MessageStatus);
-            console.log(messageData[0].message.status);
         }
     }, [messageData]);
 
