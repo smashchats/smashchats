@@ -57,8 +57,29 @@ export const messages = sqliteTable("messages", {
     date_read: timestamp("date_read"),
 });
 
+export const media = sqliteTable("media", {
+    sha256: text("sha256").primaryKey(),
+    file_path: text("file_path").notNull(),
+    mime_type: text("mime_type").notNull(),
+    media_type: text("media_type", { mode: "text" }).notNull(), // "image", "video", "audio"
+    width: integer("width"),
+    height: integer("height"),
+    duration: integer("duration"), // for video/audio in seconds
+    size: integer("size").notNull(),
+    thumbnail_path: text("thumbnail_path"), // for video thumbnails
+    created_at: defaultTimestamp("created_at"),
+    updated_at: defaultTimestamp("updated_at"),
+});
+
 export const contactsRelations = relations(contacts, ({ many }) => ({
     messages: many(messages),
+}));
+
+export const mediaRelations = relations(media, ({ one }) => ({
+    message: one(messages, {
+        fields: [media.sha256],
+        references: [messages.sha256],
+    }),
 }));
 
 export const messagesRelations = relations(messages, ({ one }) => ({
@@ -69,6 +90,10 @@ export const messagesRelations = relations(messages, ({ one }) => ({
     to: one(contacts, {
         fields: [messages.discussion_id],
         references: [contacts.did_id],
+    }),
+    media: one(media, {
+        fields: [messages.sha256],
+        references: [media.sha256],
     }),
 }));
 

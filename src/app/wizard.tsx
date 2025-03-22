@@ -4,7 +4,8 @@ import { useRouter } from "expo-router";
 
 import { IMProfile } from "@smashchats/library";
 
-import { handleUserMessages, loadIdentity } from "@/src/utils/IdentityUtils";
+import { loadIdentity } from "@/src/utils/IdentityUtils";
+import { handleUserMessages } from "@/src/utils/messageHandlers";
 import {
     DEFAULT_SETTINGS,
     useGlobalDispatch,

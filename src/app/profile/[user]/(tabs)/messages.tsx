@@ -29,7 +29,7 @@ import Animated, {
     useAnimatedScrollHandler,
     useComposedEventHandler,
 } from "react-native-reanimated";
-import { eq, desc, and, isNull, count } from "drizzle-orm";
+import { eq, desc, and, sql } from "drizzle-orm";
 import { Feather } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 
@@ -55,7 +55,7 @@ import {
     appendOlderMessages,
 } from "@/src/utils/MessagesUtils.js";
 import { drizzle_db } from "@/src/db/database";
-import { messages as MessagesSchema } from "@/src/db/schema";
+import { messages as MessagesSchema, media } from "@/src/db/schema";
 import {
     Message,
     markAllMessagesNotFromSelfInDiscussionAsRead,
@@ -74,6 +74,7 @@ import {
     SMASH_MEDIA_PHOTO,
     SmashMediaPhotoMessage,
 } from "@/src/types/smash/lexicons";
+import { saveMedia, getMediaTypeFromMimeType } from "@/src/utils/MediaStorage";
 
 const DEFAULT_LOAD_LIMIT = __DEV__ ? 10 : 100;
 
@@ -88,24 +89,34 @@ const getMessages = async (
     offset: number,
     limit: number
 ): Promise<Message[]> => {
-    return (await drizzle_db
-        .select()
+    const results = await drizzle_db
+        .select({
+            message: MessagesSchema,
+            media: media,
+        })
         .from(MessagesSchema)
+        .leftJoin(media, eq(MessagesSchema.sha256, media.sha256))
         .where(eq(MessagesSchema.discussion_id, peerId))
         .orderBy(desc(MessagesSchema.created_at))
         .offset(offset)
         .limit(limit)
-        .execute()) as Message[];
+        .execute();
+
+    return results.map(({ message, media }) => ({
+        ...message,
+        status: message.status as MessageStatus,
+        media: media || null,
+    }));
 };
 
 const getUnreadMessagesCount = async (peerId: string): Promise<number> => {
     const result = await drizzle_db
-        .select({ count: count() })
+        .select({ count: sql<number>`count(*)` })
         .from(MessagesSchema)
         .where(
             and(
                 eq(MessagesSchema.discussion_id, peerId),
-                isNull(MessagesSchema.date_read)
+                eq(MessagesSchema.status, "received")
             )
         )
         .execute();
@@ -171,6 +182,8 @@ const ProfileMessages = forwardRef<
     const [messages, setMessages] = useState<DisplayableMessage[]>([]);
 
     const loadMoreMessages = async () => {
+        return;
+        globalState.logger.info("loadMoreMessages");
         const older_messages = await getMessages(
             peerId,
             offset,
@@ -201,6 +214,11 @@ const ProfileMessages = forwardRef<
 
             const databaseMessages = await getMessages(peerId, 0, loadLimit);
 
+            dispatch({
+                type: "CHAT_LIST_DRAFT_CLEAR_ACTION",
+                did_id: peerId,
+            });
+
             if (databaseMessages.length > 0) {
                 const lastMessageId = databaseMessages[
                     databaseMessages.length - 1
@@ -210,6 +228,9 @@ const ProfileMessages = forwardRef<
                     discussionId: peerId,
                     messageId: lastMessageId,
                 });
+                globalState.logger.info(
+                    `messages::useEffect::Latest message id in discussion ${peerId} set to ${lastMessageId}`
+                );
             }
 
             const enrichedMessages = addSystemMessages(
@@ -355,26 +376,27 @@ const ProfileMessages = forwardRef<
                 throw new Error(`Unknown message type: ${message.type}`);
         }
 
-        saveMessageToDb(
-            {
-                fromDid: globalState.selfDid.id,
-                toDiscussionId: peerId as DIDString,
-                data: db_data,
-                sha256: message.sha256 as sha256,
-                timestamp: message.timestamp!,
-                type: message.type,
-                after: message.after as sha256,
-            } satisfies EnrichedSmashMessage,
-            {
-                date_read: new Date(),
-            }
-        );
+        const msg = {
+            fromDid: globalState.selfDid.id,
+            toDiscussionId: peerId as DIDString,
+            data: db_data,
+            sha256: message.sha256 as sha256,
+            timestamp: message.timestamp!,
+            type: message.type,
+            after: message.after as sha256,
+        } satisfies EnrichedSmashMessage;
+
+        saveMessageToDb(msg, {
+            date_read: new Date(),
+        });
 
         dispatch({
             type: "LATEST_MESSAGE_ID_IN_DISCUSSION_ACTION",
             discussionId: peerId,
             messageId: message.sha256 as sha256,
         });
+
+        globalState.logger.info(JSON.stringify(msg, null, 2));
 
         try {
             await globalState.selfSmashUser.send(
@@ -424,9 +446,25 @@ const ProfileMessages = forwardRef<
         }
         markContactAsActive(peerId).then();
 
+        const asset = assets[0];
+        const mediaType = getMediaTypeFromMimeType(asset.mimeType!);
+
+        // Save media to storage and database
+        const mediaMetadata = await saveMedia(
+            asset.base64!,
+            asset.mimeType!,
+            mediaType,
+            {
+                width: asset.width,
+                height: asset.height,
+                duration: asset.duration || undefined,
+                generateThumbnail: mediaType === "video",
+            }
+        );
+
         const dataToSend = {
-            base64: assets[0].base64!,
-            mimeType: assets[0].mimeType!,
+            base64: asset.base64!,
+            mimeType: asset.mimeType!,
         };
         globalState.logger.info("assets", assets);
 
@@ -436,6 +474,9 @@ const ProfileMessages = forwardRef<
         const message = await encapsulateMessage(
             new SmashMediaPhotoMessage(dataToSend, lastMessageId)
         );
+
+        // Update the message with the media metadata
+        message.sha256 = mediaMetadata.sha256 as sha256;
 
         sendMessage(message);
     };
@@ -549,6 +590,19 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         zIndex: 99,
+    },
+    messageContainer: {
+        padding: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: "#eee",
+    },
+    messageText: {
+        fontSize: 16,
+    },
+    timestamp: {
+        fontSize: 12,
+        color: "#666",
+        marginTop: 4,
     },
 });
 

@@ -6,7 +6,8 @@ import changeNavigationBarColor from "react-native-navigation-bar-color";
 
 import { Logger, SmashUser, DIDDocument, IMProfile } from "@smashchats/library";
 
-import { handleUserMessages, loadIdentity } from "@/src/utils/IdentityUtils";
+import { loadIdentity } from "@/src/utils/IdentityUtils";
+import { handleUserMessages } from "@/src/utils/messageHandlers";
 import {
     Action,
     Settings,

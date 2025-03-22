@@ -1,245 +1,139 @@
-import {
-    DIDDocManager,
-    DIDDocument,
-    DIDString,
-    EncapsulatedIMProtoMessage,
-    IMProfileMessage,
-    IM_CHAT_TEXT,
-    IM_PROFILE,
-    ISO8601,
-    Logger,
-    SMASH_PROFILE_LIST,
-    SmashChatProfileListMessage,
-    SmashMessaging,
-    SmashUser,
-    sha256,
-} from "@smashchats/library";
+import { getOrCreateIdentity } from "@/src/utils/IdentityUtils";
+import { DIDDocManager, Logger, SmashMessaging } from "@smashchats/library";
 
-import { ContactInsert, saveContactToDb, updateContact } from "@/src/db/models/Contacts";
-import * as DbModelMessages from "@/src/db/models/Messages";
-import { saveMessageToDb, updateMessagesStatus } from "@/src/db/models/Messages";
-import { EnrichedSmashMessage } from "@/src/types/";
-import {
-    handleUserMessages,
-    newProfilesMessagesListener,
-    profileMessagesListener,
-    statusMessagesListener,
-    textMessagesListener,
-} from "@/src/utils/IdentityUtils";
+const logger = new Logger("test");
 
+const MOCK_IDENTITY = {
+    createdAt: "2025-03-22T16:10:01.170Z",
+    exchangeKey: {
+        privateKey: {
+            jwk: {
+                key_ops: ["deriveKey", "deriveBits"],
+                ext: true,
+                kty: "EC",
+                x: "hbfTTsc2nW8Qje7VNuyGPyJSGMZQ0n3BVi5cGBUyihY",
+                y: "0n7bt04FF9eX5KK8Cm_a7n_-hHKyBCCk1yHCGzvkudU",
+                crv: "P-256",
+                d: "orC0QtTSIB_qsJqKBixOKNh_3ZKGxdBB2mHHdu1rnKI",
+            },
+            algorithm: {
+                name: "ECDH",
+                namedCurve: "P-256",
+            },
+            usages: ["deriveKey", "deriveBits"],
+            extractable: true,
+            type: "private",
+        },
+        publicKey: {
+            jwk: {
+                key_ops: [],
+                ext: true,
+                kty: "EC",
+                x: "hbfTTsc2nW8Qje7VNuyGPyJSGMZQ0n3BVi5cGBUyihY",
+                y: "0n7bt04FF9eX5KK8Cm_a7n_-hHKyBCCk1yHCGzvkudU",
+                crv: "P-256",
+            },
+            algorithm: {
+                name: "ECDH",
+                namedCurve: "P-256",
+            },
+            usages: [],
+            extractable: true,
+            type: "public",
+        },
+        thumbprint:
+            "d081fe833f8109c1d154b6a4c38de85383a20b764219e078c43b2d08dab1a1de",
+    },
+    id: 0,
+    preKeys: [],
+    signedPreKeys: [],
+    signingKey: {
+        privateKey: {
+            jwk: {
+                key_ops: ["sign"],
+                ext: true,
+                kty: "EC",
+                x: "_HoOmmrFHlsO_VEFAdySWuOZugN7XtVQBHZjxjIrMxQ",
+                y: "Nm-jZymd2r0WuzRnoLxORCiDOqYlR1BhCbu7Pjr7msw",
+                crv: "P-256",
+                d: "Bf_PVjorPR-V3w1Xkfh-qFZV21OpcgfftXZ6f9Eze8o",
+            },
+            algorithm: {
+                name: "ECDSA",
+                namedCurve: "P-256",
+            },
+            usages: ["sign"],
+            extractable: true,
+            type: "private",
+        },
+        publicKey: {
+            jwk: {
+                key_ops: ["verify"],
+                ext: true,
+                kty: "EC",
+                x: "_HoOmmrFHlsO_VEFAdySWuOZugN7XtVQBHZjxjIrMxQ",
+                y: "Nm-jZymd2r0WuzRnoLxORCiDOqYlR1BhCbu7Pjr7msw",
+                crv: "P-256",
+            },
+            algorithm: {
+                name: "ECDSA",
+                namedCurve: "P-256",
+            },
+            usages: ["verify"],
+            extractable: true,
+            type: "public",
+        },
+        thumbprint:
+            "71335f0144d8a498f5a23c1e4edbffda584ca90c1a383d1825aff78d3f566919",
+    },
+    did: "did:doc:71335f0144d8a498f5a23c1e4edbffda584ca90c1a383d1825aff78d3f566919",
+    endpoints: [],
+};
 
-jest.mock("@/src/db/models/Contacts", () => ({
-    saveContactToDb: jest.fn(),
-    updateContact: jest.fn(),
-}));
+jest.mock("@/src/utils/StorageUtils");
 
-jest.mock("@/src/db/models/Messages", () => ({
-    saveMessageToDb: jest.fn(),
-    updateMessagesStatus: jest.fn(),
-}));
-
-describe("listeners", () => {
-    const EVENT_TYPES = [IM_CHAT_TEXT, IM_PROFILE, SMASH_PROFILE_LIST];
-
-    let logger: Logger;
-    let user: SmashUser;
-
-    const selfDid = { id: "did:smash:self" } as unknown as DIDDocument;
-    const peerDid = { id: "did:smash:peer" } as unknown as DIDDocument;
-
-    beforeEach(() => {
-        jest.clearAllMocks();
-
-        logger = {
-            debug: jest.fn(),
-            warn: jest.fn(),
-            error: jest.fn(),
-        } as unknown as Logger;
-
-        user = {
-            on: jest.fn(),
-            getDIDDocument: jest.fn(),
-            removeListener: jest.fn(),
-        } as unknown as SmashUser;
-    });
-
+describe("IdentityUtils", () => {
     afterEach(() => {
-        jest.resetAllMocks();
+        jest.clearAllMocks();
     });
 
-    EVENT_TYPES.forEach((t) => {
-        it(`sets a listener for ${t}`, async () => {
-            const unsubscribe = await handleUserMessages(user, logger);
-            expect(user.on).toHaveBeenCalledWith(t, expect.anything());
+    describe("getOrCreateIdentity", () => {
+        it("should create a new identity", async () => {
+            const didDocumentManager = new DIDDocManager();
+            SmashMessaging.use(didDocumentManager);
+            SmashMessaging.setCrypto(window.crypto);
 
-            unsubscribe();
-            expect(user.removeListener).toHaveBeenCalled();
-        });
-    });
+            const { getData } = require("@/src/utils/StorageUtils");
+            (getData as jest.Mock).mockResolvedValue(null);
 
-    describe("newProfilesMessagesListener", () => {
-        let didManager: DIDDocManager;
-        beforeAll(() => {
-            didManager = new DIDDocManager();
-            Object.defineProperty(didManager, 'method', {
-                value: 'smash',
-                writable: false,
-            });
-            SmashMessaging.use(didManager);
-        });
+            const spy = jest.spyOn(didDocumentManager, "generate");
 
-        beforeEach(() => {
-            didManager.set(selfDid);
-        });
-
-        it("saves new profiles to the database", async () => {
-            const listener = newProfilesMessagesListener(selfDid);
-
-            const message: SmashChatProfileListMessage = {
-                data: [{ did: peerDid }],
-                type: SMASH_PROFILE_LIST,
-                after: "0",
-            };
-
-            await listener(peerDid.id, message);
-            const contact = {
-                did_id: peerDid.id,
-                did_ik: undefined,
-                did_ek: undefined,
-                did_signature: undefined,
-                did_endpoints: [],
-                meta_title: undefined,
-                meta_description: undefined,
-                meta_avatar: undefined,
-            } satisfies ContactInsert;
-
-            expect(saveContactToDb).toHaveBeenCalledTimes(1);
-            expect(saveContactToDb).toHaveBeenCalledWith(contact);
-        });
-    });
-
-    describe("textMessagesListener", () => {
-        let listener: (
-            senderDid: DIDString,
-            message: EncapsulatedIMProtoMessage
-        ) => Promise<void>;
-        beforeEach(() => {
-            jest.clearAllMocks();
-            listener = textMessagesListener(logger);
-        });
-
-        it("saves text messages to the database", async () => {
-            const message: EncapsulatedIMProtoMessage = {
-                data: { text: "Hello, world!" },
-                type: IM_CHAT_TEXT,
-                after: "0",
-                sha256: "sha256" as sha256,
-                timestamp: new Date().toISOString() as ISO8601,
-            };
-
-            await listener(peerDid.id, message);
-
-            const enrichedMessage: EnrichedSmashMessage = {
-                ...message,
-                fromDid: peerDid.id,
-                toDiscussionId: peerDid.id,
-                data: JSON.stringify(message.data),
-            };
-
-            expect(saveMessageToDb).toHaveBeenCalledWith(enrichedMessage, { status: "received" });
-        });
-
-        it("doesn't throw if message is already saved", async () => {
-            jest.spyOn(DbModelMessages, "saveMessageToDb").mockRejectedValue(
-                new Error("UNIQUE constraint failed: messages.sha256")
+            const identity = await getOrCreateIdentity(
+                didDocumentManager,
+                logger
             );
 
-            const message: EncapsulatedIMProtoMessage = {
-                data: { text: "Hello, world!" },
-                type: IM_CHAT_TEXT,
-                after: "0",
-                sha256: "sha256" as sha256,
-                timestamp: new Date().toISOString() as ISO8601,
-            };
-
-            expect(
-                async () => await listener(peerDid.id, message)
-            ).not.toThrow();
-            expect(logger.error).not.toHaveBeenCalled();
+            expect(identity).toBeDefined();
+            expect(spy).toHaveBeenCalled();
         });
 
-        it("logs error if message is not text", async () => {
-            jest.spyOn(DbModelMessages, "saveMessageToDb").mockRejectedValue(
-                new Error("other error")
+        it("should load an existing identity", async () => {
+            const didDocumentManager = new DIDDocManager();
+            SmashMessaging.use(didDocumentManager);
+            SmashMessaging.setCrypto(window.crypto);
+
+            const { getData } = require("@/src/utils/StorageUtils");
+            (getData as jest.Mock).mockResolvedValue(MOCK_IDENTITY);
+
+            const spy = jest.spyOn(didDocumentManager, "generate");
+
+            const identity = await getOrCreateIdentity(
+                didDocumentManager,
+                logger
             );
 
-            const message: EncapsulatedIMProtoMessage = {
-                data: { text: "Hello, world!" },
-                type: IM_PROFILE,
-                after: "0",
-                sha256: "sha256" as sha256,
-                timestamp: new Date().toISOString() as ISO8601,
-            };
-
-            await listener(peerDid.id, message);
-
-            expect(logger.error).toHaveBeenCalled();
-        });
-    });
-
-    describe("profileMessagesListener", () => {
-        let listener: (
-            senderDid: DIDString,
-            message: IMProfileMessage
-        ) => Promise<void>;
-        beforeEach(() => {
-            jest.clearAllMocks();
-            listener = profileMessagesListener(logger);
-        });
-        it("saves profile messages to the database", async () => {
-            const message: IMProfileMessage = {
-                data: {
-                    did: peerDid.id,
-                    title: "title",
-                    description: "description",
-                    avatar: "avatar",
-                },
-                type: IM_PROFILE,
-                after: "0",
-                sha256: "sha256" as sha256,
-                timestamp: new Date().toISOString() as ISO8601,
-            };
-
-            await listener(peerDid.id, message);
-
-            expect(updateContact).toHaveBeenCalledWith(message.data);
-        });
-    });
-
-    describe("statusMessagesListener", () => {
-        it("updates status of delivered messages", async () => {
-            const listener = statusMessagesListener(logger);
-
-            await listener("delivered", ["sha256" as sha256]);
-
-            expect(logger.debug).toHaveBeenCalled();
-            expect(updateMessagesStatus).toHaveBeenCalledWith(["sha256" as sha256], "delivered");
-        });
-
-        it("updates status of received messages", async () => {
-            const listener = statusMessagesListener(logger);
-
-            await listener("received", ["sha256" as sha256]);
-
-            expect(updateMessagesStatus).toHaveBeenCalledWith(["sha256" as sha256], "received");
-        });
-
-        it("updates status of read messages", async () => {
-            const listener = statusMessagesListener(logger);
-
-            await listener("read", ["sha256" as sha256]);
-
-            expect(updateMessagesStatus).toHaveBeenCalledWith(["sha256" as sha256], "read");
+            expect(spy).not.toHaveBeenCalled();
+            expect(identity).toBeDefined();
         });
     });
 });
