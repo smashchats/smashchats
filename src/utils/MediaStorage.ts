@@ -105,11 +105,11 @@ export const getMedia = async (mediaHash: string): Promise<MediaMetadata | null>
         file_path: result[0].file_path,
         mime_type: result[0].mime_type,
         media_type: result[0].media_type as MediaType,
-        width: result[0].width || undefined,
-        height: result[0].height || undefined,
-        duration: result[0].duration || undefined,
+        width: result[0].width ?? undefined,
+        height: result[0].height ?? undefined,
+        duration: result[0].duration ?? undefined,
         size: result[0].size,
-        thumbnail_path: result[0].thumbnail_path || undefined,
+        thumbnail_path: result[0].thumbnail_path ?? undefined,
     };
 };
 

@@ -90,7 +90,7 @@ export function ChatList({ chats }: Readonly<Props>) {
                                 d.did_id
                             )}/messages?${new URLSearchParams({
                                 active: d.active?.toString() ?? "false",
-                            })}` as Href<string>
+                            })}` as Href
                         }
                         asChild
                     >

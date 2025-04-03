@@ -1,8 +1,8 @@
 import { IMProtoMessage, sha256, undefinedString } from "@smashchats/library";
 
-export declare const SMASH_MEDIA = "com.smashchats.media";
-export declare const SMASH_MEDIA_PHOTO = "com.smashchats.media.photo";
-export declare const SMASH_MEDIA_VIDEO = "com.smashchats.media.video";
+export const SMASH_MEDIA = "com.smashchats.media";
+export const SMASH_MEDIA_PHOTO = "com.smashchats.media.photo";
+export const SMASH_MEDIA_VIDEO = "com.smashchats.media.video";
 
 export type PhotoData = {
     base64: string;

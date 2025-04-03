@@ -1,6 +1,6 @@
 import { DATABASE_NAME } from "@/src/db/database";
 
-import { openDatabaseSync } from "expo-sqlite/next";
+import { openDatabaseSync } from "expo-sqlite";
 
 jest.mock("expo-sqlite/next", () => ({
     openDatabaseSync: jest.fn().mockReturnValue({

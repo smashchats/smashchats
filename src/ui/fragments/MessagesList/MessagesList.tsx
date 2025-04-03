@@ -2,14 +2,18 @@ import React from "react";
 
 import { IM_CHAT_TEXT } from "@smashchats/library";
 
-import { Box } from "@/src/ui/design-system/layout";
 import {
     ProfileMessagesScreenDate,
     ProfileMessagesScreenMetadata,
     ProfileMessagesScreenText,
     ProfileMessagesScreenUnreadMessages,
+    ProfileMessagesScreenMedia,
 } from "@/src/ui/components/ProfileMessagesScreen";
 import { DisplayableMessage } from "@/src/types/";
+import {
+    SMASH_MEDIA_PHOTO,
+    SMASH_MEDIA_VIDEO,
+} from "@/src/types/smash/lexicons";
 
 export const RenderMessageListItem = ({
     message,
@@ -31,7 +35,27 @@ export const RenderMessageListItem = ({
             );
         case "metadata":
             return <ProfileMessagesScreenMetadata message={message} />;
+        case SMASH_MEDIA_PHOTO:
+        case SMASH_MEDIA_VIDEO:
+            return (
+                <ProfileMessagesScreenMedia
+                    message={
+                        message as unknown as DisplayableMessage & {
+                            data: string;
+                        }
+                    }
+                />
+            );
         default:
-            return <Box />;
+            return (
+                <ProfileMessagesScreenMetadata
+                    message={
+                        {
+                            content: "Unknown",
+                            type: "system-unknown",
+                        } as DisplayableMessage
+                    }
+                />
+            );
     }
 };
