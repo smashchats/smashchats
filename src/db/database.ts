@@ -1,5 +1,5 @@
 import { drizzle } from "drizzle-orm/expo-sqlite";
-import { openDatabaseSync } from "expo-sqlite/next";
+import { openDatabaseSync } from "expo-sqlite";
 import * as schema from "@/src/db/schema.js";
 
 export const DATABASE_NAME = __DEV__

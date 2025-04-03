@@ -428,6 +428,7 @@ const ProfileMessages = forwardRef<
         const message = await encapsulateMessage(
             new IMText(dataToSend, lastMessageId)
         );
+        console.warn("message", message);
         sendMessage(message);
     };
 

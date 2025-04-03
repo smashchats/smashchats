@@ -2,7 +2,7 @@ import * as FileSystem from "expo-file-system";
 import { drizzle_db } from "@/src/db/database";
 import { media } from "@/src/db/schema";
 import { eq } from "drizzle-orm";
-import { createHash } from "crypto";
+import { v7 as uuidv7 } from 'uuid';
 
 const MEDIA_DIR = `${FileSystem.documentDirectory}media/`;
 const THUMBNAILS_DIR = `${MEDIA_DIR}thumbnails/`;
@@ -20,10 +20,6 @@ export interface MediaMetadata {
     size: number;
     thumbnail_path?: string;
 }
-
-const generateSha256 = (data: string): string => {
-    return createHash("sha256").update(data).digest("hex");
-};
 
 export const ensureMediaDirectories = async () => {
     const dirInfo = await FileSystem.getInfoAsync(MEDIA_DIR);
@@ -50,8 +46,8 @@ export const saveMedia = async (
 ): Promise<MediaMetadata> => {
     await ensureMediaDirectories();
 
-    // Generate a unique filename using the SHA256 of the media data
-    const mediaHash = generateSha256(base64Data);
+    // Generate a unique filename
+    const mediaHash = uuidv7();
     const fileExtension = mimeType.split("/")[1];
     const filePath = `${MEDIA_DIR}${mediaHash}.${fileExtension}`;
 
