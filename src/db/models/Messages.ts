@@ -19,6 +19,10 @@ import { messages } from "@/src/db/schema.js";
 import { drizzle_db } from "@/src/db/database";
 import { ESMToMessageInsertMapper } from "@/src/utils/mappers/messages";
 import { EnrichedSmashMessage } from "@/src/types/";
+import {
+    SMASH_MEDIA_VIDEO,
+    SMASH_MEDIA_PHOTO,
+} from "@/src/types/smash/lexicons";
 
 export type Message = InferSelectModel<typeof messages> & {
     status: MessageStatus;
@@ -29,7 +33,11 @@ export const saveMessageToDb = async (
     message: EnrichedSmashMessage,
     extraFields?: Partial<MessageInsert>
 ) => {
-    if (message.type !== IM_CHAT_TEXT) {
+    if (
+        ![IM_CHAT_TEXT, SMASH_MEDIA_PHOTO, SMASH_MEDIA_VIDEO].includes(
+            message.type
+        )
+    ) {
         return;
     }
     const messageInsert = ESMToMessageInsertMapper(message);
