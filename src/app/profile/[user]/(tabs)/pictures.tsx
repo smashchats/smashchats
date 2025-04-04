@@ -9,6 +9,7 @@ import { Box } from "@/src/ui/design-system/layout";
 import Animated from "react-native-reanimated";
 import { SCREEN_HEIGHT } from "@/src/ui/constants";
 import { getAllMediaInDiscussion } from "@/src/db/models/Media";
+import { Text } from "@/src/ui/design-system/Text";
 
 export const ProfilePictures = forwardRef<Animated.ScrollView, ScrollViewProps>(
     function ProfilePictures(props, ref) {
@@ -69,6 +70,18 @@ export const ProfilePictures = forwardRef<Animated.ScrollView, ScrollViewProps>(
                                     />
                                 </TouchableOpacity>
                             ))}
+                            {images.length === 0 && (
+                                <Box
+                                    width={"100%"}
+                                    height={"100%"}
+                                    justifyContent="center"
+                                    alignItems="center"
+                                >
+                                    <Text>
+                                        No images in this discussion (yet)
+                                    </Text>
+                                </Box>
+                            )}
                         </Box>
                     </Box>
                 </Box>

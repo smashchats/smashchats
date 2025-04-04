@@ -390,22 +390,25 @@ const ProfileMessages = forwardRef<
         mediaMetadata?: MediaMetadata
     ) => {
         let db_data: string;
+        let displayable_data: string;
 
         switch (message.type) {
             case IM_CHAT_TEXT:
                 db_data = message.data as string;
+                displayable_data = message.data as string;
                 break;
             // TODO: save media somewhere permanent, return uri
             case SMASH_MEDIA_PHOTO:
             case SMASH_MEDIA_VIDEO:
-                db_data = mediaMetadata?.file_path ?? "";
+                db_data = "";
+                displayable_data = mediaMetadata?.file_path ?? "";
                 break;
             default:
                 throw new Error(`Unknown message type: ${message.type}`);
         }
 
         appendMessage({
-            data: db_data,
+            data: displayable_data,
             sha256: message.sha256 as sha256,
             after_sha256: message.after as sha256,
             from_self: true,
