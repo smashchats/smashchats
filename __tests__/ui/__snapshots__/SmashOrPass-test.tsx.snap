@@ -224,11 +224,7 @@ exports[`SmashOrPass Renders correctly 1`] = `
     source={
       [
         {
-          "__packager_asset": true,
-          "height": 1,
-          "scale": 1,
-          "uri": "file://assets/full/path/to/directory/name.type",
-          "width": 1,
+          "testUri": "../../../assets/lightning-bolt.png",
         },
       ]
     }

@@ -4,11 +4,48 @@ exports[`RenderMessageListItem renders correctly 1`] = `
 <View
   style={
     {
+      "alignItems": "flex-start",
+      "alignSelf": "flex-start",
       "backgroundColor": undefined,
       "height": undefined,
+      "marginBottom": 10,
+      "maxWidth": "80%",
+      "paddingHorizontal": 14,
+      "paddingVertical": 10,
     }
   }
-/>
+>
+  <View
+    style={
+      {
+        "backgroundColor": undefined,
+        "flex": undefined,
+        "flexDirection": undefined,
+        "height": undefined,
+        "marginHorizontal": undefined,
+        "marginLeft": undefined,
+        "paddingHorizontal": undefined,
+        "paddingVertical": undefined,
+        "position": undefined,
+        "width": undefined,
+      }
+    }
+  >
+    <Text
+      style={
+        {
+          "color": "#696969",
+          "textShadowColor": undefined,
+          "textShadowOffset": undefined,
+          "textShadowRadius": undefined,
+          "textTransform": undefined,
+        }
+      }
+    >
+      Unknown
+    </Text>
+  </View>
+</View>
 `;
 
 exports[`RenderMessageListItem renders messages 1`] = `
