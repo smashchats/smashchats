@@ -72,6 +72,16 @@ export interface SetAppWorkflowAction extends GlobalActionBase {
     appWorkflow: AppWorkflow;
 }
 
+export interface SetShownMediaInGalleryAction extends GlobalActionBase {
+    type: "SET_SHOWN_MEDIA_IN_GALLERY_ACTION";
+    uris: string[];
+}
+
+export interface AddShownMediaInGalleryAction extends GlobalActionBase {
+    type: "ADD_SHOWN_MEDIA_IN_GALLERY_ACTION";
+    uri: string;
+}
+
 export type Action =
     | ChatListAction
     | LatestMessageIdInDiscussionAction
@@ -80,7 +90,9 @@ export type Action =
     | SetSettingsUserMetaAction
     | SetLoggerAction
     | SetUserAction
-    | SetSelfDidAction;
+    | SetSelfDidAction
+    | SetShownMediaInGalleryAction
+    | AddShownMediaInGalleryAction;
 
 export type GlobalParams = {
     chatList: ChatListParams;
@@ -91,6 +103,7 @@ export type GlobalParams = {
     userMeta: Partial<IMProfile>;
     appWorkflow: AppWorkflow;
     logger: Logger;
+    shownMediaInGallery: string[];
 };
 
 export const INITIAL_GLOBAL_STATE: GlobalParams = {
@@ -106,6 +119,7 @@ export const INITIAL_GLOBAL_STATE: GlobalParams = {
     } as IMProfile,
     appWorkflow: "LOADING",
     logger: new Logger("device", "WARN"),
+    shownMediaInGallery: [],
 };
 
 type GlobalContextType = [
@@ -144,6 +158,10 @@ export const rootReducer = (
         selfSmashUser: selfSmashUserReducer(state.selfSmashUser, action),
         selfDid: selfDidReducer(state.selfDid, action),
         logger: loggerReducer(state.logger, action),
+        shownMediaInGallery: shownMediaInGalleryReducer(
+            state.shownMediaInGallery,
+            action
+        ),
     };
 };
 
@@ -305,4 +323,16 @@ function loggerReducer(logger: Logger, action: Action): Logger {
         return logger;
     }
     return action.logger;
+}
+function shownMediaInGalleryReducer(
+    shownMediaInGallery: string[],
+    action: Action
+): string[] {
+    switch (action.type) {
+        case "SET_SHOWN_MEDIA_IN_GALLERY_ACTION":
+            return [...action.uris];
+        case "ADD_SHOWN_MEDIA_IN_GALLERY_ACTION":
+            return [...shownMediaInGallery, action.uri];
+    }
+    return shownMediaInGallery;
 }

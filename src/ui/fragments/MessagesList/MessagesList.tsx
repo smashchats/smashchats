@@ -40,11 +40,7 @@ export const RenderMessageListItem = ({
         case SMASH_MEDIA_VIDEO:
             return (
                 <ProfileMessagesScreenMedia
-                    message={
-                        message as unknown as DisplayableMessage & {
-                            data: string;
-                        }
-                    }
+                    message={message as unknown as DisplayableMessage}
                 />
             );
         default:

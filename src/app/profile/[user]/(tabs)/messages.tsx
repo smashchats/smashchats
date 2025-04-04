@@ -74,7 +74,11 @@ import {
     SMASH_MEDIA_VIDEO,
     SMASH_MEDIA_PHOTO,
 } from "@/src/types/smash/lexicons";
-import { saveMedia, getMediaTypeFromMimeType, MediaMetadata } from "@/src/utils/MediaStorage";
+import {
+    saveMedia,
+    getMediaTypeFromMimeType,
+    MediaMetadata,
+} from "@/src/utils/MediaStorage";
 
 const DEFAULT_LOAD_LIMIT = __DEV__ ? 10 : 100;
 
@@ -136,7 +140,7 @@ const ProfileMessages = forwardRef<
         onScroll: ScrollHandlerProcessed;
         onLayout: (event: LayoutChangeEvent) => void;
     }
->((props, ref) => {
+>(function ProfileMessages(props, ref) {
     const globalState = useGlobalState();
     const dispatch = useGlobalDispatch();
 
@@ -319,6 +323,21 @@ const ProfileMessages = forwardRef<
                 globalState.selfSmashUser.ackMessagesRead(peerId, [
                     message.sha256,
                 ]);
+                dispatch({
+                    type: "LATEST_MESSAGE_ID_IN_DISCUSSION_ACTION",
+                    discussionId: peerId,
+                    messageId: message.sha256,
+                });
+                if (
+                    [SMASH_MEDIA_PHOTO, SMASH_MEDIA_VIDEO].includes(
+                        message.type
+                    )
+                ) {
+                    dispatch({
+                        type: "ADD_SHOWN_MEDIA_IN_GALLERY_ACTION",
+                        uri: message.data as string,
+                    });
+                }
 
                 if (!hasUserScrolledToOlderMessages) {
                     scrollToBottom();
@@ -333,11 +352,18 @@ const ProfileMessages = forwardRef<
                 });
             }
         };
+        // SUPPORT FOR NEW MESSAGE TYPES SHOULD BE ADDED HERE
         globalState.selfSmashUser.on(IM_CHAT_TEXT, onNewMessageByPeer);
+        globalState.selfSmashUser.on(SMASH_MEDIA_PHOTO, onNewMessageByPeer);
+        globalState.selfSmashUser.on(SMASH_MEDIA_VIDEO, onNewMessageByPeer);
         return () => {
-            globalState.selfSmashUser.removeListener(
-                "data",
-                onNewMessageByPeer
+            [IM_CHAT_TEXT, SMASH_MEDIA_PHOTO, SMASH_MEDIA_VIDEO].forEach(
+                (type) => {
+                    globalState.selfSmashUser.removeListener(
+                        type,
+                        onNewMessageByPeer
+                    );
+                }
             );
         };
     }, [globalState.selfSmashUser]);
@@ -360,7 +386,10 @@ const ProfileMessages = forwardRef<
         onScroll,
     ]);
 
-    const sendMessage = async (message: IMProtoMessage, mediaMetadata?: MediaMetadata) => {
+    const sendMessage = async (
+        message: IMProtoMessage,
+        mediaMetadata?: MediaMetadata
+    ) => {
         let db_data: string;
 
         switch (message.type) {

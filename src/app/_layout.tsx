@@ -38,9 +38,7 @@ function RootLayout() {
         SpaceMono: require("@/assets/fonts/SpaceMono-Regular.ttf"),
     });
 
-    if (__DEV__) {
-        useDrizzleStudio(expo_db);
-    }
+    useDrizzleStudio(expo_db);
 
     let success = false;
     let error: Error | undefined = undefined;

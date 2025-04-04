@@ -30,6 +30,7 @@
 -   [ ] add unit preferences to settings screen
 -   [ ] add interests somewhere(?)
 -   [ ] fix collapsed header on profile screen
+-   [~] bug latest message id in discussion apparently only looks for Text ??
 
 ## In progress
 

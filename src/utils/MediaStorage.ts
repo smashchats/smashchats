@@ -1,8 +1,9 @@
 import * as FileSystem from "expo-file-system";
+import { eq } from "drizzle-orm";
+import { v7 as uuidv7 } from "uuid";
+
 import { drizzle_db } from "@/src/db/database";
 import { media } from "@/src/db/schema";
-import { eq } from "drizzle-orm";
-import { v7 as uuidv7 } from 'uuid';
 
 const MEDIA_DIR = `${FileSystem.documentDirectory}media/`;
 const THUMBNAILS_DIR = `${MEDIA_DIR}thumbnails/`;
@@ -29,7 +30,9 @@ export const ensureMediaDirectories = async () => {
 
     const thumbnailsDirInfo = await FileSystem.getInfoAsync(THUMBNAILS_DIR);
     if (!thumbnailsDirInfo.exists) {
-        await FileSystem.makeDirectoryAsync(THUMBNAILS_DIR, { intermediates: true });
+        await FileSystem.makeDirectoryAsync(THUMBNAILS_DIR, {
+            intermediates: true,
+        });
     }
 };
 
@@ -91,7 +94,9 @@ export const saveMedia = async (
     return metadata;
 };
 
-export const getMedia = async (mediaHash: string): Promise<MediaMetadata | null> => {
+export const getMedia = async (
+    mediaHash: string
+): Promise<MediaMetadata | null> => {
     const result = await drizzle_db
         .select()
         .from(media)
@@ -113,7 +118,9 @@ export const getMedia = async (mediaHash: string): Promise<MediaMetadata | null>
     };
 };
 
-export const getMediaUri = async (mediaHash: string): Promise<string | null> => {
+export const getMediaUri = async (
+    mediaHash: string
+): Promise<string | null> => {
     const metadata = await getMedia(mediaHash);
     if (!metadata) return null;
 
@@ -123,7 +130,9 @@ export const getMediaUri = async (mediaHash: string): Promise<string | null> => 
     return metadata.file_path;
 };
 
-export const getThumbnailUri = async (mediaHash: string): Promise<string | null> => {
+export const getThumbnailUri = async (
+    mediaHash: string
+): Promise<string | null> => {
     const metadata = await getMedia(mediaHash);
     if (!metadata?.thumbnail_path) return null;
 
@@ -138,12 +147,14 @@ export const deleteMedia = async (mediaHash: string): Promise<void> => {
     if (metadata) {
         // Delete the main file
         await FileSystem.deleteAsync(metadata.file_path, { idempotent: true });
-        
+
         // Delete thumbnail if it exists
         if (metadata.thumbnail_path) {
-            await FileSystem.deleteAsync(metadata.thumbnail_path, { idempotent: true });
+            await FileSystem.deleteAsync(metadata.thumbnail_path, {
+                idempotent: true,
+            });
         }
-        
+
         // Delete from database
         await drizzle_db.delete(media).where(eq(media.sha256, mediaHash));
     }
@@ -152,13 +163,15 @@ export const deleteMedia = async (mediaHash: string): Promise<void> => {
 export const cleanupUnusedMedia = async (): Promise<void> => {
     // Get all media from database
     const allMedia = await drizzle_db.select().from(media);
-    
+
     // Check each media file
     for (const mediaItem of allMedia) {
         const fileInfo = await FileSystem.getInfoAsync(mediaItem.file_path);
         if (!fileInfo.exists) {
             // File doesn't exist, remove from database
-            await drizzle_db.delete(media).where(eq(media.sha256, mediaItem.sha256));
+            await drizzle_db
+                .delete(media)
+                .where(eq(media.sha256, mediaItem.sha256));
         }
     }
 };
@@ -169,4 +182,4 @@ export const getMediaTypeFromMimeType = (mimeType: string): MediaType => {
     if (mimeType.startsWith("video/")) return "video";
     if (mimeType.startsWith("audio/")) return "audio";
     throw new Error(`Unsupported mime type: ${mimeType}`);
-}; 
+};

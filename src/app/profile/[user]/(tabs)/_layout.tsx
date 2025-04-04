@@ -38,16 +38,18 @@ import Animated, {
     AnimatedRef,
     clamp,
 } from "react-native-reanimated";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 
 import { Colors } from "@/src/constants/Colors.js";
 import ProfileMessages from "@/src/app/profile/[user]/(tabs)/messages.jsx";
 import { DisplayableMessage } from "@/src/types/";
 import ProfilePictures from "@/src/app/profile/[user]/(tabs)/pictures.jsx";
 import ProfileBadges from "@/src/app/profile/[user]/(tabs)/badges.jsx";
-import { useGlobalState } from "@/src/context/GlobalContext.js";
 import {
-    getContactWithTrustRelation,
-} from "@/src/db/models/Contacts";
+    useGlobalDispatch,
+    useGlobalState,
+} from "@/src/context/GlobalContext.js";
+import { getContactWithTrustRelation } from "@/src/db/models/Contacts";
 import {
     ProfileHeader,
     ProfileHeaderCollapsed,
@@ -63,8 +65,8 @@ import useScrollSync, {
 } from "@/src/hooks/useScrollSync";
 import { useKeyboard } from "@/src/hooks/useKeyboard";
 import { useCollapsibleHeaderTab } from "@/src/hooks/useCollapsibleHeaderTab";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { TrustedContact } from "@/src/types/Contacts.types";
+import { getAllMediaInDiscussion, Media } from "@/src/db/models/Media";
 
 type ProfileIdType = {
     profileId: string;
@@ -87,6 +89,7 @@ const OVERLAY_VISIBILITY_OFFSET = 90;
 export const ProfileScreen = () => {
     const router = useRouter();
     const globalState = useGlobalState();
+    const dispatch = useGlobalDispatch();
     const { keyboardVisible, hideKeyboard } = useKeyboard();
     const { user, active } = useLocalSearchParams();
 
@@ -161,9 +164,9 @@ export const ProfileScreen = () => {
     const scrollToPosition = (position: number) => {
         const config = tabScrollConfigs[tabIndex];
         const scrollValue = config.virtual ? config.virtual : config.position;
-        
+
         const syncScroll = () => sync(position);
-        
+
         scrollValue.value = withTiming(position, {
             duration: SCROLL_ANIMATION_DURATION,
         });
@@ -176,7 +179,7 @@ export const ProfileScreen = () => {
     };
 
     const collapse = () => {
-        scrollToPosition(headerDiff); 
+        scrollToPosition(headerDiff);
     };
     //#endregion
 
@@ -279,8 +282,8 @@ export const ProfileScreen = () => {
         return (config.virtual ? config.virtual : config.position).value;
     }, [tabIndex, tabScrollConfigs]);
 
-    const translateY = useDerivedValue(
-        () => clamp(сurrentScrollValue.value, 0, headerDiff)
+    const translateY = useDerivedValue(() =>
+        clamp(сurrentScrollValue.value, 0, headerDiff)
     );
 
     useEffect(() => {
@@ -376,6 +379,17 @@ export const ProfileScreen = () => {
         [tabBarStyle]
     );
 
+    useEffect(() => {
+        const fetchMedia = async () => {
+            const media = await getAllMediaInDiscussion(user as string);
+            dispatch({
+                type: "SET_SHOWN_MEDIA_IN_GALLERY_ACTION",
+                uris: media.map((m) => m.file_path),
+            });
+        };
+        fetchMedia();
+    }, [user]);
+
     const renderMessages = useCallback(() => {
         const contentContainerStyle: StyleProp<ViewStyle> = {
             paddingTop:
@@ -468,7 +482,7 @@ export const ProfileScreen = () => {
             <Tab.Navigator
                 tabBar={renderTabBar}
                 screenListeners={{
-                    tabPress: (e) => {
+                    tabPress: (e: any) => {
                         if (Keyboard.isVisible()) {
                             e.preventDefault();
                             Keyboard.dismiss();

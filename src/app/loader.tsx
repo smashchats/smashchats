@@ -87,7 +87,7 @@ export default function LoaderScreen() {
     const setupUser = async (dispatch: Dispatch<Action>) => {
         const user = await loadIdentity(
             state.logger,
-            __DEV__ ? "DEBUG" : "WARN"
+            __DEV__ ? "WARN" : "WARN"
         );
         dispatch({
             type: "SET_USER_ACTION",
@@ -178,6 +178,16 @@ export default function LoaderScreen() {
                             options={{
                                 headerShown: false,
                                 headerTitle: "Chats",
+                            }}
+                        />
+
+                        <Stack.Screen
+                            name="gallery"
+                            options={{
+                                title: "Gallery",
+                                headerShown: false,
+                                animation: "fade",
+                                gestureEnabled: false,
                             }}
                         />
 
