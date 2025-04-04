@@ -12,6 +12,10 @@ import { daysBetweenTwoDates } from "@/src/utils/Utils.js";
 import { ChatListView } from "@/src/types/";
 import { IM_CHAT_TEXT } from "@smashchats/library";
 import { Checkbox } from "@/src/ui/design-system/Checkbox/Checkbox";
+import {
+    SMASH_MEDIA_PHOTO,
+    SMASH_MEDIA_VIDEO,
+} from "@/src/types/smash/lexicons";
 
 type ChatItemProps = PropsWithChildren<ChatListView>;
 
@@ -48,11 +52,16 @@ export function dateToShowableString(date: Date): string {
     });
 }
 
+// SUPPORT FOR NEW MESSAGE TYPES SHOULD BE ADDED HERE
 export function getExcerpt(rawMessage: string, messageType: string): string {
     if (messageType === IM_CHAT_TEXT) {
         return rawMessage.split(" ").slice(0, 10).join(" ");
     } else if (messageType === "empty") {
         return "(new contact)";
+    } else if (messageType === SMASH_MEDIA_PHOTO) {
+        return "Sent a photo";
+    } else if (messageType === SMASH_MEDIA_VIDEO) {
+        return "Sent a video";
     }
     return "unsupported message";
 }

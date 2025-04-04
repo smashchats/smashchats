@@ -162,10 +162,14 @@ const ProfileMessages = forwardRef<
     const insets = useSafeAreaInsets();
 
     const [offset, setOffset] = useState(0);
+
+    // SUPPORT FOR NEW MESSAGE TYPES SHOULD BE ADDED HERE
     const keyExtractor = useCallback(
         (message: DisplayableMessage, index: number) => {
             switch (message.type) {
                 case IM_CHAT_TEXT:
+                case SMASH_MEDIA_PHOTO:
+                case SMASH_MEDIA_VIDEO:
                 case "metadata":
                 case "profile":
                 case "profiles":

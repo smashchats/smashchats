@@ -15,6 +15,7 @@ import {
     SMASH_MEDIA_VIDEO,
 } from "@/src/types/smash/lexicons";
 
+// SUPPORT FOR NEW MESSAGE TYPES SHOULD BE ADDED HERE
 export const RenderMessageListItem = ({
     message,
 }: {

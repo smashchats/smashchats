@@ -1,10 +1,18 @@
 import { MessageInsert } from "@/src/db/models/Messages";
 import { EnrichedSmashMessage } from "@/src/types/";
-import { DIDString, EncapsulatedIMProtoMessage, IM_CHAT_TEXT } from "@smashchats/library";
+import {
+    SMASH_MEDIA_VIDEO,
+    SMASH_MEDIA_PHOTO,
+} from "@/src/types/smash/lexicons";
+import {
+    DIDString,
+    EncapsulatedIMProtoMessage,
+    IM_CHAT_TEXT,
+} from "@smashchats/library";
 
 export const mapReceivedMessageToEnrichedMessage = (
     message: EncapsulatedIMProtoMessage,
-    senderDid: DIDString,
+    senderDid: DIDString
 ): EnrichedSmashMessage => {
     let data;
     if (typeof message.data === "string") {
@@ -21,10 +29,13 @@ export const mapReceivedMessageToEnrichedMessage = (
     return m;
 };
 
+// SUPPORT FOR NEW MESSAGE TYPES SHOULD BE ADDED HERE
 export const ESMToMessageInsertMapper = (
     esm: EnrichedSmashMessage
 ): MessageInsert => {
-    if (esm.type !== IM_CHAT_TEXT) {
+    if (
+        ![IM_CHAT_TEXT, SMASH_MEDIA_PHOTO, SMASH_MEDIA_VIDEO].includes(esm.type)
+    ) {
         throw new Error("Message type is not IM_CHAT_TEXT");
     }
 

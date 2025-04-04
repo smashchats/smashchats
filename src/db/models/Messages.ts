@@ -29,6 +29,7 @@ export type Message = InferSelectModel<typeof messages> & {
 };
 export type MessageInsert = InferInsertModel<typeof messages>;
 
+// SUPPORT FOR NEW MESSAGE TYPES SHOULD BE ADDED HERE
 export const saveMessageToDb = async (
     message: EnrichedSmashMessage,
     extraFields?: Partial<MessageInsert>
@@ -38,6 +39,7 @@ export const saveMessageToDb = async (
             message.type
         )
     ) {
+        console.warn(`message.type: ${message.type} is not supported`);
         return;
     }
     const messageInsert = ESMToMessageInsertMapper(message);

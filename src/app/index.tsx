@@ -25,6 +25,10 @@ import {
 import { ChatListView } from "@/src/types/ChatListScreen.types";
 import { useLiveTablesQuery } from "@/src/hooks/useLiveQuery";
 import { chatListView } from "@/src/db/queries/ChatListView";
+import {
+    SMASH_MEDIA_PHOTO,
+    SMASH_MEDIA_VIDEO,
+} from "@/src/types/smash/lexicons";
 
 export function Home() {
     const dispatch = useGlobalDispatch();
@@ -56,6 +60,8 @@ export function Home() {
             };
 
             user.on(IM_CHAT_TEXT, listener);
+            user.on(SMASH_MEDIA_PHOTO, listener);
+            user.on(SMASH_MEDIA_VIDEO, listener);
 
             return () => {
                 user.removeListener("data", listener);

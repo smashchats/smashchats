@@ -38,13 +38,18 @@ import { getMediaTypeFromMimeType, saveMedia } from "@/src/utils/MediaStorage";
 
 const IGNORED_MESSAGE_TYPES = [IM_SESSION_RESET];
 
+// SUPPORT FOR NEW MESSAGE TYPES SHOULD BE ADDED HERE
 export const firehoseListener =
     (logger: Logger) =>
     async (_senderDid: DIDString, message: IMProtoMessage) => {
         if (
-            ![IM_CHAT_TEXT, IM_PROFILE, ...IGNORED_MESSAGE_TYPES].includes(
-                message.type
-            )
+            ![
+                IM_CHAT_TEXT,
+                IM_PROFILE,
+                SMASH_MEDIA_PHOTO,
+                SMASH_MEDIA_VIDEO,
+                ...IGNORED_MESSAGE_TYPES,
+            ].includes(message.type)
         ) {
             logger.debug("message received", message);
             logger.warn("unhandled message type", message.type);
