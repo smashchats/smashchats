@@ -85,10 +85,7 @@ export default function LoaderScreen() {
     };
 
     const setupUser = async (dispatch: Dispatch<Action>) => {
-        const user = await loadIdentity(
-            state.logger,
-            __DEV__ ? "WARN" : "WARN"
-        );
+        const user = await loadIdentity(state.logger, "WARN");
         dispatch({
             type: "SET_USER_ACTION",
             user,

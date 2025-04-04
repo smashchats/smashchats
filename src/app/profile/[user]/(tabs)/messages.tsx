@@ -190,8 +190,7 @@ const ProfileMessages = forwardRef<
     const [messages, setMessages] = useState<DisplayableMessage[]>([]);
 
     const loadMoreMessages = async () => {
-        return;
-        globalState.logger.info("loadMoreMessages");
+        globalState.logger.debug("loadMoreMessages");
         const older_messages = await getMessages(
             peerId,
             offset,
