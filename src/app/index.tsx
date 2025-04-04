@@ -44,31 +44,6 @@ export function Home() {
     } = useMicrophonePermission();
     const [chats, setChats] = useState<ChatListView[]>([]);
 
-    const user = selfSmashUser;
-    useEffect(() => {
-        if (user) {
-            const listener = async (
-                senderDid: DIDString,
-                originalMessage: IMProtoMessage
-            ) => {
-                const message = originalMessage as EncapsulatedIMProtoMessage; // TODO remove "as" when lib exports proper types
-                dispatch({
-                    type: "LATEST_MESSAGE_ID_IN_DISCUSSION_ACTION",
-                    discussionId: senderDid,
-                    messageId: message.sha256,
-                });
-            };
-
-            user.on(IM_CHAT_TEXT, listener);
-            user.on(SMASH_MEDIA_PHOTO, listener);
-            user.on(SMASH_MEDIA_VIDEO, listener);
-
-            return () => {
-                user.removeListener("data", listener);
-            };
-        }
-    }, [user]);
-
     const { data: chat_list_data } = useLiveTablesQuery(chatListView, [
         "messages",
         "contacts",

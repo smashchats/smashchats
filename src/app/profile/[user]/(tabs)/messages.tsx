@@ -207,7 +207,7 @@ const ProfileMessages = forwardRef<
     };
 
     useEffect(() => {
-        (async () => {
+        const onDiscussionLoad_LoadMessages = async () => {
             const unread_count = await getUnreadMessagesCount(peerId);
             const needToLoadMoreThanDefaultThreshold =
                 unread_count > DEFAULT_LOAD_LIMIT;
@@ -246,8 +246,9 @@ const ProfileMessages = forwardRef<
             );
             setMessages(enrichedMessages);
             setOffset(newOffset);
-        })();
-    }, []);
+        };
+        onDiscussionLoad_LoadMessages();
+    }, [peerId, globalState.logger, dispatch, globalState.selfDid.id]);
 
     useEffect(() => {
         markAllMessagesNotFromSelfInDiscussionAsRead(

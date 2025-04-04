@@ -30,7 +30,6 @@
 -   [ ] add unit preferences to settings screen
 -   [ ] add interests somewhere(?)
 -   [ ] fix collapsed header on profile screen
--   [~] bug latest message id in discussion apparently only looks for Text ??
 
 ## In progress
 
@@ -65,6 +64,7 @@
 
 ## Done
 
+-   [x] bug latest message id in discussion apparently only looks for Text ??
 -   [x] (UI) add badges to profile
 -   [x] save "active" contact --> display as purple ; active here is like "dirty" in an angular form
 -   [x] drafts (in-memory)

@@ -141,8 +141,7 @@ export const rootReducer = (
     state: GlobalParams,
     action: Action
 ): GlobalParams => {
-    console.info("dispatched", action.type);
-    console.debug("action", action);
+    console.info("dispatched", action.type, action);
     console.debug("state", state);
 
     return {
