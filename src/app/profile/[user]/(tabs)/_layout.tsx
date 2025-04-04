@@ -331,8 +331,8 @@ export const ProfileScreen = () => {
     const collapsedOverlayAnimatedStyle = useAnimatedStyle(() => ({
         opacity: interpolate(
             translateY.value,
-            [-headerDiff, OVERLAY_VISIBILITY_OFFSET - headerDiff, 0],
-            [Visibility.Visible, Visibility.Hidden, Visibility.Hidden]
+            [0, headerDiff - OVERLAY_VISIBILITY_OFFSET, headerDiff],
+            [Visibility.Hidden, Visibility.Visible, Visibility.Visible]
         ),
     }));
 

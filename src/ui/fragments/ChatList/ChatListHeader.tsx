@@ -51,7 +51,7 @@ export function ChatListHeader({
         } else if (count === 0) {
             setQrCode(undefined);
         }
-    }, [count]);
+    }, [count, globalState.selfDid]);
     return (
         <Box>
             {selectionEnabled && (

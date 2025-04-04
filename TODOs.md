@@ -23,16 +23,15 @@
 -   [ ] delete own avatar
 -   [ ] mark as unread
 -   [ ] hide screen on connecting and show connecting status
--   [ ] send media messages
-    -   [ ] media organizer à la stash
--   [ ] cache images on device
 -   [ ] fetch badges from somewhere(?)
 -   [ ] add unit preferences to settings screen
 -   [ ] add interests somewhere(?)
--   [ ] fix collapsed header on profile screen
 
 ## In progress
 
+-   [~] cache images on device
+-   [~] send media messages
+    -   [ ] media organizer à la stash
 -   [~] drawing feature on camera w/ Skia
     -   [ ] allow user to change drawing colors
     -   [~] videos on ios are sideways
@@ -64,6 +63,7 @@
 
 ## Done
 
+-   [x] fix collapsed header on profile screen
 -   [x] bug latest message id in discussion apparently only looks for Text ??
 -   [x] (UI) add badges to profile
 -   [x] save "active" contact --> display as purple ; active here is like "dirty" in an angular form
