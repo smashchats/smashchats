@@ -65,11 +65,13 @@ export function MessageStatusIcon({ status }: Readonly<MessageStatusProps>) {
 type Props = {
     children: React.ReactNode;
     message: DisplayableMessage;
+    padding?: number;
 };
 
 export function ProfileMessagesScreenBubble({
     children,
     message,
+    padding,
 }: Readonly<Props>): JSX.Element {
     const backgroundColor = message.fromMe ? Colors.purple : Colors.darkGray;
     const alignSelf = message.fromMe ? "flex-end" : "flex-start";
@@ -101,8 +103,8 @@ export function ProfileMessagesScreenBubble({
             borderRadius={10}
             maxWidth={"80%"}
             alignSelf={alignSelf}
-            paddingVertical={10}
-            paddingHorizontal={14}
+            paddingVertical={padding ?? 10}
+            paddingHorizontal={padding ?? 14}
             marginBottom={10}
             marginHorizontal={10}
         >
