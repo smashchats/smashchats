@@ -1,4 +1,4 @@
-import { act, renderHook } from "@testing-library/react-native";
+import { act, renderHook, waitFor } from "@testing-library/react-native";
 import { AppState } from "react-native";
 
 import { useIsForeground } from "@/src/hooks/useIsForeground";
@@ -8,7 +8,9 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 describe("useIsForeground", () => {
     it("should be true by default", async () => {
         const { result } = renderHook(useIsForeground);
-        expect(result.current).toBe(true);
+        await waitFor(() => {
+            expect(result.current).toBe(true);
+        });
     });
 
     it("changes to false when AppState emits 'inactive' status", async () => {
@@ -16,7 +18,7 @@ describe("useIsForeground", () => {
 
         const { result } = renderHook(useIsForeground);
         act(async () => {
-            await appStateSpy.mock.calls[0][1]("inactive")
+            await appStateSpy.mock.calls[0][1]("inactive");
             await sleep(250);
             expect(result.current).toBe(false);
         });
