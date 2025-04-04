@@ -53,7 +53,15 @@ export function dateToShowableString(date: Date): string {
 }
 
 // SUPPORT FOR NEW MESSAGE TYPES SHOULD BE ADDED HERE
-export function getExcerpt(rawMessage: string, messageType: string): string {
+export function getExcerpt(
+    rawMessage: string,
+    messageType: string,
+    draft?: string
+): string {
+    if (draft) {
+        return `Draft: ${draft}`;
+    }
+
     if (messageType === IM_CHAT_TEXT) {
         return rawMessage.split(" ").slice(0, 10).join(" ");
     } else if (messageType === "empty") {
@@ -85,8 +93,7 @@ export function ChatItem({
     const VERTICAL_PADDING = 8;
 
     const text =
-        (draft && `Draft: ${draft}`) ??
-        getExcerpt(most_recent_message, most_recent_message_type) ??
+        getExcerpt(most_recent_message, most_recent_message_type, draft) ??
         "(new contact)";
 
     return (

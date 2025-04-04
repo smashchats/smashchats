@@ -385,27 +385,61 @@ const ProfileMessages = forwardRef<
         onScroll,
     ]);
 
-    const sendMessage = async (
+    const createTextMessage = async (
+        content: string
+    ): Promise<IMProtoMessage> => {
+        const lastMessageId: sha256 | undefinedString =
+            globalState.latestMessageIdInDiscussion[peerId] ?? "0";
+
+        const message = await encapsulateMessage(
+            new IMText(content, lastMessageId)
+        );
+        message.type = IM_CHAT_TEXT;
+        return message;
+    };
+
+    const createMediaMessage = async (
+        asset: ImagePicker.ImagePickerAsset,
+        mediaType: "image" | "video" | "audio"
+    ): Promise<{ message: IMProtoMessage; metadata: MediaMetadata }> => {
+        const mediaMetadata = await saveMedia(
+            asset.base64!,
+            asset.mimeType!,
+            mediaType,
+            {
+                width: asset.width,
+                height: asset.height,
+                duration: asset.duration ?? undefined,
+                generateThumbnail:
+                    mediaType === "video" || mediaType === "image",
+            }
+        );
+
+        const lastMessageId: sha256 | undefinedString =
+            globalState.latestMessageIdInDiscussion[peerId] ?? "0";
+
+        const message = {
+            data: {
+                base64: asset.base64!,
+                mimeType: asset.mimeType!,
+            },
+            sha256: mediaMetadata.sha256 as sha256,
+            timestamp: new Date().toISOString() as ISO8601,
+            after: lastMessageId,
+            type: mediaType === "video" ? SMASH_MEDIA_VIDEO : SMASH_MEDIA_PHOTO,
+        } satisfies IMProtoMessage;
+
+        return { message, metadata: mediaMetadata };
+    };
+
+    const saveMessageToLocalDb = async (
         message: IMProtoMessage,
         mediaMetadata?: MediaMetadata
-    ) => {
-        let db_data: string;
-        let displayable_data: string;
-
-        switch (message.type) {
-            case IM_CHAT_TEXT:
-                db_data = message.data as string;
-                displayable_data = message.data as string;
-                break;
-            // TODO: save media somewhere permanent, return uri
-            case SMASH_MEDIA_PHOTO:
-            case SMASH_MEDIA_VIDEO:
-                db_data = "";
-                displayable_data = mediaMetadata?.file_path ?? "";
-                break;
-            default:
-                throw new Error(`Unknown message type: ${message.type}`);
-        }
+    ): Promise<void> => {
+        const { db_data, displayable_data } = getMessageData(
+            message,
+            mediaMetadata
+        );
 
         appendMessage({
             data: displayable_data,
@@ -425,7 +459,7 @@ const ProfileMessages = forwardRef<
             after: message.after as sha256,
         } satisfies EnrichedSmashMessage;
 
-        saveMessageToDb(msg, {
+        await saveMessageToDb(msg, {
             date_read: new Date(),
         });
 
@@ -434,19 +468,46 @@ const ProfileMessages = forwardRef<
             discussionId: peerId,
             messageId: message.sha256 as sha256,
         });
+    };
 
+    const getMessageData = (
+        message: IMProtoMessage,
+        mediaMetadata?: MediaMetadata
+    ): { db_data: string; displayable_data: string } => {
+        switch (message.type) {
+            case IM_CHAT_TEXT:
+                return {
+                    db_data: message.data as string,
+                    displayable_data: message.data as string,
+                };
+            case SMASH_MEDIA_PHOTO:
+            case SMASH_MEDIA_VIDEO:
+                return {
+                    db_data: "",
+                    displayable_data: mediaMetadata?.file_path ?? "",
+                };
+            default:
+                throw new Error(`Unknown message type: ${message.type}`);
+        }
+    };
+
+    const sendMessage = async (
+        message: IMProtoMessage,
+        mediaMetadata?: MediaMetadata
+    ): Promise<void> => {
         try {
+            await saveMessageToLocalDb(message, mediaMetadata);
             await globalState.selfSmashUser.send(
                 MapContactToDidDocument(props.peer),
                 message
             );
-
             // TODO: update message in db as successfully sent to SME
         } catch (error) {
             // TODO: mark message as failed to send to SME
             globalState.logger.error(
                 `messages::handleSendMessage::Error sending message to SME: ${error}`
             );
+            throw error;
         }
     };
 
@@ -457,17 +518,8 @@ const ProfileMessages = forwardRef<
         }
         setNewMessage("");
 
-        markContactAsActive(peerId).then();
-
-        const lastMessageId: sha256 | undefinedString =
-            globalState.latestMessageIdInDiscussion[peerId] ?? "0";
-
-        const message = await encapsulateMessage(
-            new IMText(dataToSend, lastMessageId)
-        );
-        message.type = IM_CHAT_TEXT;
-
-        sendMessage(message);
+        createTextMessage(dataToSend).then((message) => sendMessage(message));
+        await markContactAsActive(peerId);
     };
 
     const handleSendMedia = async () => {
@@ -475,50 +527,24 @@ const ProfileMessages = forwardRef<
             return;
         }
 
-        let { canceled, assets } = await ImagePicker.launchImageLibraryAsync({
+        const { canceled, assets } = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ["images", "videos", "livePhotos"],
             quality: 0.2,
             base64: true,
         });
+
         if (canceled || !assets) {
             return;
         }
-        markContactAsActive(peerId).then();
 
         const asset = assets[0];
         const mediaType = getMediaTypeFromMimeType(asset.mimeType!);
-
-        // Save media to storage and database
-        const mediaMetadata = await saveMedia(
-            asset.base64!,
-            asset.mimeType!,
-            mediaType,
-            {
-                width: asset.width,
-                height: asset.height,
-                duration: asset.duration ?? undefined,
-                generateThumbnail:
-                    mediaType === "video" || mediaType === "image",
-            }
+        const { message, metadata } = await createMediaMessage(
+            asset,
+            mediaType
         );
-
-        const dataToSend = {
-            data: asset.base64!,
-            mimeType: asset.mimeType!,
-        };
-
-        const lastMessageId: sha256 | undefinedString =
-            globalState.latestMessageIdInDiscussion[peerId] ?? "0";
-
-        const message = {
-            ...dataToSend,
-            sha256: mediaMetadata.sha256 as sha256,
-            timestamp: new Date().toISOString() as ISO8601,
-            after: lastMessageId,
-            type: mediaType === "video" ? SMASH_MEDIA_VIDEO : SMASH_MEDIA_PHOTO,
-        } satisfies IMProtoMessage;
-
-        sendMessage(message, mediaMetadata);
+        await sendMessage(message, metadata);
+        await markContactAsActive(peerId);
     };
 
     if (!globalState.selfDid) {
