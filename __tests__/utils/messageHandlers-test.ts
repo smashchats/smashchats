@@ -4,6 +4,7 @@ import {
     DIDString,
     EncapsulatedIMProtoMessage,
     IMProfileMessage,
+    IMTextMessage,
     IM_CHAT_TEXT,
     IM_PROFILE,
     ISO8601,
@@ -34,6 +35,7 @@ import {
     updateMessagesStatus,
 } from "@/src/db/models/Messages";
 import { EnrichedSmashMessage } from "@/src/types/";
+import { EncapsulatedMessage } from "@/src/types/smash/lexicons";
 
 jest.mock("@/src/db/models/Contacts", () => ({
     saveContactToDb: jest.fn(),
@@ -128,7 +130,7 @@ describe("listeners", () => {
     describe("textMessagesListener", () => {
         let listener: (
             senderDid: DIDString,
-            message: EncapsulatedIMProtoMessage
+            message: any
         ) => Promise<void>;
         beforeEach(() => {
             jest.clearAllMocks();
@@ -136,8 +138,8 @@ describe("listeners", () => {
         });
 
         it("saves text messages to the database", async () => {
-            const message: EncapsulatedIMProtoMessage = {
-                data: { text: "Hello, world!" },
+            const message: EncapsulatedMessage<IMTextMessage> = {
+                data: "Hello, world!",
                 type: IM_CHAT_TEXT,
                 after: "0",
                 sha256: "sha256" as sha256,
@@ -150,7 +152,7 @@ describe("listeners", () => {
                 ...message,
                 fromDid: peerDid.id,
                 toDiscussionId: peerDid.id,
-                data: JSON.stringify(message.data),
+                data: message.data,
             };
 
             expect(saveMessageToDb).toHaveBeenCalledWith(enrichedMessage, {
@@ -163,8 +165,8 @@ describe("listeners", () => {
                 new Error("UNIQUE constraint failed: messages.sha256")
             );
 
-            const message: EncapsulatedIMProtoMessage = {
-                data: { text: "Hello, world!" },
+            const message: EncapsulatedMessage<IMTextMessage> = {
+                data: "Hello, world!",
                 type: IM_CHAT_TEXT,
                 after: "0",
                 sha256: "sha256" as sha256,

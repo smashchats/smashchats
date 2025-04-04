@@ -66,7 +66,7 @@ import useScrollSync, {
 import { useKeyboard } from "@/src/hooks/useKeyboard";
 import { useCollapsibleHeaderTab } from "@/src/hooks/useCollapsibleHeaderTab";
 import { TrustedContact } from "@/src/types/Contacts.types";
-import { getAllMediaInDiscussion, Media } from "@/src/db/models/Media";
+import { getAllMediaInDiscussion } from "@/src/db/models/Media";
 
 type ProfileIdType = {
     profileId: string;

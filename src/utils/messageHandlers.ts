@@ -14,6 +14,7 @@ import {
     IMProtoMessage,
     IMProfileMessage,
     SmashProfileList,
+    IMTextMessage,
 } from "@smashchats/library";
 
 import {
@@ -28,11 +29,10 @@ import {
 import { mapReceivedMessageToEnrichedMessage } from "@/src/utils/mappers/messages";
 import { SmashProfileToContactMapper } from "@/src/utils/mappers/contacts";
 import {
-    PhotoData,
+    EncapsulatedMessage,
     SMASH_MEDIA_PHOTO,
     SMASH_MEDIA_VIDEO,
     SmashMediaMessage,
-    VideoData,
 } from "@/src/types/smash/lexicons";
 import { getMediaTypeFromMimeType, saveMedia } from "@/src/utils/MediaStorage";
 
@@ -63,10 +63,15 @@ export const profileMessagesListener =
         await updateContact(message.data);
     };
 
+
+
 export const textMessagesListener =
     (logger: Logger) =>
-    async (senderDid: DIDString, originalMessage: IMProtoMessage) => {
-        const message = originalMessage as EncapsulatedIMProtoMessage; // TODO remove "as" when lib exports proper types
+    async (
+        senderDid: DIDString,
+        originalMessage: EncapsulatedMessage<IMTextMessage>
+    ) => {
+        const message = originalMessage;
         try {
             const m = mapReceivedMessageToEnrichedMessage(message, senderDid);
             await saveMessageToDb(m, { status: "received" });
@@ -124,7 +129,7 @@ export const mediaMessagesListener =
                 throw new Error("Invalid media message data");
             }
 
-            const mediaData = originalMessage.data as PhotoData | VideoData;
+            const mediaData = originalMessage.data;
             const mediaType = getMediaTypeFromMimeType(mediaData.mimeType);
 
             // Save media to storage and database
@@ -143,7 +148,7 @@ export const mediaMessagesListener =
                     ...originalMessage,
                     sha256: mediaMetadata.sha256,
                     timestamp:
-                        originalMessage.timestamp || new Date().toISOString(),
+                        originalMessage.timestamp ?? new Date().toISOString(),
                 } as EncapsulatedIMProtoMessage,
                 senderDid
             );

@@ -1,4 +1,9 @@
-import { IMProtoMessage, sha256, undefinedString } from "@smashchats/library";
+import {
+    IMEncapsulatedMessage,
+    IMProtoMessage,
+    sha256,
+    undefinedString,
+} from "@smashchats/library";
 
 export const SMASH_MEDIA = "com.smashchats.media";
 export const SMASH_MEDIA_PHOTO = "com.smashchats.media.photo";
@@ -34,3 +39,5 @@ export class SmashMediaVideoMessage implements SmashMediaMessage {
         public after: sha256 | undefinedString = ""
     ) {}
 }
+
+export type EncapsulatedMessage<T> = IMEncapsulatedMessage & T;
