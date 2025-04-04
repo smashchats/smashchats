@@ -1,4 +1,4 @@
-import { act, fireEvent, render } from "@testing-library/react-native";
+import { act, fireEvent, render, waitFor } from "@testing-library/react-native";
 import { FloatingActionButton } from "@/src/ui/design-system/FloatingActionButton";
 
 describe("FloatingActionButton", () => {
@@ -19,6 +19,8 @@ describe("FloatingActionButton", () => {
             fireEvent.press(pressable);
         });
 
-        expect(fn).toHaveBeenCalled();
+        await waitFor(() => {
+            expect(fn).toHaveBeenCalled();
+        });
     });
 });
