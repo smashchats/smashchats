@@ -1,21 +1,30 @@
-import React, { forwardRef, memo } from "react";
+import React, { forwardRef, memo, useEffect, useState } from "react";
 import { ScrollViewProps, TouchableOpacity, StyleSheet } from "react-native";
 
 import { Image } from "expo-image";
+import { router, useLocalSearchParams } from "expo-router";
 
 import { Colors } from "@/src/constants/Colors.js";
 import { Box } from "@/src/ui/design-system/layout";
 import Animated from "react-native-reanimated";
 import { SCREEN_HEIGHT } from "@/src/ui/constants";
+import { getAllMediaInDiscussion } from "@/src/db/models/Media";
 
 export const ProfilePictures = forwardRef<Animated.ScrollView, ScrollViewProps>(
-    (props, ref) => {
-        // how to find profileId --> const { user: profileId } = useLocalSearchParams();
-        // how to find profile --> const profile = data.find((d) => d.id === profileId);
+    function ProfilePictures(props, ref) {
+        const { user: discussionId } = useLocalSearchParams();
+        const [images, setImages] = useState<string[]>([]);
 
-        // Doesn't support Landscape Orientation, see: https://github.com/jobtoday/react-native-image-viewing/blob/master/src/ImageViewing.tsx#L102
-        // Might want to change to `react-native-image-zoom-viewer`: https://github.com/jobtoday/react-native-image-viewing/issues/141#issuecomment-1605478538
-        // Or re-implement myself
+        useEffect(() => {
+            const fetchData = async () => {
+                setImages(
+                    (await getAllMediaInDiscussion(discussionId as string)).map(
+                        (d) => d.file_path
+                    )
+                );
+            };
+            fetchData();
+        }, [discussionId]);
 
         return (
             <Animated.ScrollView ref={ref} style={styles.container} {...props}>
@@ -31,7 +40,7 @@ export const ProfilePictures = forwardRef<Animated.ScrollView, ScrollViewProps>(
                             display="flex"
                             flexDirection="row"
                         >
-                            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((p) => (
+                            {images.map((p) => (
                                 <TouchableOpacity
                                     key={p}
                                     style={{
@@ -39,7 +48,11 @@ export const ProfilePictures = forwardRef<Animated.ScrollView, ScrollViewProps>(
                                         height: 120,
                                         aspectRatio: 1,
                                     }}
-                                    onPress={() => {}}
+                                    onPress={() => {
+                                        router.push(
+                                            `/gallery?activePhotoUri=${p}`
+                                        );
+                                    }}
                                 >
                                     <Image
                                         contentFit="cover"
@@ -52,9 +65,7 @@ export const ProfilePictures = forwardRef<Animated.ScrollView, ScrollViewProps>(
                                                 { scaleX: 0.96 },
                                             ],
                                         }}
-                                        source={
-                                            "https://images.unsplash.com/photo-1571501679680-de32f1e7aad4"
-                                        }
+                                        source={{ uri: p }}
                                     />
                                 </TouchableOpacity>
                             ))}
