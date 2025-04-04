@@ -1,4 +1,4 @@
-import { fireEvent, render } from "@testing-library/react-native";
+import { act, fireEvent, render } from "@testing-library/react-native";
 import { FloatingActionButton } from "@/src/ui/design-system/FloatingActionButton";
 
 describe("FloatingActionButton", () => {
@@ -9,13 +9,15 @@ describe("FloatingActionButton", () => {
 
         expect(tree).toMatchSnapshot();
     });
-    test("Can click", () => {
+    test("Can click", async () => {
         const fn = jest.fn();
         const { getByTestId } = render(
             <FloatingActionButton icon="camera" onPress={fn} />
         );
         const pressable = getByTestId("FloatingActionButton::Pressable");
-        fireEvent.press(pressable);
+        await act(async () => {
+            fireEvent.press(pressable);
+        });
 
         expect(fn).toHaveBeenCalled();
     });
