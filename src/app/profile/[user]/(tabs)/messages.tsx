@@ -83,9 +83,9 @@ import {
 const DEFAULT_LOAD_LIMIT = __DEV__ ? 10 : 100;
 
 const FEATURE_FLAGS = {
-    show_pictures_and_badges: false,
-    send_media: false,
-    show_smash_or_pass: false,
+    show_pictures_and_badges: true,
+    send_media: true,
+    show_smash_or_pass: true,
 };
 
 const getMessages = async (

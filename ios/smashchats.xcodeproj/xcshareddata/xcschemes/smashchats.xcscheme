@@ -16,8 +16,8 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
                BuildableName = "Smashchats.app"
-               BlueprintName = "smashchats"
-               ReferencedContainer = "container:smashchats.xcodeproj">
+               BlueprintName = "Smashchats"
+               ReferencedContainer = "container:Smashchats.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "smashchatsTests.xctest"
-               BlueprintName = "smashchatsTests"
-               ReferencedContainer = "container:smashchats.xcodeproj">
+               BuildableName = "SmashchatsTests.xctest"
+               BlueprintName = "SmashchatsTests"
+               ReferencedContainer = "container:Smashchats.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -56,8 +56,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
             BuildableName = "Smashchats.app"
-            BlueprintName = "smashchats"
-            ReferencedContainer = "container:smashchats.xcodeproj">
+            BlueprintName = "Smashchats"
+            ReferencedContainer = "container:Smashchats.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -73,8 +73,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
             BuildableName = "Smashchats.app"
-            BlueprintName = "smashchats"
-            ReferencedContainer = "container:smashchats.xcodeproj">
+            BlueprintName = "Smashchats"
+            ReferencedContainer = "container:Smashchats.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
