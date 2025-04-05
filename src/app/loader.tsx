@@ -202,6 +202,13 @@ export default function LoaderScreen() {
                             name="camera"
                             options={{ title: "Camera" }}
                         />
+                        <Stack.Screen 
+                            name="secret" 
+                            options={{ 
+                                title: "Secret",
+                                headerShown: true 
+                            }} 
+                        />
                         <Stack.Screen name="+not-found" />
                     </Stack>
                 </PostHogProvider>

@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Pressable, Image } from "react-native";
+import { Pressable } from "react-native";
 
 import { Feather } from "@expo/vector-icons";
-import { Link } from "expo-router";
-import { generateQrCode } from "react-native-qr";
+import { Link, useRouter } from "expo-router";
 
 import { NeonBadge } from "@/src/ui/components/NeonBadge";
 import { Colors } from "@/src/constants/Colors.js";
@@ -20,6 +19,8 @@ type ChatListHeaderProps = {
     onDelete: () => void;
 };
 
+const DEV_SECRET_COUNT = __DEV__ ? 2 : 10;
+
 export function ChatListHeader({
     selectionEnabled,
     selectedChats,
@@ -29,27 +30,14 @@ export function ChatListHeader({
     const globalState = useGlobalState();
     const [count, setCount] = useState(0);
     const [qrCode, setQrCode] = useState<string | undefined>(undefined);
+    const router = useRouter();
 
     const handlePress = () => {
-        setCount((count + 1) % 10);
+        setCount((count + 1) % DEV_SECRET_COUNT);
     };
     useEffect(() => {
-        const logSelfDid = async () => {
-            const selfDid = globalState.selfDid;
-
-            generateQrCode(JSON.stringify(selfDid), 300).then(
-                (img: string | undefined) => {
-                    if (!img) {
-                        return;
-                    }
-                    setQrCode(img);
-                }
-            );
-        };
-        if (count === 9) {
-            logSelfDid();
-        } else if (count === 0) {
-            setQrCode(undefined);
+        if (count === DEV_SECRET_COUNT - 1) {
+            router.push("/secret");
         }
     }, [count, globalState.selfDid]);
     return (
@@ -117,22 +105,14 @@ export function ChatListHeader({
                 <Pressable
                     style={{
                         padding: 30,
-                        top: 400,
+                        top: 40,
+                        zIndex: 1000,
                         left: 0,
                         position: "absolute",
                         backgroundColor: "red",
                     }}
                     onPress={() => setQrCode(undefined)}
-                >
-                    <Image
-                        style={{
-                            width: 300,
-                            height: 300,
-                            display: "flex",
-                        }}
-                        source={{ uri: qrCode }}
-                    />
-                </Pressable>
+                ></Pressable>
             )}
         </Box>
     );
