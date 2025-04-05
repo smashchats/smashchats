@@ -29,7 +29,7 @@ export default function LoaderScreen() {
     const initializeUserAndDiscoverNetwork = async (user: SmashUser) => {
         try {
             await Promise.all([
-                createTrustRelation(didId),
+                createTrustRelation(didId, "Neighborhood Admin"),
                 user.join(dev_nab_join_action),
                 saveContactToDb(
                     MapDidToContactInsert(
