@@ -36,6 +36,7 @@ export function SmashOrPass({ onSmash, onPass }: Readonly<Props>): JSX.Element {
                     left: 57,
                     transform: [{ scale: 0.8 }],
                 }}
+                cachePolicy="memory-disk"
                 alt="Lightning bolt"
                 source={Lightning}
             />

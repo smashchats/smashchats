@@ -24,6 +24,7 @@ const renderItem = ({
     return (
         <Image
             source={item.uri}
+            cachePolicy="memory-disk"
             style={StyleSheet.absoluteFillObject}
             contentFit="contain"
             onLoad={(e) => {

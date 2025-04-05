@@ -44,6 +44,7 @@ export const ProfileHeader = ({
                 >
                     <Image
                         alt="Close profile"
+                        cachePolicy="memory-disk"
                         style={{ width: 18, height: 18 }}
                         source={require("@/assets/icon_x.png")}
                     />

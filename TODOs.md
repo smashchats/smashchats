@@ -26,6 +26,7 @@
 -   [ ] fetch badges from somewhere(?)
 -   [ ] add unit preferences to settings screen
 -   [ ] add interests somewhere(?)
+-   [ ] decouple image sending feature into 1/ render 2/ send
 
 ## In progress
 

@@ -20,6 +20,7 @@ export const ProfileHeaderExpanded = ({ peer }: { peer?: TrustedContact }) => {
             <Image
                 style={styles.backgroundImage}
                 alt="Profile picture"
+                cachePolicy="memory-disk"
                 source={peer?.meta_avatar}
             />
             <Box

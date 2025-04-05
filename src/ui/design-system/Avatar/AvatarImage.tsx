@@ -25,6 +25,7 @@ export function AvatarImage({
 }: Props): JSX.Element {
     return (
         <Image
+            cachePolicy="memory-disk"
             style={{
                 minWidth: size ?? 64,
                 maxWidth: size ?? 64,

@@ -57,6 +57,7 @@ export const ProfilePictures = forwardRef<Animated.ScrollView, ScrollViewProps>(
                                 >
                                     <Image
                                         contentFit="cover"
+                                        cachePolicy="memory-disk"
                                         style={{
                                             height: "100%",
                                             borderRadius: 2,

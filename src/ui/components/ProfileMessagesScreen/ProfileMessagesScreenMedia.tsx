@@ -24,6 +24,7 @@ export const ProfileMessagesScreenMedia = ({
             >
                 <Image
                     source={{ uri: message.content }}
+                    cachePolicy="memory-disk"
                     style={{ width: 200, height: 200, borderRadius: 4 }}
                 />
             </TouchableHighlight>
