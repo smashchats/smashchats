@@ -3,6 +3,7 @@
 exports[`AvatarImage Renders correctly 1`] = `
 <ViewManagerAdapter_ExpoImage
   accessibilityLabel="contact name's avatar"
+  cachePolicy="memory-disk"
   containerViewRef={"[React.ref]"}
   contentFit="contain"
   contentPosition={
@@ -51,6 +52,7 @@ exports[`AvatarImage Renders correctly 1`] = `
 exports[`AvatarImage Renders correctly with no defined size --> default size 1`] = `
 <ViewManagerAdapter_ExpoImage
   accessibilityLabel="contact name's avatar"
+  cachePolicy="memory-disk"
   containerViewRef={"[React.ref]"}
   contentFit="contain"
   contentPosition={

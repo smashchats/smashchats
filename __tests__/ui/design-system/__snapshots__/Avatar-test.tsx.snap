@@ -80,6 +80,7 @@ exports[`Avatar Renders correctly with image 1`] = `
 >
   <ViewManagerAdapter_ExpoImage
     accessibilityLabel="contact name's avatar"
+    cachePolicy="memory-disk"
     containerViewRef={"[React.ref]"}
     contentFit="contain"
     contentPosition={

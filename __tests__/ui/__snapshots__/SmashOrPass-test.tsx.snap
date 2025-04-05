@@ -203,6 +203,7 @@ exports[`SmashOrPass Renders correctly 1`] = `
   />
   <ViewManagerAdapter_ExpoImage
     accessibilityLabel="Lightning bolt"
+    cachePolicy="memory-disk"
     containerViewRef={"[React.ref]"}
     contentFit="cover"
     contentPosition={
