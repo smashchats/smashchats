@@ -592,11 +592,18 @@ const ProfileMessages = forwardRef<
                         value={newMessage}
                         onChangeText={setNewMessage}
                         onBlur={() => {
-                            dispatch({
-                                type: "CHAT_LIST_DRAFT_ACTION",
-                                draft: newMessage,
-                                did_id: peerId,
-                            });
+                            if (newMessage.trim().length > 0) {
+                                dispatch({
+                                    type: "CHAT_LIST_DRAFT_ACTION",
+                                    draft: newMessage,
+                                    did_id: peerId,
+                                });
+                            } else {
+                                dispatch({
+                                    type: "CHAT_LIST_DRAFT_CLEAR_ACTION",
+                                    did_id: peerId,
+                                });
+                            }
                         }}
                         onSubmitEditing={handleSendMessage}
                         style={{

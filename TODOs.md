@@ -51,14 +51,6 @@
     -   [ ] fix transparency behind header
     -   [ ] fix buggy-ness
     -   [~] implement gesture handler on tabs & user bio so that we can scroll to the top
--   [~] Contact notes
-    -   [x] dynamically generate filters
-    -   [x] use filters to search in notes & user bio.{title, description}
-    -   [x] handle LOTS of emojis (allow for scrolling)
-    -   [x] duplicate emojis should be collapsed into one badge
-    -   [ ] adding note to a contact
-    -   [x] remove integers 0-9 from filters, unless it is emojis (i.e. 1 vs 1️⃣)
-    -   [x] refresh filters when notes change
 -   [~] delete contacts / discussions
     -   [x] selection mode
     -   [x] exit selection mode
@@ -68,6 +60,14 @@
 
 ## Done
 
+-   [x] Contact notes
+    -   [x] dynamically generate filters
+    -   [x] use filters to search in notes & user bio.{title, description}
+    -   [x] handle LOTS of emojis (allow for scrolling)
+    -   [x] duplicate emojis should be collapsed into one badge
+    -   [x] adding note to a contact
+    -   [x] remove integers 0-9 from filters, unless it is emojis (i.e. 1 vs 1️⃣)
+    -   [x] refresh filters when notes change
 -   [x] fix collapsed header on profile screen
 -   [x] bug latest message id in discussion apparently only looks for Text ??
 -   [x] (UI) add badges to profile

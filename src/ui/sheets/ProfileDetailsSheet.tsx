@@ -1,11 +1,20 @@
-import { Button, View } from "react-native";
+import {
+    Button,
+    View,
+    TextInput,
+    NativeSyntheticEvent,
+    TextInputKeyPressEventData,
+} from "react-native";
 import ActionSheet, {
     SheetManager,
     SheetProps,
 } from "react-native-actions-sheet";
 import { Text } from "@/src/ui/design-system/Text";
-import { useEffect, useState } from "react";
-import { getContactWithTrustRelation } from "@/src/db/models/Contacts";
+import { useEffect, useState, useRef } from "react";
+import {
+    getContactWithTrustRelation,
+    patchContact,
+} from "@/src/db/models/Contacts";
 import {
     createTrustRelation,
     deleteTrustRelation,
@@ -20,6 +29,8 @@ function ProfileDetailsSheet({
     payload,
 }: Readonly<SheetProps<"profile-details-sheet">>) {
     const [peer, setPeer] = useState<TrustedContact | null>(null);
+    const [notes, setNotes] = useState<string>("");
+    const notesInputRef = useRef<TextInput>(null);
 
     useEffect(() => {
         const fetchPeer = async () => {
@@ -28,10 +39,19 @@ function ProfileDetailsSheet({
                     payload.didId
                 );
                 setPeer(peerData);
+                setNotes(peerData.notes ?? "");
             }
         };
         fetchPeer();
     }, [payload?.didId]);
+
+    const handleNotesBlur = async () => {
+        if (payload?.didId) {
+            const trimmedNotes = notes.trim();
+            await patchContact(payload.didId, { notes: trimmedNotes });
+            setNotes(trimmedNotes);
+        }
+    };
 
     const handleTrust = async (name: string | undefined) => {
         if (payload?.didId && name) {
@@ -53,6 +73,15 @@ function ProfileDetailsSheet({
         }
     };
 
+    const handleKeyPress = (
+        e: NativeSyntheticEvent<TextInputKeyPressEventData>
+    ) => {
+        if (e.nativeEvent.key === "Enter") {
+            e.preventDefault();
+            notesInputRef.current?.blur();
+        }
+    };
+
     return (
         <ActionSheet>
             <View style={{ padding: 20 }}>
@@ -63,6 +92,25 @@ function ProfileDetailsSheet({
                             Trusted as: {peer.trusted_name}
                         </Text>
                         <Button title="Untrust" onPress={handleUntrust} />
+                        <TextInput
+                            ref={notesInputRef}
+                            style={{
+                                borderWidth: 1,
+                                borderColor: "#ccc",
+                                borderRadius: 5,
+                                padding: 10,
+                                marginTop: 10,
+                                minHeight: 100,
+                                textAlignVertical: "top",
+                            }}
+                            multiline
+                            returnKeyType="done"
+                            placeholder="Add notes about this contact..."
+                            value={notes}
+                            onChangeText={(text) => setNotes(text)}
+                            onBlur={handleNotesBlur}
+                            onKeyPress={handleKeyPress}
+                        />
                     </>
                 ) : (
                     <Button
