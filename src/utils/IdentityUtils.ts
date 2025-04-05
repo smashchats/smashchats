@@ -20,6 +20,18 @@ import {
 import { getContactsFromDb } from "@/src/db/models/Contacts";
 import { MapContactToDidDocument } from "@/src/utils/mappers/contacts";
 import { sme } from "@/data/dev";
+import { getDIDManager } from "./DIDManagerSingleton";
+
+export const generateNewIdentity = async (
+    didDocumentManager: DIDDocManager
+): Promise<IMPeerIdentity> => {
+    const newIdentity = await didDocumentManager.generate();
+    const preKeyPair = await didDocumentManager.generateNewPreKeyPair(
+        newIdentity
+    );
+    newIdentity.addPreKeyPair(preKeyPair);
+    return newIdentity;
+};
 
 export const getOrCreateIdentity = async (
     didDocumentManager: DIDDocManager,
@@ -31,11 +43,7 @@ export const getOrCreateIdentity = async (
     if (!savedIdentity) {
         logger.info("creating new identity");
         try {
-            newIdentity = await didDocumentManager.generate();
-            const preKeyPair = await didDocumentManager.generateNewPreKeyPair(
-                newIdentity
-            );
-            newIdentity.addPreKeyPair(preKeyPair);
+            newIdentity = await generateNewIdentity(didDocumentManager);
         } catch (error) {
             logger.error("getOrCreateIdentity error", error);
             throw error;
@@ -72,7 +80,7 @@ export const loadIdentity = async (
     logger: Logger,
     logLevel: LogLevel = "DEBUG"
 ): Promise<SmashUser> => {
-    const didDocumentManager = new DIDDocManager();
+    const didDocumentManager = getDIDManager();
     SmashMessaging.use(didDocumentManager);
     try {
         const savedIdentity = await getOrCreateIdentity(
