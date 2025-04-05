@@ -8,31 +8,16 @@ import {
 } from "react-native-vision-camera";
 import { useRouter } from "expo-router";
 
-import {
-    EncapsulatedIMProtoMessage,
-    DIDString,
-    IM_CHAT_TEXT,
-    IMProtoMessage,
-} from "@smashchats/library";
-
 import { Colors } from "@/src/constants/Colors.js";
 import { ChatList } from "@/src/ui/fragments/ChatList";
 import { FloatingActionButton } from "@/src/ui/design-system/FloatingActionButton";
-import {
-    useGlobalDispatch,
-    useGlobalState,
-} from "@/src/context/GlobalContext.js";
+import { useGlobalState } from "@/src/context/GlobalContext.js";
 import { ChatListView } from "@/src/types/ChatListScreen.types";
 import { useLiveTablesQuery } from "@/src/hooks/useLiveQuery";
 import { chatListView } from "@/src/db/queries/ChatListView";
-import {
-    SMASH_MEDIA_PHOTO,
-    SMASH_MEDIA_VIDEO,
-} from "@/src/types/smash/lexicons";
 
 export function Home() {
-    const dispatch = useGlobalDispatch();
-    const { logger, selfSmashUser } = useGlobalState();
+    const { logger } = useGlobalState();
     const router = useRouter();
     const {
         hasPermission: hasCameraPermission,
