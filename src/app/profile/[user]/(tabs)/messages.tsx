@@ -265,6 +265,10 @@ const ProfileMessages = forwardRef<
         });
     }, []);
 
+    const getterForMessages = () => {
+        return messages;
+    };
+
     const appendMessage = ({
         data,
         sha256,
@@ -298,7 +302,7 @@ const ProfileMessages = forwardRef<
                         ? ("sending" as MessageStatus)
                         : "received",
                 } satisfies Message,
-                messages,
+                getterForMessages(),
                 globalState.selfDid.id
             )
         );
