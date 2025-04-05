@@ -1,8 +1,7 @@
-import { DIDString } from "@smashchats/library";
+import { DIDString, IM_MEDIA_EMBEDDED } from "@smashchats/library";
 
 import { Message } from "@/src/db/models/Messages";
 import { DisplayableMessage, DisplayableSystemMessage } from "@/src/types/";
-import { SMASH_MEDIA_PHOTO } from "@/src/types/smash/lexicons";
 import { Media } from "@/src/db/models/Media";
 
 // Types
@@ -14,7 +13,8 @@ interface SystemMessageGenerator<T extends string | number> {
 }
 
 // Date utilities
-const getDateString = (date: Date): string => date.toISOString().substring(0, 10);
+const getDateString = (date: Date): string =>
+    date.toISOString().substring(0, 10);
 
 export const isSameDay = (date1: Date, date2: Date): boolean => {
     return getDateString(date1) === getDateString(date2);
@@ -58,9 +58,10 @@ export const mapMessageToDisplayableMessage = (
     message: Message & { media?: Media },
     selfDidString: DIDString
 ): DisplayableMessage => {
-    const content = message.type === SMASH_MEDIA_PHOTO 
-        ? message.media?.file_path ?? ""
-        : message.data ?? "";
+    const content =
+        message.type === IM_MEDIA_EMBEDDED
+            ? message.media?.file_path ?? ""
+            : message.data ?? "";
 
     return {
         ...message,
@@ -97,7 +98,7 @@ export const addSystemMessages = (
 
     messages.forEach((message) => {
         const msgDate = getMessageDate(message);
-        
+
         if (!hasAddedUnreadMessagesMessage && !message.date_read) {
             newMessages.push(
                 systemMessageGenerators["system-unread"].generate(
@@ -118,7 +119,9 @@ export const addSystemMessages = (
             previousDate = msgDate;
         }
 
-        newMessages.push(mapMessageToDisplayableMessage(message, selfDidString));
+        newMessages.push(
+            mapMessageToDisplayableMessage(message, selfDidString)
+        );
     });
 
     return newMessages.toReversed();
@@ -135,7 +138,10 @@ export const appendMessageToDisplayableMessages = (
     if (!latestMessage || !isSameDay(latestMessage.date, msgDate)) {
         return [
             mapMessageToDisplayableMessage(db_message, selfDidString),
-            systemMessageGenerators["system-date"].generate(msgDate, getDateString(msgDate)),
+            systemMessageGenerators["system-date"].generate(
+                msgDate,
+                getDateString(msgDate)
+            ),
             ...displayedMessages,
         ];
     }
@@ -148,7 +154,7 @@ export const appendMessageToDisplayableMessages = (
 
 // Message deduplication
 const getExistingMessageIds = (messages: DisplayableMessage[]): Set<string> => {
-    return new Set(messages.map(m => m.sha256));
+    return new Set(messages.map((m) => m.sha256));
 };
 
 export const appendOlderMessages = (
@@ -161,15 +167,18 @@ export const appendOlderMessages = (
     }
 
     const existingMessageIds = getExistingMessageIds(displayedMessages);
-    const uniqueDbMessages = db_messages.filter(msg => !existingMessageIds.has(msg.sha256));
-    
+    const uniqueDbMessages = db_messages.filter(
+        (msg) => !existingMessageIds.has(msg.sha256)
+    );
+
     if (uniqueDbMessages.length === 0) {
         return displayedMessages;
     }
 
     const lastMessage = displayedMessages[displayedMessages.length - 1];
-    const alreadyDisplayedUnreadMessages = getExistingUnreadCount(displayedMessages);
-    
+    const alreadyDisplayedUnreadMessages =
+        getExistingUnreadCount(displayedMessages);
+
     const newMessages = addSystemMessages(
         uniqueDbMessages,
         selfDidString,

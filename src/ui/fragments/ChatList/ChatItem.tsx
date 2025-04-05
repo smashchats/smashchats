@@ -10,12 +10,8 @@ import { Heading } from "@/src/ui/design-system/Heading";
 import { Badge, BadgeText } from "@/src/ui/design-system/Badge";
 import { daysBetweenTwoDates } from "@/src/utils/Utils.js";
 import { ChatListView } from "@/src/types/";
-import { IM_CHAT_TEXT } from "@smashchats/library";
+import { IM_CHAT_TEXT, IM_MEDIA_EMBEDDED } from "@smashchats/library";
 import { Checkbox } from "@/src/ui/design-system/Checkbox/Checkbox";
-import {
-    SMASH_MEDIA_PHOTO,
-    SMASH_MEDIA_VIDEO,
-} from "@/src/types/smash/lexicons";
 
 type ChatItemProps = PropsWithChildren<ChatListView>;
 
@@ -66,10 +62,8 @@ export function getExcerpt(
         return rawMessage.split(" ").slice(0, 10).join(" ");
     } else if (messageType === "empty") {
         return "(new contact)";
-    } else if (messageType === SMASH_MEDIA_PHOTO) {
-        return "Sent a photo";
-    } else if (messageType === SMASH_MEDIA_VIDEO) {
-        return "Sent a video";
+    } else if (messageType === IM_MEDIA_EMBEDDED) {
+        return "Sent media";
     }
     return "unsupported message";
 }

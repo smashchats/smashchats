@@ -15,6 +15,9 @@ import {
     IMProfileMessage,
     SmashProfileList,
     IMTextMessage,
+    IM_MEDIA_EMBEDDED,
+    reverseDNS,
+    IMMediaEmbeddedMessage,
 } from "@smashchats/library";
 
 import {
@@ -28,13 +31,14 @@ import {
 } from "@/src/db/models/Contacts";
 import { mapReceivedMessageToEnrichedMessage } from "@/src/utils/mappers/messages";
 import { SmashProfileToContactMapper } from "@/src/utils/mappers/contacts";
-import {
-    EncapsulatedMessage,
-    SMASH_MEDIA_PHOTO,
-    SMASH_MEDIA_VIDEO,
-    SmashMediaMessage,
-} from "@/src/types/smash/lexicons";
+import { EncapsulatedMessage } from "@/src/types/smash/lexicons";
 import { getMediaTypeFromMimeType, saveMedia } from "@/src/utils/MediaStorage";
+
+const SUPPORTED_MESSAGE_TYPES: reverseDNS[] = [
+    IM_CHAT_TEXT,
+    IM_PROFILE,
+    IM_MEDIA_EMBEDDED,
+];
 
 const IGNORED_MESSAGE_TYPES = [IM_SESSION_RESET];
 
@@ -43,13 +47,9 @@ export const firehoseListener =
     (logger: Logger) =>
     async (_senderDid: DIDString, message: IMProtoMessage) => {
         if (
-            ![
-                IM_CHAT_TEXT,
-                IM_PROFILE,
-                SMASH_MEDIA_PHOTO,
-                SMASH_MEDIA_VIDEO,
-                ...IGNORED_MESSAGE_TYPES,
-            ].includes(message.type)
+            ![...SUPPORTED_MESSAGE_TYPES, ...IGNORED_MESSAGE_TYPES].includes(
+                message.type
+            )
         ) {
             logger.debug("message received", message);
             logger.warn("unhandled message type", message.type);
@@ -62,8 +62,6 @@ export const profileMessagesListener =
         logger.debug("parsing profile message", JSON.stringify(message.data));
         await updateContact(message.data);
     };
-
-
 
 export const textMessagesListener =
     (logger: Logger) =>
@@ -117,7 +115,7 @@ export const statusMessagesListener =
 
 export const mediaMessagesListener =
     (logger: Logger) =>
-    async (senderDid: DIDString, originalMessage: SmashMediaMessage) => {
+    async (senderDid: DIDString, originalMessage: IMMediaEmbeddedMessage) => {
         logger.debug("parsing media message from", senderDid, originalMessage);
 
         try {
@@ -134,7 +132,7 @@ export const mediaMessagesListener =
 
             // Save media to storage and database
             const mediaMetadata = await saveMedia(
-                mediaData.base64,
+                mediaData.content,
                 mediaData.mimeType,
                 mediaType,
                 {
@@ -189,8 +187,7 @@ export const handleUserMessages = async (user: SmashUser, logger: Logger) => {
         [SMASH_PROFILE_LIST]: newProfilesMessagesListener(selfDid),
         [IM_CHAT_TEXT]: textMessagesListener(logger),
         [IM_PROFILE]: profileMessagesListener(logger),
-        [SMASH_MEDIA_PHOTO]: mediaMessagesListener(logger),
-        [SMASH_MEDIA_VIDEO]: mediaMessagesListener(logger),
+        [IM_MEDIA_EMBEDDED]: mediaMessagesListener(logger),
         status: statusMessagesListener(logger),
         data: firehoseListener(logger),
     };

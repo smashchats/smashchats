@@ -44,6 +44,8 @@ import {
     IMProtoMessage,
     MessageStatus,
     ISO8601,
+    IM_MEDIA_EMBEDDED,
+    IMMediaEmbedded,
 } from "@smashchats/library";
 
 import {
@@ -70,10 +72,6 @@ import { MapContactToDidDocument } from "@/src/utils/mappers/contacts";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TrustedContact } from "@/src/types/Contacts.types";
 import { markContactAsActive } from "@/src/db/models/Contacts";
-import {
-    SMASH_MEDIA_VIDEO,
-    SMASH_MEDIA_PHOTO,
-} from "@/src/types/smash/lexicons";
 import {
     saveMedia,
     getMediaTypeFromMimeType,
@@ -172,8 +170,7 @@ const ProfileMessages = forwardRef<
         (message: DisplayableMessage, index: number) => {
             switch (message.type) {
                 case IM_CHAT_TEXT:
-                case SMASH_MEDIA_PHOTO:
-                case SMASH_MEDIA_VIDEO:
+                case IM_MEDIA_EMBEDDED:
                 case "metadata":
                 case "profile":
                 case "profiles":
@@ -332,11 +329,7 @@ const ProfileMessages = forwardRef<
                     discussionId: peerId,
                     messageId: message.sha256,
                 });
-                if (
-                    [SMASH_MEDIA_PHOTO, SMASH_MEDIA_VIDEO].includes(
-                        message.type
-                    )
-                ) {
+                if (message.type === IM_MEDIA_EMBEDDED) {
                     dispatch({
                         type: "ADD_SHOWN_MEDIA_IN_GALLERY_ACTION",
                         uri: message.data as string,
@@ -358,17 +351,14 @@ const ProfileMessages = forwardRef<
         };
         // SUPPORT FOR NEW MESSAGE TYPES SHOULD BE ADDED HERE
         globalState.selfSmashUser.on(IM_CHAT_TEXT, onNewMessageByPeer);
-        globalState.selfSmashUser.on(SMASH_MEDIA_PHOTO, onNewMessageByPeer);
-        globalState.selfSmashUser.on(SMASH_MEDIA_VIDEO, onNewMessageByPeer);
+        globalState.selfSmashUser.on(IM_MEDIA_EMBEDDED, onNewMessageByPeer);
         return () => {
-            [IM_CHAT_TEXT, SMASH_MEDIA_PHOTO, SMASH_MEDIA_VIDEO].forEach(
-                (type) => {
-                    globalState.selfSmashUser.removeListener(
-                        type,
-                        onNewMessageByPeer
-                    );
-                }
-            );
+            [IM_CHAT_TEXT, IM_MEDIA_EMBEDDED].forEach((type) => {
+                globalState.selfSmashUser.removeListener(
+                    type,
+                    onNewMessageByPeer
+                );
+            });
         };
     }, [globalState.selfSmashUser]);
 
@@ -423,16 +413,24 @@ const ProfileMessages = forwardRef<
         const lastMessageId: sha256 | undefinedString =
             globalState.latestMessageIdInDiscussion[peerId] ?? "0";
 
-        const message = {
-            data: {
-                base64: asset.base64!,
-                mimeType: asset.mimeType!,
-            },
-            sha256: mediaMetadata.sha256 as sha256,
-            timestamp: new Date().toISOString() as ISO8601,
-            after: lastMessageId,
-            type: mediaType === "video" ? SMASH_MEDIA_VIDEO : SMASH_MEDIA_PHOTO,
-        } satisfies IMProtoMessage;
+        const message = IMMediaEmbedded.fromBase64(
+            asset.base64!,
+            asset.mimeType!
+        );
+        message.after = lastMessageId;
+        message.sha256 = mediaMetadata.sha256 as sha256;
+        message.timestamp = new Date().toISOString() as ISO8601;
+
+        // const message = {
+        //     data: {
+        //         base64: asset.base64!,
+        //         mimeType: asset.mimeType!,
+        //     },
+        //     sha256: mediaMetadata.sha256 as sha256,
+        //     timestamp: new Date().toISOString() as ISO8601,
+        //     after: lastMessageId,
+        //     type: IM_MEDIA_EMBEDDED,
+        // } satisfies IMProtoMessage;
 
         return { message, metadata: mediaMetadata };
     };
@@ -485,8 +483,7 @@ const ProfileMessages = forwardRef<
                     db_data: message.data as string,
                     displayable_data: message.data as string,
                 };
-            case SMASH_MEDIA_PHOTO:
-            case SMASH_MEDIA_VIDEO:
+            case IM_MEDIA_EMBEDDED:
                 return {
                     db_data: "",
                     displayable_data: mediaMetadata?.file_path ?? "",

@@ -27,6 +27,9 @@
 -   [ ] add unit preferences to settings screen
 -   [ ] add interests somewhere(?)
 -   [ ] decouple image sending feature into 1/ render 2/ send
+-   [ ] remove data from media_emb (since we store it in its own table)
+-   [ ] bug: onMessageReceive, current code removes previous displayed messages
+-   [ ] sending/receiving image doesn't display correctly; need to reopen discussion
 
 ## In progress
 

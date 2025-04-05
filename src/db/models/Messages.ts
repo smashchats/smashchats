@@ -11,7 +11,9 @@ import {
 import {
     DIDString,
     IM_CHAT_TEXT,
+    IM_MEDIA_EMBEDDED,
     MessageStatus,
+    reverseDNS,
     sha256,
 } from "@smashchats/library";
 
@@ -19,10 +21,6 @@ import { messages } from "@/src/db/schema.js";
 import { drizzle_db } from "@/src/db/database";
 import { ESMToMessageInsertMapper } from "@/src/utils/mappers/messages";
 import { EnrichedSmashMessage } from "@/src/types/";
-import {
-    SMASH_MEDIA_VIDEO,
-    SMASH_MEDIA_PHOTO,
-} from "@/src/types/smash/lexicons";
 
 export type Message = InferSelectModel<typeof messages> & {
     status: MessageStatus;
@@ -35,9 +33,7 @@ export const saveMessageToDb = async (
     extraFields?: Partial<MessageInsert>
 ) => {
     if (
-        ![IM_CHAT_TEXT, SMASH_MEDIA_PHOTO, SMASH_MEDIA_VIDEO].includes(
-            message.type
-        )
+        ![IM_CHAT_TEXT, IM_MEDIA_EMBEDDED as reverseDNS].includes(message.type)
     ) {
         console.warn(`message.type: ${message.type} is not supported`);
         return;

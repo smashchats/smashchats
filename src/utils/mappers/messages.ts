@@ -1,14 +1,13 @@
-import { MessageInsert } from "@/src/db/models/Messages";
-import { EnrichedSmashMessage } from "@/src/types/";
-import {
-    SMASH_MEDIA_VIDEO,
-    SMASH_MEDIA_PHOTO,
-} from "@/src/types/smash/lexicons";
 import {
     DIDString,
     EncapsulatedIMProtoMessage,
     IM_CHAT_TEXT,
+    IM_MEDIA_EMBEDDED,
+    reverseDNS,
 } from "@smashchats/library";
+
+import { MessageInsert } from "@/src/db/models/Messages";
+import { EnrichedSmashMessage } from "@/src/types/";
 
 export const mapReceivedMessageToEnrichedMessage = (
     message: EncapsulatedIMProtoMessage,
@@ -33,10 +32,9 @@ export const mapReceivedMessageToEnrichedMessage = (
 export const ESMToMessageInsertMapper = (
     esm: EnrichedSmashMessage
 ): MessageInsert => {
-    if (
-        ![IM_CHAT_TEXT, SMASH_MEDIA_PHOTO, SMASH_MEDIA_VIDEO].includes(esm.type)
-    ) {
-        throw new Error("Message type is not IM_CHAT_TEXT");
+    const supportedTypes: reverseDNS[] = [IM_CHAT_TEXT, IM_MEDIA_EMBEDDED];
+    if (!supportedTypes.includes(esm.type)) {
+        throw new Error(`Message type (${esm.type}) is not supported`);
     }
 
     return {

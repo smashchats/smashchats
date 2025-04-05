@@ -1,6 +1,6 @@
 import React from "react";
 
-import { IM_CHAT_TEXT } from "@smashchats/library";
+import { IM_CHAT_TEXT, IM_MEDIA_EMBEDDED } from "@smashchats/library";
 
 import {
     ProfileMessagesScreenDate,
@@ -10,10 +10,6 @@ import {
     ProfileMessagesScreenMedia,
 } from "@/src/ui/components/ProfileMessagesScreen";
 import { DisplayableMessage } from "@/src/types/";
-import {
-    SMASH_MEDIA_PHOTO,
-    SMASH_MEDIA_VIDEO,
-} from "@/src/types/smash/lexicons";
 
 // SUPPORT FOR NEW MESSAGE TYPES SHOULD BE ADDED HERE
 export const RenderMessageListItem = ({
@@ -36,8 +32,7 @@ export const RenderMessageListItem = ({
             );
         case "metadata":
             return <ProfileMessagesScreenMetadata message={message} />;
-        case SMASH_MEDIA_PHOTO:
-        case SMASH_MEDIA_VIDEO:
+        case IM_MEDIA_EMBEDDED:
             return (
                 <ProfileMessagesScreenMedia
                     message={message as unknown as DisplayableMessage}
