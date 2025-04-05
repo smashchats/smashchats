@@ -7,6 +7,8 @@ import {
     LogLevel,
     IMProfile,
     IIMPeerIdentity,
+    SmashEndpoint,
+    SMEConfigJSONWithoutDefaults,
 } from "@smashchats/library";
 
 import {
@@ -15,12 +17,9 @@ import {
     getData,
     saveObject,
 } from "@/src/utils/StorageUtils.js";
-import {
-    getContactsFromDb,
-} from "@/src/db/models/Contacts";
-import {
-    MapContactToDidDocument,
-} from "@/src/utils/mappers/contacts";
+import { getContactsFromDb } from "@/src/db/models/Contacts";
+import { MapContactToDidDocument } from "@/src/utils/mappers/contacts";
+import { sme } from "@/data/dev";
 
 export const getOrCreateIdentity = async (
     didDocumentManager: DIDDocManager,
@@ -33,6 +32,10 @@ export const getOrCreateIdentity = async (
         logger.info("creating new identity");
         try {
             newIdentity = await didDocumentManager.generate();
+            const preKeyPair = await didDocumentManager.generateNewPreKeyPair(
+                newIdentity
+            );
+            newIdentity.addPreKeyPair(preKeyPair);
         } catch (error) {
             logger.error("getOrCreateIdentity error", error);
             throw error;
@@ -47,13 +50,30 @@ export const getOrCreateIdentity = async (
     return newIdentity;
 };
 
+const joinSme = async (
+    user: SmashUser,
+    identity: IMPeerIdentity,
+    smeConfig: SmashEndpoint,
+    didManager: DIDDocManager
+) => {
+    if (smeConfig) {
+        const preKeyPair = identity.signedPreKeys[0];
+        if (!preKeyPair) {
+            throw new Error("No PreKeyPair found in identity");
+        }
+        await user.endpoints.reset([
+            smeConfig as SmashEndpoint & SMEConfigJSONWithoutDefaults,
+        ]);
+        didManager.set(await user.getDIDDocument());
+    }
+};
+
 export const loadIdentity = async (
     logger: Logger,
     logLevel: LogLevel = "DEBUG"
 ): Promise<SmashUser> => {
     const didDocumentManager = new DIDDocManager();
     SmashMessaging.use(didDocumentManager);
-    // TODO load contact dids from db
     try {
         const savedIdentity = await getOrCreateIdentity(
             didDocumentManager,
@@ -65,6 +85,13 @@ export const loadIdentity = async (
             meta?.title ?? "device",
             logLevel
         );
+
+        joinSme(
+            user,
+            savedIdentity,
+            sme as unknown as SmashEndpoint,
+            didDocumentManager
+        );
         if (meta) {
             user.updateMeta(meta);
         }
@@ -74,7 +101,7 @@ export const loadIdentity = async (
             contacts.map((c) => {
                 return {
                     with: MapContactToDidDocument(c),
-                    lastMessageTimestamp: new Date().toISOString(),
+                    lastMessageTimestamp: new Date(0).toISOString(),
                 };
             })
         );

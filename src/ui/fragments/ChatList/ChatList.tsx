@@ -44,6 +44,7 @@ export function ChatList({ chats }: Readonly<Props>) {
                 await deleteContact(chat.did_id);
             })
         );
+        setSelectedChats([]);
     };
 
     const [refreshing, setRefreshing] = useState(false);

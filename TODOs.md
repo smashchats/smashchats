@@ -30,6 +30,10 @@
 
 ## In progress
 
+-   [~] correct join
+    -   [~] remove sme from join action
+    -   [~] generate prekey
+    -   [~] join sme
 -   [~] cache images on device
 -   [~] send media messages
     -   [ ] media organizer à la stash
