@@ -7,7 +7,9 @@ import { TrustedContact } from "@/src/types/Contacts.types";
 import { Text } from "@/src/ui/design-system/Text";
 import { Colors } from "@/src/constants/Colors";
 import { SCREEN_WIDTH } from "@/src/ui/constants";
-import { Box } from "@/src/ui/design-system/layout";
+import { Box, HStack, VStack } from "@/src/ui/design-system/layout";
+import { Ionicons } from "@expo/vector-icons";
+import { SheetManager } from "react-native-actions-sheet";
 
 export const ProfileHeaderExpanded = ({ peer }: { peer?: TrustedContact }) => {
     return (
@@ -33,10 +35,27 @@ export const ProfileHeaderExpanded = ({ peer }: { peer?: TrustedContact }) => {
                 paddingHorizontal={20}
                 paddingVertical={10}
             >
-                <Text color="white" marginBottom={10}>
-                    {peer?.meta_title}
-                </Text>
-                <Text>{peer?.meta_description}</Text>
+                <HStack alignItems="center">
+                    <VStack flex={1}>
+                        <Text color="white" marginBottom={10}>
+                            {peer?.meta_title}
+                        </Text>
+                        <Text>{peer?.meta_description}</Text>
+                    </VStack>
+                    <Ionicons
+                        style={{ marginLeft: "auto" }}
+                        name="ellipsis-horizontal"
+                        size={24}
+                        color="white"
+                        onPress={() => {
+                            SheetManager.show("profile-details-sheet", {
+                                payload: {
+                                    didId: peer!.did_id,
+                                },
+                            });
+                        }}
+                    />
+                </HStack>
             </Box>
         </View>
     );
