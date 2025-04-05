@@ -11,6 +11,7 @@ import AwesomeGallery, {
 } from "react-native-awesome-gallery";
 import * as React from "react";
 
+import * as ScreenOrientation from "expo-screen-orientation";
 import { Image } from "expo-image";
 import Animated, { FadeInUp, FadeOutUp } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -52,7 +53,16 @@ export const GalleryScreen = () => {
     );
 
     useEffect(() => {
-        setMounted(true);
+        const unlockScreenOrientation = async () => {
+            await ScreenOrientation.unlockAsync();
+            setMounted(true);
+        };
+
+        unlockScreenOrientation();
+
+        return () => {
+            ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
+        };
     }, []);
 
     useEffect(() => {
