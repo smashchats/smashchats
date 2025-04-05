@@ -2,8 +2,8 @@
   "expo": {
     "name": "Smashchats",
     "slug": "smashchats",
-    "version": "1.3.0",
-    "runtimeVersion": "1.3.0",
+    "version": "1.3.1",
+    "runtimeVersion": "1.3.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "smash",
@@ -14,7 +14,7 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "buildNumber": "12",
+      "buildNumber": "13",
       "appleTeamId": "5P8Z824PGN",
       "associatedDomains": [
         "webcredentials:smashchats.com"
@@ -38,7 +38,7 @@
       }
     },
     "android": {
-      "versionCode": 12,
+      "versionCode": 13,
       "adaptiveIcon": {
         "backgroundColor": "#ffffff"
       },
@@ -47,11 +47,6 @@
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO"
       ]
-    },
-    "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
       "expo-router",
