@@ -1,0 +1,98 @@
+name: SonarQube analysis
+
+on:
+    push:
+        branches: ["main"]
+    pull_request:
+        branches: ["main"]
+    workflow_dispatch:
+
+permissions:
+    pull-requests: read # allows SonarQube to decorate PRs with analysis results
+
+jobs:
+    test-and-quality:
+        runs-on: ubuntu-24.04
+
+        steps:
+            - uses: szenius/set-timezone@v2.0
+              with:
+                  timezoneLinux: "Europe/Paris"
+
+            - uses: actions/checkout@v4
+              with:
+                  # Disabling shallow clones is recommended for improving the relevancy of reporting
+                  fetch-depth: 0
+
+            - name: Setup Node.js
+              uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+              with:
+                  node-version: "22.x"
+
+            - name: Install Dependencies
+              run: npm ci
+
+            - name: Run Tests
+              run: npx jest --coverage --runInBand
+
+            - name: Analyze with SonarQube
+              uses: SonarSource/sonarqube-scan-action@v5.1.0
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+                  SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+            - uses: actions/upload-artifact@v4
+              with:
+                  name: node_modules
+                  path: node_modules
+
+    build-and-push-updates:
+        runs-on: ubuntu-24.04
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Setup Node.js
+              uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+              with:
+                  node-version: "22.x"
+
+            - uses: actions/download-artifact@v4
+              with:
+                  name: node_modules
+                  path: node_modules
+
+            - name: Install Dependencies
+              run: npm ci
+
+            - name: Build and Push Updates
+              run: |
+                  jq '${{ vars.EXPO_UPDATES }}' app.json > app.json.tmp && mv app.json.tmp app.json
+
+                  commitHash=$(git rev-parse HEAD)
+                  commitMessage=$(git log -1 --pretty=%B | tr -d '\n' | cut -c1-250)
+                  runtimeVersion=$(jq -r .expo.runtimeVersion app.json)
+                  serverHost=${{ secrets.EXPO_UPDATES_SERVER }}
+
+                  timestamp=$(date -u +%Y%m%d%H%M%S)
+                  outputFolder="ota-builds/$timestamp"
+
+                  mkdir -p $outputFolder
+
+                  npx expo export --output-dir $outputFolder
+
+                  jq '.expo' app.json > $outputFolder/expoconfig.json
+
+                  cd $outputFolder  
+                  zip -q -r ${timestamp}.zip .
+
+                  curl -X POST $serverHost/api/upload -F "file=@${timestamp}.zip" -F "runtimeVersion=$runtimeVersion" -F "commitHash=$commitHash" -F "commitMessage=$commitMessage"
+
+                  echo ""
+
+                  echo "Uploaded to server"
+                  cd ..
+
+                  rm -rf $outputFolder

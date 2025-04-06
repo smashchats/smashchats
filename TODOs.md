@@ -26,20 +26,16 @@
 -   [ ] fetch badges from somewhere(?)
 -   [ ] add unit preferences to settings screen
 -   [ ] add interests somewhere(?)
--   [ ] decouple image sending feature into 1/ render 2/ send
 -   [ ] remove data from media_emb (since we store it in its own table)
     -   [ ] store alt + ratio
--   [ ] sending/receiving image doesn't display correctly; need to reopen discussion
+-   [ ] when enabling selection mode, ChatItem content should move animatedly away from the selection marker
+-   [ ] media organizer à la stash
+-   [ ] display version (.expo.runtimeVersion) somewhere + Updates.manifest version
 
 ## In progress
 
--   [~] correct join
-    -   [~] remove sme from join action
-    -   [~] generate prekey
-    -   [~] join sme
--   [~] cache images on device
--   [~] send media messages
-    -   [ ] media organizer à la stash
+-   [~] pipeline job to push to EAS Updates
+-   [~] decouple image sending feature into 1/ render 2/ send
 -   [~] drawing feature on camera w/ Skia
     -   [ ] allow user to change drawing colors
     -   [~] videos on ios are sideways
@@ -54,15 +50,21 @@
     -   [ ] fix transparency behind header
     -   [ ] fix buggy-ness
     -   [~] implement gesture handler on tabs & user bio so that we can scroll to the top
--   [~] delete contacts / discussions
-    -   [x] selection mode
-    -   [x] exit selection mode
-    -   [x] delete button
-    -   [ ] confirmation modal(?)
-    -   [ ] when enabling selection mode, ChatItem content should move animatedly away from the selection marker
 
 ## Done
 
+-   [x] correct join
+    -   [x] remove sme from join action
+    -   [x] generate prekey
+    -   [x] join sme
+-   [x] cache images on device
+-   [x] send media messages
+-   [x] delete contacts / discussions
+    -   [x] selection mode
+    -   [x] exit selection mode
+    -   [x] delete button
+    -   [-] confirmation modal(?)
+-   [x] sending/receiving image doesn't display correctly; need to reopen discussion
 -   [x] bug: onMessageReceive, current code removes previous displayed messages
 -   [x] Contact notes
     -   [x] dynamically generate filters
