@@ -87,9 +87,7 @@ const SecretScreen = () => {
             saveObject(IDENTITY_KEY, await newIdentity.serialize());
             const user = await setupUser(globalDispatch);
             generateQrCodeWithDid(await user.getDIDDocument());
-            setInterval(async () => {
-                console.log(await user.getDIDDocument());
-            }, 1000);
+            console.log(await user.getDIDDocument());
         }
     }
 

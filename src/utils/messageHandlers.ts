@@ -144,6 +144,7 @@ export const mediaMessagesListener =
             const m = mapReceivedMessageToEnrichedMessage(
                 {
                     ...originalMessage,
+                    data: "",
                     sha256: mediaMetadata.sha256,
                     timestamp:
                         originalMessage.timestamp ?? new Date().toISOString(),

@@ -46,6 +46,7 @@ import {
     ISO8601,
     IM_MEDIA_EMBEDDED,
     IMMediaEmbedded,
+    IMMediaEmbeddedMessage,
 } from "@smashchats/library";
 
 import {
@@ -332,7 +333,7 @@ const ProfileMessages = forwardRef<
                 if (message.type === IM_MEDIA_EMBEDDED) {
                     dispatch({
                         type: "ADD_SHOWN_MEDIA_IN_GALLERY_ACTION",
-                        uri: message.data as string,
+                        uri: "data:image/png;base64," + (message as IMMediaEmbeddedMessage).data.content,
                     });
                 }
 
@@ -340,8 +341,14 @@ const ProfileMessages = forwardRef<
                     scrollToBottom();
                 }
 
+                // TODO: find file URI for media messages instead of using base64
+                const displayable_data =
+                    message.type === IM_MEDIA_EMBEDDED
+                        ? "data:image/png;base64," + (message as IMMediaEmbeddedMessage).data.content
+                        : message.data;
+
                 appendMessage({
-                    data: message.data as string,
+                    data: displayable_data as string,
                     sha256: message.sha256,
                     after_sha256: message.after,
                     from_self: false,
@@ -360,7 +367,7 @@ const ProfileMessages = forwardRef<
                 );
             });
         };
-    }, [globalState.selfSmashUser]);
+    }, [globalState.selfSmashUser, messages]);
 
     const renderItem = useCallback<ListRenderItem<DisplayableMessage>>(
         ({ item }) => <RenderMessageListItem message={item} />,
@@ -420,17 +427,6 @@ const ProfileMessages = forwardRef<
         message.after = lastMessageId;
         message.sha256 = mediaMetadata.sha256 as sha256;
         message.timestamp = new Date().toISOString() as ISO8601;
-
-        // const message = {
-        //     data: {
-        //         base64: asset.base64!,
-        //         mimeType: asset.mimeType!,
-        //     },
-        //     sha256: mediaMetadata.sha256 as sha256,
-        //     timestamp: new Date().toISOString() as ISO8601,
-        //     after: lastMessageId,
-        //     type: IM_MEDIA_EMBEDDED,
-        // } satisfies IMProtoMessage;
 
         return { message, metadata: mediaMetadata };
     };

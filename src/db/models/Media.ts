@@ -10,7 +10,7 @@ export type MediaInsert = InferInsertModel<typeof media>;
 export const getAllMediaInDiscussion = async (
     discussionId: string
 ): Promise<Media[]> => {
-    console.log("getAllMediaInDiscussion", discussionId);
+    console.debug("getAllMediaInDiscussion", discussionId);
     const results = (await drizzle_db
         .select({
             media: media,

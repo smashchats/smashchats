@@ -58,10 +58,13 @@ export const mapMessageToDisplayableMessage = (
     message: Message & { media?: Media },
     selfDidString: DIDString
 ): DisplayableMessage => {
-    const content =
-        message.type === IM_MEDIA_EMBEDDED
-            ? message.media?.file_path ?? ""
-            : message.data ?? "";
+    let content = "";
+
+    if (message.type === IM_MEDIA_EMBEDDED) {
+        content = message.media?.file_path ?? message.data;
+    } else {
+        content = message.data;
+    }
 
     return {
         ...message,

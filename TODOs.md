@@ -28,7 +28,7 @@
 -   [ ] add interests somewhere(?)
 -   [ ] decouple image sending feature into 1/ render 2/ send
 -   [ ] remove data from media_emb (since we store it in its own table)
--   [ ] bug: onMessageReceive, current code removes previous displayed messages
+    -   [ ] store alt + ratio
 -   [ ] sending/receiving image doesn't display correctly; need to reopen discussion
 
 ## In progress
@@ -63,6 +63,7 @@
 
 ## Done
 
+-   [x] bug: onMessageReceive, current code removes previous displayed messages
 -   [x] Contact notes
     -   [x] dynamically generate filters
     -   [x] use filters to search in notes & user bio.{title, description}
