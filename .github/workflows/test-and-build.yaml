@@ -49,6 +49,7 @@ jobs:
 
     build-and-push-updates:
         runs-on: ubuntu-24.04
+        needs: test-and-quality
         steps:
             - uses: actions/checkout@v4
               with:

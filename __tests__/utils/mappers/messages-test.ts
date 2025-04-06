@@ -86,7 +86,7 @@ describe("message mappers", () => {
                 type: IM_PROFILE,
             } as unknown as EnrichedSmashMessage;
 
-            expect(() => ESMToMessageInsertMapper(message)).toThrow("Message type is not IM_CHAT_TEXT");
+            expect(() => ESMToMessageInsertMapper(message)).toThrow("Message type (org.improto.profile) is not supported");
         });
     });
 });
