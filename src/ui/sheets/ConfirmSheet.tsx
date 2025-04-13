@@ -20,6 +20,7 @@ function ConfirmSheet(props: Readonly<SheetProps<"confirm-sheet">>) {
                 <HStack justifyContent="space-between">
                     <Button
                         title="No"
+                        testID="confirmSheetNoButton"
                         onPress={() => {
                             SheetManager.hide(props.sheetId, {
                                 payload: false,
@@ -28,6 +29,7 @@ function ConfirmSheet(props: Readonly<SheetProps<"confirm-sheet">>) {
                     />
                     <Button
                         title="Yes"
+                        testID="confirmSheetYesButton"
                         onPress={() => {
                             SheetManager.hide(props.sheetId, {
                                 payload: true,

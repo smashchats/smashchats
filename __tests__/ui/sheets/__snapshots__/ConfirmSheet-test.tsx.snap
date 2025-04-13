@@ -1,0 +1,179 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ConfirmSheet should render correctly 1`] = `
+<View
+  style={
+    {
+      "padding": 20,
+    }
+  }
+>
+  <View
+    style={
+      {
+        "backgroundColor": undefined,
+        "flex": undefined,
+        "flexDirection": undefined,
+        "height": undefined,
+        "marginHorizontal": undefined,
+        "marginLeft": undefined,
+        "paddingHorizontal": undefined,
+        "paddingVertical": undefined,
+        "position": undefined,
+        "width": undefined,
+      }
+    }
+  >
+    <Text
+      style={
+        {
+          "color": "black",
+          "marginBottom": 10,
+          "textShadowColor": undefined,
+          "textShadowOffset": undefined,
+          "textShadowRadius": undefined,
+          "textTransform": undefined,
+        }
+      }
+    >
+      [TEST MESSAGE] are you sure?
+    </Text>
+  </View>
+  <View
+    style={
+      {
+        "alignContent": undefined,
+        "alignItems": undefined,
+        "backgroundColor": undefined,
+        "flex": undefined,
+        "flexDirection": "row",
+        "gap": undefined,
+        "height": undefined,
+        "justifyContent": "space-between",
+        "marginBottom": undefined,
+        "marginHorizontal": undefined,
+        "marginVertical": undefined,
+      }
+    }
+  >
+    <View
+      accessibilityRole="button"
+      accessibilityState={
+        {
+          "busy": undefined,
+          "checked": undefined,
+          "disabled": undefined,
+          "expanded": undefined,
+          "selected": undefined,
+        }
+      }
+      accessibilityValue={
+        {
+          "max": undefined,
+          "min": undefined,
+          "now": undefined,
+          "text": undefined,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        {
+          "opacity": 1,
+        }
+      }
+      testID="confirmSheetNoButton"
+    >
+      <View
+        style={
+          [
+            {},
+          ]
+        }
+      >
+        <Text
+          style={
+            [
+              {
+                "color": "#007AFF",
+                "fontSize": 18,
+                "margin": 8,
+                "textAlign": "center",
+              },
+            ]
+          }
+        >
+          No
+        </Text>
+      </View>
+    </View>
+    <View
+      accessibilityRole="button"
+      accessibilityState={
+        {
+          "busy": undefined,
+          "checked": undefined,
+          "disabled": undefined,
+          "expanded": undefined,
+          "selected": undefined,
+        }
+      }
+      accessibilityValue={
+        {
+          "max": undefined,
+          "min": undefined,
+          "now": undefined,
+          "text": undefined,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        {
+          "opacity": 1,
+        }
+      }
+      testID="confirmSheetYesButton"
+    >
+      <View
+        style={
+          [
+            {},
+          ]
+        }
+      >
+        <Text
+          style={
+            [
+              {
+                "color": "#007AFF",
+                "fontSize": 18,
+                "margin": 8,
+                "textAlign": "center",
+              },
+            ]
+          }
+        >
+          Yes
+        </Text>
+      </View>
+    </View>
+  </View>
+</View>
+`;
