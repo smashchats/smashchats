@@ -1,4 +1,13 @@
-import { DomainBadges } from "@/src/types/smash/badge.categories";
+import { DomainBadges, UnitKey } from "@/src/types/smash/badge.categories";
+
+export const interests = ["cbt", "hung", "+18"].map((interest) =>
+    interest.toLowerCase()
+);
+
+export const unitPreferences: Record<string, UnitKey> = {
+    length: "com.smashchats.units.cm",
+    weight: "com.smashchats.units.kg",
+};
 
 export const badgeData: DomainBadges[] = [
     {

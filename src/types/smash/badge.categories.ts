@@ -1,4 +1,5 @@
 import { UnitKey } from "@/src/types/smash/units";
+export { UnitKey };
 
 export type CategoryKey = keyof typeof categories;
 

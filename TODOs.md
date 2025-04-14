@@ -13,12 +13,13 @@
 -   [ ] follow https://www.runway.team/blog/how-to-set-up-a-ci-cd-pipeline-for-your-ios-app-fastlane-github-actions
     -   [ ] fastlane ios
     -   [ ] fastlane ios bump version
+-   [ ] badge label and value translation (e.g. dog -> chien ; German Shepher -> Berger allemand) --> per neighborhood badges suggestions?
 
 ## Pending
 
 -   [ ] fix chat list ordering (see with @xsbfh for algorithm?)
 -   [ ] bio max 140chars
--   [ ] replace Pressable with TouchableHighlight where needed
+-   [ ] replace Pressable with TouchableOpacity where needed
 -   [ ] DID set (when contact sends profile) vs DID patch (when resolving? & when nab sends profiles)
 -   [ ] delete own avatar
 -   [ ] mark as unread

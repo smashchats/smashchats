@@ -1,30 +1,27 @@
 import React, { forwardRef, memo } from "react";
-import { StyleSheet, ScrollViewProps, View } from "react-native";
+import {
+    StyleSheet,
+    ScrollViewProps,
+    View,
+    TouchableOpacity,
+} from "react-native";
 
 import { useLocalSearchParams } from "expo-router";
 import Animated from "react-native-reanimated";
 import { MaterialIcons } from "@expo/vector-icons";
+
+import { badgeData, interests, unitPreferences } from "@/data/badges";
 
 import { Colors } from "@/src/constants/Colors.js";
 import { Text } from "@/src/ui/design-system/Text";
 import { Badge } from "@/src/ui/components/Badge";
 import { CategoryKey, categories } from "@/src/types/smash/badge.categories";
 import { getCategories } from "@/src/utils/BadgeUtils";
-import { badgeData } from "@/data/badges";
+import { SheetManager } from "react-native-actions-sheet";
 
 export const ProfileBadges = forwardRef<Animated.ScrollView, ScrollViewProps>(
-    (props, ref) => {
+    function ProfileBadges(props, ref) {
         const { user: profileId } = useLocalSearchParams();
-        console.log(profileId);
-
-        const interests = ["cbt", "hung", "+18"].map((interest) =>
-            interest.toLowerCase()
-        );
-
-        const unitPreferences = {
-            length: "com.smashchats.units.cm",
-            weight: "com.smashchats.units.kg",
-        };
 
         return (
             <Animated.ScrollView
@@ -65,14 +62,32 @@ export const ProfileBadges = forwardRef<Animated.ScrollView, ScrollViewProps>(
                                                         badge.category === key
                                                 )
                                                 .map((badge) => (
-                                                    <Badge
+                                                    <TouchableOpacity
+                                                        activeOpacity={0.8}
                                                         key={badge.id}
-                                                        badge={badge}
-                                                        unitPreferences={
-                                                            unitPreferences
+                                                        onPress={() =>
+                                                            SheetManager.show(
+                                                                "badge-details-sheet",
+                                                                {
+                                                                    payload: {
+                                                                        badge,
+                                                                        profileId:
+                                                                            profileId as string,
+                                                                    },
+                                                                }
+                                                            )
                                                         }
-                                                        interests={interests}
-                                                    />
+                                                    >
+                                                        <Badge
+                                                            badge={badge}
+                                                            unitPreferences={
+                                                                unitPreferences
+                                                            }
+                                                            interests={
+                                                                interests
+                                                            }
+                                                        />
+                                                    </TouchableOpacity>
                                                 ))}
                                         </View>
                                     </View>
