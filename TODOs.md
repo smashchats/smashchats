@@ -14,6 +14,7 @@
     -   [ ] fastlane ios
     -   [ ] fastlane ios bump version
 -   [ ] badge label and value translation (e.g. dog -> chien ; German Shepher -> Berger allemand) --> per neighborhood badges suggestions?
+-   [ ] audio player support changing playback rate
 
 ## Pending
 
@@ -34,6 +35,8 @@
 -   [ ] display version (.expo.runtimeVersion) somewhere + Updates.manifest version
 -   [ ] filter out audio messages from `getAllMediaInDiscussion` or create other specific methods.
 -   [ ] make sure gallery can display videos when they'll be supported
+-   [ ] add seeker to audio player
+-   [ ] audio player smooth animation
 
 ## In progress
 

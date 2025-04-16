@@ -17,9 +17,9 @@ import PolyfillCrypto from "react-native-webview-crypto";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import {SheetProvider} from 'react-native-actions-sheet';
+import { SheetProvider } from "react-native-actions-sheet";
 // ================================
-import '@/src/app/sheets';
+import "@/src/app/sheets";
 import { SmashMessaging } from "@smashchats/library";
 
 import migrations from "@/drizzle/migrations.js";
@@ -109,6 +109,8 @@ if (show_storybook) {
     SplashScreen.hideAsync();
 }
 
-const AppEntryPoint = show_storybook ? require("@/.storybook").default : RootLayout;
+const AppEntryPoint = show_storybook
+    ? require("@/.storybook").default
+    : RootLayout;
 
 export default AppEntryPoint;

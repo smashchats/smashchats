@@ -8,6 +8,7 @@ import GlobalContext, {
     settingsReducer,
     useGlobalDispatch,
     userMetaReducer,
+    mediaPlayerReducer,
 } from "@/src/context/GlobalContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { View } from "react-native";
@@ -224,5 +225,85 @@ describe("self did string reducer", () => {
             selfDid: null as unknown as DIDDocument,
         });
         expect(result).toEqual(example_DID);
+    });
+});
+
+describe("media player reducer", () => {
+    const initialState = {
+        currentMedia: null,
+    };
+
+    it("should play media when PLAY_MEDIA_ACTION is dispatched", () => {
+        const result = mediaPlayerReducer(initialState, {
+            type: "PLAY_MEDIA_ACTION",
+            payload: {
+                id: "test-id",
+                uri: "test-uri",
+            },
+        });
+        expect(result).toEqual({
+            currentMedia: {
+                id: "test-id",
+                uri: "test-uri",
+                isPlaying: true,
+            },
+        });
+    });
+
+    it("should stop media when STOP_MEDIA_ACTION is dispatched", () => {
+        const stateWithPlayingMedia = {
+            currentMedia: {
+                id: "test-id",
+                uri: "test-uri",
+                isPlaying: true,
+            },
+        };
+        const result = mediaPlayerReducer(stateWithPlayingMedia, {
+            type: "STOP_MEDIA_ACTION",
+        });
+        expect(result).toEqual({
+            currentMedia: null,
+        });
+    });
+
+    it("should pause media when PAUSE_MEDIA_ACTION is dispatched", () => {
+        const stateWithPlayingMedia = {
+            currentMedia: {
+                id: "test-id",
+                uri: "test-uri",
+                isPlaying: true,
+            },
+        };
+        const result = mediaPlayerReducer(stateWithPlayingMedia, {
+            type: "PAUSE_MEDIA_ACTION",
+        });
+        expect(result).toEqual({
+            currentMedia: {
+                id: "test-id",
+                uri: "test-uri",
+                isPlaying: false,
+            },
+        });
+    });
+
+    it("should not change state when PAUSE_MEDIA_ACTION is dispatched with no current media", () => {
+        const result = mediaPlayerReducer(initialState, {
+            type: "PAUSE_MEDIA_ACTION",
+        });
+        expect(result).toEqual(initialState);
+    });
+
+    it("should not change state when an unknown action is dispatched", () => {
+        const stateWithPlayingMedia = {
+            currentMedia: {
+                id: "test-id",
+                uri: "test-uri",
+                isPlaying: true,
+            },
+        };
+        const result = mediaPlayerReducer(stateWithPlayingMedia, {
+            type: "UNKNOWN_ACTION",
+        } as any);
+        expect(result).toEqual(stateWithPlayingMedia);
     });
 });

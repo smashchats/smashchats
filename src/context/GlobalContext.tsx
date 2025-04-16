@@ -84,6 +84,32 @@ export interface AddShownMediaInGalleryAction extends GlobalActionBase {
     uri: string;
 }
 
+// Media Player Types
+export interface MediaPlayerState {
+    currentMedia: {
+        id: string;
+        uri: string;
+        isPlaying: boolean;
+    } | null;
+}
+
+export interface PlayMediaAction extends GlobalActionBase {
+    type: "PLAY_MEDIA_ACTION";
+    payload: {
+        id: string;
+        uri: string;
+    };
+}
+
+export interface StopMediaAction extends GlobalActionBase {
+    type: "STOP_MEDIA_ACTION";
+}
+
+export interface PauseMediaAction extends GlobalActionBase {
+    type: "PAUSE_MEDIA_ACTION";
+}
+
+// Update Action type
 export type Action =
     | ChatListAction
     | LatestMessageIdInDiscussionAction
@@ -94,9 +120,12 @@ export type Action =
     | SetUserAction
     | SetSelfDidAction
     | SetShownMediaInGalleryAction
-    | AddShownMediaInGalleryAction;
+    | AddShownMediaInGalleryAction
+    | PlayMediaAction
+    | StopMediaAction
+    | PauseMediaAction;
 
-// Global State Interface
+// Update GlobalParams
 export type GlobalParams = {
     chatList: ChatListParams;
     latestMessageIdInDiscussion: Record<string, sha256>;
@@ -107,9 +136,10 @@ export type GlobalParams = {
     appWorkflow: AppWorkflow;
     logger: Logger;
     shownMediaInGallery: string[];
+    mediaPlayer: MediaPlayerState;
 };
 
-// Initial State
+// Update INITIAL_GLOBAL_STATE
 export const INITIAL_GLOBAL_STATE: GlobalParams = {
     chatList: INITIAL_CHAT_LIST_STATE,
     latestMessageIdInDiscussion: {},
@@ -124,6 +154,9 @@ export const INITIAL_GLOBAL_STATE: GlobalParams = {
     appWorkflow: "LOADING",
     logger: new Logger("device", "WARN"),
     shownMediaInGallery: [],
+    mediaPlayer: {
+        currentMedia: null,
+    },
 };
 
 // Context Types
@@ -167,6 +200,7 @@ export const rootReducer = (
             state.shownMediaInGallery,
             action
         ),
+        mediaPlayer: mediaPlayerReducer(state.mediaPlayer, action),
     };
 };
 
@@ -320,5 +354,40 @@ function shownMediaInGalleryReducer(
             return [...shownMediaInGallery, action.uri];
         default:
             return shownMediaInGallery;
+    }
+}
+
+// Media Player Reducer
+export function mediaPlayerReducer(
+    state: MediaPlayerState,
+    action: Action
+): MediaPlayerState {
+    switch (action.type) {
+        case "PLAY_MEDIA_ACTION":
+            return {
+                currentMedia: {
+                    ...action.payload,
+                    isPlaying: true,
+                },
+            };
+
+        case "STOP_MEDIA_ACTION":
+            return {
+                currentMedia: null,
+            };
+
+        case "PAUSE_MEDIA_ACTION":
+            if (state.currentMedia) {
+                return {
+                    currentMedia: {
+                        ...state.currentMedia,
+                        isPlaying: false,
+                    },
+                };
+            }
+            return state;
+
+        default:
+            return state;
     }
 }
