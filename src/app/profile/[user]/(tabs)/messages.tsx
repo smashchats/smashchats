@@ -11,7 +11,7 @@ import {
     FlatList,
     Insets,
     ListRenderItem,
-    Pressable,
+    TouchableOpacity,
     StyleProp,
     TextInput,
     StyleSheet,
@@ -20,6 +20,8 @@ import {
     NativeSyntheticEvent,
     NativeScrollEvent,
     LayoutChangeEvent,
+    Alert,
+    Pressable,
 } from "react-native";
 
 import { useLocalSearchParams } from "expo-router";
@@ -30,8 +32,14 @@ import Animated, {
     useComposedEventHandler,
 } from "react-native-reanimated";
 import { eq, desc, and, sql } from "drizzle-orm";
-import { Feather } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import {
+    useAudioRecorder,
+    RecordingPresets,
+    AudioModule,
+    setAudioModeAsync,
+} from "expo-audio";
 
 import {
     EncapsulatedIMProtoMessage,
@@ -74,10 +82,14 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TrustedContact } from "@/src/types/Contacts.types";
 import { markContactAsActive } from "@/src/db/models/Contacts";
 import {
-    saveMedia,
+    saveMediaFromBase64,
     getMediaTypeFromMimeType,
     MediaMetadata,
+    saveMediaFromUri,
+    getMediaBytes,
 } from "@/src/utils/MediaStorage";
+import { Text } from "@/src/ui/design-system/Text";
+import { formatDuration } from "@/src/utils/TimeUtils";
 
 const DEFAULT_LOAD_LIMIT = __DEV__ ? 10 : 100;
 
@@ -144,6 +156,11 @@ const ProfileMessages = forwardRef<
     const dispatch = useGlobalDispatch();
 
     const { user: peerId }: { user: string } = useLocalSearchParams();
+
+    const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
+    const [recordingDuration, setRecordingDuration] = useState(0);
+    const [isRecording, setIsRecording] = useState(false);
+    const durationInterval = useRef<NodeJS.Timeout | null>(null);
 
     const [newMessage, setNewMessage] = useState(
         globalState.chatList.drafts[peerId] ?? ""
@@ -418,7 +435,7 @@ const ProfileMessages = forwardRef<
         asset: ImagePicker.ImagePickerAsset,
         mediaType: "image" | "video" | "audio"
     ): Promise<{ message: IMProtoMessage; metadata: MediaMetadata }> => {
-        const mediaMetadata = await saveMedia(
+        const mediaMetadata = await saveMediaFromBase64(
             asset.base64!,
             asset.mimeType!,
             mediaType,
@@ -439,10 +456,14 @@ const ProfileMessages = forwardRef<
             asset.mimeType!
         );
         message.after = lastMessageId;
-        message.sha256 = mediaMetadata.sha256 as sha256;
-        message.timestamp = new Date().toISOString() as ISO8601;
 
-        return { message, metadata: mediaMetadata };
+        const messageWithMetadata = {
+            ...message,
+            sha256: mediaMetadata.sha256 as sha256,
+            timestamp: new Date().toISOString() as ISO8601,
+        };
+
+        return { message: messageWithMetadata, metadata: mediaMetadata };
     };
 
     const saveMessageToLocalDb = async (
@@ -559,6 +580,132 @@ const ProfileMessages = forwardRef<
         await markContactAsActive(peerId);
     };
 
+    // Request permissions on mount
+    useEffect(() => {
+        (async () => {
+            const status = await AudioModule.requestRecordingPermissionsAsync();
+            if (!status.granted) {
+                Alert.alert(
+                    "Permission required",
+                    "Please grant microphone access to record audio messages."
+                );
+            }
+        })();
+    }, []);
+
+    const startRecording = async () => {
+        try {
+            dispatch({
+                type: "STOP_MEDIA_ACTION",
+            });
+
+            await setAudioModeAsync({
+                playsInSilentMode: true,
+                shouldRouteThroughEarpiece: true,
+                allowsRecording: true,
+                shouldPlayInBackground: true,
+            });
+
+            await audioRecorder.prepareToRecordAsync({
+                ...RecordingPresets.HIGH_QUALITY,
+                isMeteringEnabled: true,
+            });
+            audioRecorder.record();
+            setIsRecording(true);
+            setRecordingDuration(0);
+
+            // Start duration timer
+            durationInterval.current = setInterval(() => {
+                setRecordingDuration((prev) => prev + 1);
+            }, 1000);
+        } catch (err) {
+            console.error("Failed to start recording", err);
+            Alert.alert("Error", "Failed to start recording");
+        }
+    };
+
+    const stopRecording = async () => {
+        try {
+            // Clear duration timer
+            if (durationInterval.current) {
+                clearInterval(durationInterval.current);
+                durationInterval.current = null;
+            }
+
+            await audioRecorder.stop();
+            setIsRecording(false);
+            setRecordingDuration(0);
+
+            const uri = audioRecorder.uri;
+            if (uri) {
+                console.debug("Recording saved at:", uri);
+
+                await handleRecordingFinished(uri);
+            }
+        } catch (err) {
+            console.error("Failed to stop recording", err);
+            Alert.alert("Error", "Failed to stop recording");
+        }
+    };
+
+    const handleRecordingFinished = async (uri: string) => {
+        try {
+            const audioMetadata = await saveMediaFromUri(
+                uri,
+                "audio/m4a",
+                "audio",
+                { duration: recordingDuration }
+            );
+
+            await sendAudioMessage(audioMetadata);
+
+            setRecordingDuration(0);
+            setIsRecording(false);
+        } catch (error) {
+            console.error("Error handling recording finished:", error);
+            Alert.alert("Error", "Failed to save audio recording");
+        }
+    };
+
+    const sendAudioMessage = async (audioMetadata: MediaMetadata) => {
+        try {
+            const lastMessageId: string =
+                globalState.latestMessageIdInDiscussion[peerId] ?? "0";
+
+            const mediaBytes = await getMediaBytes(audioMetadata.file_path);
+            if (!mediaBytes) {
+                throw new Error("Failed to get media bytes");
+            }
+
+            const message = IMMediaEmbedded.fromBase64(
+                mediaBytes,
+                audioMetadata.mime_type
+            );
+
+            const messageWithMetadata = {
+                ...message,
+                after: lastMessageId as `${string & { length: 64 }}`,
+                sha256: audioMetadata.sha256 as `${string & { length: 64 }}`,
+                timestamp: new Date().toISOString() as ISO8601,
+            };
+
+            await sendMessage(messageWithMetadata);
+            await markContactAsActive(peerId);
+        } catch (error) {
+            console.error("Error sending audio message:", error);
+            Alert.alert("Error", "Failed to send audio message");
+        }
+    };
+
+    // Cleanup interval on unmount
+    useEffect(() => {
+        return () => {
+            if (durationInterval.current) {
+                clearInterval(durationInterval.current);
+            }
+        };
+    }, []);
+
     if (!globalState.selfDid) {
         return <View />;
     }
@@ -613,41 +760,56 @@ const ProfileMessages = forwardRef<
                             }
                         }}
                         onSubmitEditing={handleSendMessage}
-                        style={{
-                            color: "white",
-                            padding: 15,
-                            marginRight: 60,
-                        }}
+                        style={styles.messageInput}
                         onFocus={() => props.onCollapse()}
                     />
 
-                    <Pressable
-                        style={{
-                            position: "absolute",
-                            right: 0,
-                            top: 0,
-                            padding: 20,
-                        }}
-                        onPress={handleSendMessage}
+                    <TouchableOpacity
+                        style={styles.attachmentButton}
+                        onPress={handleSendMedia}
                     >
-                        <Feather
-                            name="chevron-right"
+                        <MaterialCommunityIcons
+                            name="paperclip"
                             size={24}
-                            color={
-                                shouldShowSendIcon
-                                    ? Colors.textWhite
-                                    : Colors.darkGray
-                            }
+                            color={Colors.textWhite}
                         />
-                    </Pressable>
+                    </TouchableOpacity>
 
-                    {!shouldShowSendIcon && FEATURE_FLAGS.send_media && (
-                        <Pressable
-                            style={styles.floatingActionButton}
-                            onPress={handleSendMedia}
+                    {shouldShowSendIcon ? (
+                        <TouchableOpacity
+                            style={styles.sendButton}
+                            onPress={handleSendMessage}
                         >
-                            <Feather name="paperclip" size={28} color="white" />
-                        </Pressable>
+                            <MaterialCommunityIcons
+                                name="chevron-right"
+                                size={24}
+                                color={Colors.textWhite}
+                            />
+                        </TouchableOpacity>
+                    ) : (
+                        <View style={styles.recordingContainer}>
+                            {isRecording && (
+                                <View style={styles.recordingDurationContainer}>
+                                    <Text
+                                        color={Colors.textWhite}
+                                        fontSize={12}
+                                    >
+                                        {formatDuration(recordingDuration)}
+                                    </Text>
+                                </View>
+                            )}
+                            <TouchableOpacity
+                                onPressIn={startRecording}
+                                onPressOut={stopRecording}
+                                style={styles.microphoneButton}
+                            >
+                                <MaterialCommunityIcons
+                                    name="microphone"
+                                    size={24}
+                                    color={Colors.textWhite}
+                                />
+                            </TouchableOpacity>
+                        </View>
                     )}
                 </Box>
             </Pressable>
@@ -659,20 +821,6 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: Colors.background,
         flex: 1,
-    },
-    floatingActionButton: {
-        width: 50,
-        height: 50,
-        position: "absolute",
-        right: 0,
-        top: -30,
-        backgroundColor: Colors.purple,
-        borderRadius: 25,
-        marginRight: 20,
-        marginBottom: 40,
-        justifyContent: "center",
-        alignItems: "center",
-        zIndex: 999,
     },
     messageContainer: {
         padding: 10,
@@ -686,6 +834,43 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: "#666",
         marginTop: 4,
+    },
+    messageInput: {
+        color: "white",
+        padding: 12,
+        marginRight: 60,
+        marginLeft: 60,
+        marginTop: 5,
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: Colors.darkGray,
+    },
+    attachmentButton: {
+        position: "absolute",
+        padding: 14,
+    },
+    sendButton: {
+        position: "absolute",
+        right: 0,
+        padding: 14,
+    },
+    recordingContainer: {
+        position: "absolute",
+        right: 0,
+        top: 0,
+    },
+    recordingDurationContainer: {
+        position: "absolute",
+        top: -40,
+        right: 12,
+        backgroundColor: Colors.darkGray,
+        padding: 8,
+        borderRadius: 12,
+        minWidth: 60,
+        alignItems: "center",
+    },
+    microphoneButton: {
+        padding: 14,
     },
 });
 

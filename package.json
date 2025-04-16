@@ -7,7 +7,7 @@
     "start": "expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "test": "jest --watchAll",
+    "test": "jest --watchAll --no-coverage",
     "lint": "expo lint",
     "postinstall": "patch-package",
     "storybook-generate": "sb-rn-get-stories -js",

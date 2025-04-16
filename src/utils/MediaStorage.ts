@@ -36,7 +36,7 @@ export const ensureMediaDirectories = async () => {
     }
 };
 
-export const saveMedia = async (
+export const saveMediaFromBase64 = async (
     base64Data: string,
     mimeType: string,
     mediaType: MediaType,
@@ -82,7 +82,7 @@ export const saveMedia = async (
         width: options.width,
         height: options.height,
         duration: options.duration,
-        size: 0, // We'll need to implement a way to get file size
+        size: fileInfo.size || 0,
         thumbnail_path: thumbnailPath,
     };
 
@@ -92,6 +92,73 @@ export const saveMedia = async (
     });
 
     return metadata;
+};
+
+export const saveMediaFromUri = async (
+    uri: string,
+    mimeType: string,
+    mediaType: MediaType,
+    options: {
+        width?: number;
+        height?: number;
+        duration?: number;
+        generateThumbnail?: boolean;
+    } = {}
+): Promise<MediaMetadata> => {
+    await ensureMediaDirectories();
+
+    const mediaHash = uuidv7();
+    const fileExtension = mimeType.split("/")[1];
+    const filePath = `${MEDIA_DIR}${mediaHash}.${fileExtension}`;
+
+    await FileSystem.copyAsync({
+        from: uri,
+        to: filePath,
+    });
+
+    const fileInfo = await FileSystem.getInfoAsync(filePath);
+    if (!fileInfo.exists) {
+        throw new Error("Failed to save media file");
+    }
+
+    let thumbnailPath: string | undefined;
+    if (options.generateThumbnail && mediaType === "video") {
+        // TODO For videos, we'll generate a thumbnail (use a library like react-native-video-thumbnails ?)
+        // thumbnailPath = `${THUMBNAILS_DIR}${mediaHash}.jpg`;
+    }
+
+    const metadata: MediaMetadata = {
+        sha256: mediaHash,
+        file_path: filePath,
+        mime_type: mimeType,
+        media_type: mediaType,
+        width: options.width,
+        height: options.height,
+        duration: options.duration,
+        size: fileInfo.size || 0,
+        thumbnail_path: thumbnailPath,
+    };
+
+    await drizzle_db.insert(media).values({
+        ...metadata,
+        media_type: mediaType as string, // Type assertion needed for database schema
+    });
+
+    return metadata;
+};
+
+export const getMediaBytes = async (
+    filePath: string
+): Promise<string | null> => {
+    try {
+        const base64Data = await FileSystem.readAsStringAsync(filePath, {
+            encoding: FileSystem.EncodingType.Base64,
+        });
+        return base64Data;
+    } catch (error) {
+        console.error("Failed to read media file:", error);
+        return null;
+    }
 };
 
 export const getMedia = async (
@@ -116,64 +183,6 @@ export const getMedia = async (
         size: result[0].size,
         thumbnail_path: result[0].thumbnail_path ?? undefined,
     };
-};
-
-export const getMediaUri = async (
-    mediaHash: string
-): Promise<string | null> => {
-    const metadata = await getMedia(mediaHash);
-    if (!metadata) return null;
-
-    const fileInfo = await FileSystem.getInfoAsync(metadata.file_path);
-    if (!fileInfo.exists) return null;
-
-    return metadata.file_path;
-};
-
-export const getThumbnailUri = async (
-    mediaHash: string
-): Promise<string | null> => {
-    const metadata = await getMedia(mediaHash);
-    if (!metadata?.thumbnail_path) return null;
-
-    const fileInfo = await FileSystem.getInfoAsync(metadata.thumbnail_path);
-    if (!fileInfo.exists) return null;
-
-    return metadata.thumbnail_path;
-};
-
-export const deleteMedia = async (mediaHash: string): Promise<void> => {
-    const metadata = await getMedia(mediaHash);
-    if (metadata) {
-        // Delete the main file
-        await FileSystem.deleteAsync(metadata.file_path, { idempotent: true });
-
-        // Delete thumbnail if it exists
-        if (metadata.thumbnail_path) {
-            await FileSystem.deleteAsync(metadata.thumbnail_path, {
-                idempotent: true,
-            });
-        }
-
-        // Delete from database
-        await drizzle_db.delete(media).where(eq(media.sha256, mediaHash));
-    }
-};
-
-export const cleanupUnusedMedia = async (): Promise<void> => {
-    // Get all media from database
-    const allMedia = await drizzle_db.select().from(media);
-
-    // Check each media file
-    for (const mediaItem of allMedia) {
-        const fileInfo = await FileSystem.getInfoAsync(mediaItem.file_path);
-        if (!fileInfo.exists) {
-            // File doesn't exist, remove from database
-            await drizzle_db
-                .delete(media)
-                .where(eq(media.sha256, mediaItem.sha256));
-        }
-    }
 };
 
 // Helper function to determine media type from mime type

@@ -20,7 +20,6 @@
 
 -   [ ] fix chat list ordering (see with @xsbfh for algorithm?)
 -   [ ] bio max 140chars
--   [ ] replace Pressable with TouchableOpacity where needed
 -   [ ] DID set (when contact sends profile) vs DID patch (when resolving? & when nab sends profiles)
 -   [ ] delete own avatar
 -   [ ] mark as unread
@@ -40,8 +39,7 @@
 
 ## In progress
 
--   [~] pipeline job to push to EAS Updates
--   [~] decouple image sending feature into 1/ render 2/ send
+-   [~] replace Pressable with TouchableOpacity where needed
 -   [~] drawing feature on camera w/ Skia
     -   [ ] allow user to change drawing colors
     -   [~] videos on ios are sideways
@@ -59,6 +57,8 @@
 
 ## Done
 
+-   [x] decouple image sending feature into 1/ render 2/ send
+-   [x] pipeline job to push to EAS Updates
 -   [x] correct join
     -   [x] remove sme from join action
     -   [x] generate prekey

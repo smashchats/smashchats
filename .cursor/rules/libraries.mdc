@@ -1,0 +1,13 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Libraries
+
+Several libraries are already installed in this project. Try using these libraries before suggesting installing a new one or using one that's not installed.
+
+- MaterialCommunityIcons
+- expo-audio instead of expo-av
+- Check [package.json](mdc:package.json) for other libraries

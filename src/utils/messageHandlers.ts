@@ -32,7 +32,10 @@ import {
 import { mapReceivedMessageToEnrichedMessage } from "@/src/utils/mappers/messages";
 import { SmashProfileToContactMapper } from "@/src/utils/mappers/contacts";
 import { EncapsulatedMessage } from "@/src/types/smash/lexicons";
-import { getMediaTypeFromMimeType, saveMedia } from "@/src/utils/MediaStorage";
+import {
+    getMediaTypeFromMimeType,
+    saveMediaFromBase64,
+} from "@/src/utils/MediaStorage";
 
 const SUPPORTED_MESSAGE_TYPES: reverseDNS[] = [
     IM_CHAT_TEXT,
@@ -131,7 +134,7 @@ export const mediaMessagesListener =
             const mediaType = getMediaTypeFromMimeType(mediaData.mimeType);
 
             // Save media to storage and database
-            const mediaMetadata = await saveMedia(
+            const mediaMetadata = await saveMediaFromBase64(
                 mediaData.content,
                 mediaData.mimeType,
                 mediaType,

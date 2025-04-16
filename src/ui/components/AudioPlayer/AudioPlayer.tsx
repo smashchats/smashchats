@@ -43,13 +43,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
     }, [status]);
 
     useEffect(() => {
-        (async () => {
-            await setAudioModeAsync({
-                playsInSilentMode: true,
-                allowsRecording: false,
-                interruptionMode: "doNotMix",
-            });
-        })();
+        (async () => {})();
     }, []);
 
     useEffect(() => {
@@ -74,6 +68,11 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
             dispatch({ type: "PAUSE_MEDIA_ACTION" });
             player.pause();
         } else {
+            await setAudioModeAsync({
+                playsInSilentMode: true,
+                allowsRecording: false,
+                interruptionMode: "doNotMix",
+            });
             dispatch({
                 type: "PLAY_MEDIA_ACTION",
                 payload: { id: sha256, uri },
