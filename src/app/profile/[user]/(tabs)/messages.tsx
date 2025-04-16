@@ -205,6 +205,9 @@ const ProfileMessages = forwardRef<
     };
 
     useEffect(() => {
+        if (!globalState.selfDid || !globalState.selfDid.id) {
+            return;
+        }
         const onDiscussionLoad_LoadMessages = async () => {
             const unread_count = await getUnreadMessagesCount(peerId);
             const needToLoadMoreThanDefaultThreshold =
@@ -240,15 +243,18 @@ const ProfileMessages = forwardRef<
 
             const enrichedMessages = addSystemMessages(
                 databaseMessages,
-                globalState.selfDid.id
+                globalState.selfDid?.id
             );
             setMessages(enrichedMessages);
             setOffset(newOffset);
         };
         onDiscussionLoad_LoadMessages();
-    }, [peerId, globalState.logger, dispatch, globalState.selfDid.id]);
+    }, [peerId, globalState.logger, dispatch, globalState.selfDid, globalState.selfDid?.id]);
 
     useEffect(() => {
+        if (!globalState.selfDid || !globalState.selfDid.id) {
+            return;
+        }
         markAllMessagesNotFromSelfInDiscussionAsRead(
             peerId,
             globalState.selfDid.id
@@ -261,7 +267,7 @@ const ProfileMessages = forwardRef<
                 `messages::useEffect::Marked all messages in discussion ${peerId} as read`
             );
         });
-    }, []);
+    }, [peerId, globalState.logger, globalState.selfSmashUser, globalState.selfDid, globalState.selfDid?.id]);
 
     const getterForMessages = () => {
         return messages;
