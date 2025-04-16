@@ -2,7 +2,11 @@ import { render } from "@testing-library/react-native";
 
 import { RenderMessageListItem } from "@/src/ui/fragments/MessagesList";
 import { DisplayableMessage } from "@/src/types/";
-import { IM_CHAT_TEXT, MessageStatus } from "@smashchats/library";
+import {
+    IM_CHAT_TEXT,
+    IM_MEDIA_EMBEDDED,
+    MessageStatus,
+} from "@smashchats/library";
 
 jest.mock("drizzle-orm/expo-sqlite", () => ({
     useLiveQuery: () => ({
@@ -26,6 +30,21 @@ jest.mock("drizzle-orm/expo-sqlite", () => ({
         }
         return new Db();
     }),
+}));
+
+jest.mock("expo-audio", () => ({
+    useAudioPlayer: jest.fn(() => ({
+        play: jest.fn(),
+        pause: jest.fn(),
+    })),
+    useAudioPlayerStatus: jest.fn(() => ({
+        isLoaded: true,
+        playing: false,
+        didJustFinish: false,
+        currentTime: 0,
+        duration: 100,
+    })),
+    setAudioModeAsync: jest.fn(),
 }));
 
 describe("RenderMessageListItem", () => {

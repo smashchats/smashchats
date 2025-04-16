@@ -9,7 +9,7 @@ import {
     ProfileMessagesScreenUnreadMessages,
     ProfileMessagesScreenMedia,
 } from "@/src/ui/components/ProfileMessagesScreen";
-import { DisplayableMessage } from "@/src/types/";
+import { DisplayableMediaMessage, DisplayableMessage } from "@/src/types/";
 
 // SUPPORT FOR NEW MESSAGE TYPES SHOULD BE ADDED HERE
 export const RenderMessageListItem = ({
@@ -35,7 +35,7 @@ export const RenderMessageListItem = ({
         case IM_MEDIA_EMBEDDED:
             return (
                 <ProfileMessagesScreenMedia
-                    message={message as unknown as DisplayableMessage}
+                    message={message as unknown as DisplayableMediaMessage}
                 />
             );
         default:

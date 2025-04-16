@@ -130,6 +130,8 @@ export interface SmashDID {
 
 Follow this guide: https://docs.expo.dev/guides/local-app-production
 
+Update version in `app.json`. Run `npx expo prebuild` to update native files to include the newly set version. Build as described below.
+
 ### Releasing for Android
 
 ```bash
