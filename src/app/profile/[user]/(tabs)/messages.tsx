@@ -205,7 +205,7 @@ const ProfileMessages = forwardRef<
     };
 
     useEffect(() => {
-        if (!globalState.selfDid || !globalState.selfDid.id) {
+        if (!globalState.selfDid?.id) {
             return;
         }
         const onDiscussionLoad_LoadMessages = async () => {
@@ -252,7 +252,7 @@ const ProfileMessages = forwardRef<
     }, [peerId, globalState.logger, dispatch, globalState.selfDid, globalState.selfDid?.id]);
 
     useEffect(() => {
-        if (!globalState.selfDid || !globalState.selfDid.id) {
+        if (!globalState.selfDid?.id) {
             return;
         }
         markAllMessagesNotFromSelfInDiscussionAsRead(

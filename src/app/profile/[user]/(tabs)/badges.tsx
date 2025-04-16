@@ -9,6 +9,7 @@ import {
 import { useLocalSearchParams } from "expo-router";
 import Animated from "react-native-reanimated";
 import { MaterialIcons } from "@expo/vector-icons";
+import { SheetManager } from "react-native-actions-sheet";
 
 import { badgeData, interests, unitPreferences } from "@/data/badges";
 
@@ -17,11 +18,70 @@ import { Text } from "@/src/ui/design-system/Text";
 import { Badge } from "@/src/ui/components/Badge";
 import { CategoryKey, categories } from "@/src/types/smash/badge.categories";
 import { getCategories } from "@/src/utils/BadgeUtils";
-import { SheetManager } from "react-native-actions-sheet";
+import { HStack } from "@/src/ui/design-system/layout";
+
+const NeighbourhoodCategoriesAndBadges = ({
+    neighbourhood,
+    handleOpenBadgeDetailsSheet,
+}: {
+    neighbourhood: (typeof badgeData)[number];
+    handleOpenBadgeDetailsSheet: (
+        badge: (typeof badgeData)[number]["badges"][number]
+    ) => void;
+}) => {
+    return (
+        <>
+            <Text fontSize={22} marginBottom={16}>
+                {neighbourhood.domain}
+            </Text>
+            {getCategories(neighbourhood.badges).map((key: CategoryKey) => (
+                <View key={key} style={{ marginBottom: 16 }}>
+                    <Text
+                        fontSize={16}
+                        textTransform="lowercase"
+                        marginBottom={8}
+                    >
+                        {categories[key].title}
+                    </Text>
+                    <View style={styles.badgeContainer}>
+                        {neighbourhood.badges
+                            .filter((badge) => badge.category === key)
+                            .map((badge) => (
+                                <TouchableOpacity
+                                    activeOpacity={0.8}
+                                    key={badge.id}
+                                    onPress={() =>
+                                        handleOpenBadgeDetailsSheet(badge)
+                                    }
+                                >
+                                    <Badge
+                                        badge={badge}
+                                        unitPreferences={unitPreferences}
+                                        interests={interests}
+                                    />
+                                </TouchableOpacity>
+                            ))}
+                    </View>
+                </View>
+            ))}
+        </>
+    );
+};
 
 export const ProfileBadges = forwardRef<Animated.ScrollView, ScrollViewProps>(
     function ProfileBadges(props, ref) {
         const { user: profileId } = useLocalSearchParams();
+
+        const handleOpenBadgeDetailsSheet = (
+            badge: (typeof badgeData)[number]["badges"][number]
+        ) => {
+            SheetManager.show("badge-details-sheet", {
+                payload: {
+                    badge,
+                    profileId: profileId as string,
+                },
+            });
+        };
 
         return (
             <Animated.ScrollView
@@ -31,68 +91,20 @@ export const ProfileBadges = forwardRef<Animated.ScrollView, ScrollViewProps>(
                 {...props}
             >
                 <View style={{ paddingTop: 16 }}>
-                    {badgeData.map((item) => (
+                    {badgeData.map((neighbourhood) => (
                         <View
-                            key={item.domain}
+                            key={neighbourhood.domain}
                             style={{
                                 paddingHorizontal: 30,
                                 marginBottom: 16,
                             }}
                         >
-                            <Text fontSize={22} marginBottom={16}>
-                                {item.domain}
-                            </Text>
-                            {getCategories(item.badges).map(
-                                (key: CategoryKey) => (
-                                    <View
-                                        key={key}
-                                        style={{ marginBottom: 16 }}
-                                    >
-                                        <Text
-                                            fontSize={16}
-                                            textTransform="lowercase"
-                                            marginBottom={8}
-                                        >
-                                            {categories[key].title}
-                                        </Text>
-                                        <View style={styles.badgeContainer}>
-                                            {item.badges
-                                                .filter(
-                                                    (badge) =>
-                                                        badge.category === key
-                                                )
-                                                .map((badge) => (
-                                                    <TouchableOpacity
-                                                        activeOpacity={0.8}
-                                                        key={badge.id}
-                                                        onPress={() =>
-                                                            SheetManager.show(
-                                                                "badge-details-sheet",
-                                                                {
-                                                                    payload: {
-                                                                        badge,
-                                                                        profileId:
-                                                                            profileId as string,
-                                                                    },
-                                                                }
-                                                            )
-                                                        }
-                                                    >
-                                                        <Badge
-                                                            badge={badge}
-                                                            unitPreferences={
-                                                                unitPreferences
-                                                            }
-                                                            interests={
-                                                                interests
-                                                            }
-                                                        />
-                                                    </TouchableOpacity>
-                                                ))}
-                                        </View>
-                                    </View>
-                                )
-                            )}
+                            <NeighbourhoodCategoriesAndBadges
+                                neighbourhood={neighbourhood}
+                                handleOpenBadgeDetailsSheet={
+                                    handleOpenBadgeDetailsSheet
+                                }
+                            />
                         </View>
                     ))}
                 </View>
@@ -105,15 +117,22 @@ export const ProfileBadges = forwardRef<Animated.ScrollView, ScrollViewProps>(
                     >
                         tap on a badge to see more
                     </Text>
-                    <Text
-                        fontSize={11}
-                        textTransform="lowercase"
-                        color={Colors.textLightGray}
-                    >
-                        <MaterialIcons name="verified" size={16} /> badges with
-                        this icon are signed by an authority you marked as
-                        trusted.
-                    </Text>
+                    <HStack alignItems="center">
+                        <MaterialIcons
+                            name="verified"
+                            size={16}
+                            color={Colors.textLightGray}
+                        />
+                        <Text
+                            marginLeft={4}
+                            fontSize={11}
+                            textTransform="lowercase"
+                            color={Colors.textLightGray}
+                        >
+                            badges with this icon are signed by an authority you
+                            marked as trusted
+                        </Text>
+                    </HStack>
                 </View>
             </Animated.ScrollView>
         );

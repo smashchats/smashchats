@@ -80,11 +80,9 @@ const BadgeDetailsSheet = (
                     </Text>
                 )}
 
-                {true && (
-                    <Text fontSize={16} marginBottom={16} color="black">
-                        Delivered by: 'Smash Corp.'
-                    </Text>
-                )}
+                <Text fontSize={16} marginBottom={16} color="black">
+                    Delivered by: 'Smash Corp.'
+                </Text>
 
                 {props.payload?.badge.verified && (
                     <MaterialIcons name="verified" size={16} color={"gold"} />
