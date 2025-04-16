@@ -92,25 +92,6 @@ function ProfileDetailsSheet({
                             Trusted as: {peer.trusted_name}
                         </Text>
                         <Button title="Untrust" onPress={handleUntrust} />
-                        <TextInput
-                            ref={notesInputRef}
-                            style={{
-                                borderWidth: 1,
-                                borderColor: "#ccc",
-                                borderRadius: 5,
-                                padding: 10,
-                                marginTop: 10,
-                                minHeight: 100,
-                                textAlignVertical: "top",
-                            }}
-                            multiline
-                            returnKeyType="done"
-                            placeholder="Add notes about this contact..."
-                            value={notes}
-                            onChangeText={(text) => setNotes(text)}
-                            onBlur={handleNotesBlur}
-                            onKeyPress={handleKeyPress}
-                        />
                     </>
                 ) : (
                     <Button
@@ -130,6 +111,25 @@ function ProfileDetailsSheet({
                         }}
                     />
                 )}
+                <TextInput
+                    ref={notesInputRef}
+                    style={{
+                        borderWidth: 1,
+                        borderColor: "#ccc",
+                        borderRadius: 5,
+                        padding: 10,
+                        marginTop: 10,
+                        minHeight: 100,
+                        textAlignVertical: "top",
+                    }}
+                    multiline
+                    returnKeyType="done"
+                    placeholder="Add notes about this contact..."
+                    value={notes}
+                    onChangeText={(text) => setNotes(text)}
+                    onBlur={handleNotesBlur}
+                    onKeyPress={handleKeyPress}
+                />
             </View>
         </ActionSheet>
     );

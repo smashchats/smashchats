@@ -330,10 +330,17 @@ const ProfileMessages = forwardRef<
                     discussionId: peerId,
                     messageId: message.sha256,
                 });
-                if (message.type === IM_MEDIA_EMBEDDED) {
+                if (
+                    message.type === IM_MEDIA_EMBEDDED &&
+                    (message as IMMediaEmbeddedMessage).data.mimeType.split(
+                        "/"
+                    )[0] !== "audio"
+                ) {
                     dispatch({
                         type: "ADD_SHOWN_MEDIA_IN_GALLERY_ACTION",
-                        uri: "data:image/png;base64," + (message as IMMediaEmbeddedMessage).data.content,
+                        uri:
+                            "data:image/png;base64," +
+                            (message as IMMediaEmbeddedMessage).data.content,
                     });
                 }
 
@@ -344,7 +351,8 @@ const ProfileMessages = forwardRef<
                 // TODO: find file URI for media messages instead of using base64
                 const displayable_data =
                     message.type === IM_MEDIA_EMBEDDED
-                        ? "data:image/png;base64," + (message as IMMediaEmbeddedMessage).data.content
+                        ? "data:image/png;base64," +
+                          (message as IMMediaEmbeddedMessage).data.content
                         : message.data;
 
                 appendMessage({

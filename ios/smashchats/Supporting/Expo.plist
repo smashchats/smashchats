@@ -4,11 +4,40 @@
   <dict>
     <key>EXUpdatesCheckOnLaunch</key>
     <string>ALWAYS</string>
+    <key>EXUpdatesCodeSigningCertificate</key>
+    <string>-----BEGIN CERTIFICATE-----&#xD;
+MIIC3TCCAcWgAwIBAgIJZdAaecnkiMi3MA0GCSqGSIb3DQEBCwUAMBgxFjAUBgNV&#xD;
+BAMTDVVuc3RhdGljIExhYnMwHhcNMjUwMjAzMTcxNDAzWhcNNDUwMjAzMTcxNDAz&#xD;
+WjAYMRYwFAYDVQQDEw1VbnN0YXRpYyBMYWJzMIIBIjANBgkqhkiG9w0BAQEFAAOC&#xD;
+AQ8AMIIBCgKCAQEAnmQ2l8SghpHEKItGIdd8NQLT41keROABH8iovvTOyjacNXJ7&#xD;
+Pe5vbnQp2C8H7eugk28e3hidV4J8b5ccFenBExku5KNwLMeR0AYn2zR/pU0+m3ma&#xD;
+csDXJ4jTirehQkKoebCnDZEb5iUUN/Hg6644JHXNp1L7AxPMJ9J5SdJ/KmPgaWYT&#xD;
+N5RA7Yqc3J3nK8RSdMkY80dK0yq2T910nX6KvOeEw49D9l6q0Zd9AzfKPOZNffSN&#xD;
+vcOPZrdKmpK++a2DgAwCrQz7sjwAA0EdU9SJvhgC5PP16PPL1EPjyMO1lagVMWiq&#xD;
+NBiz2ToONYv0LDTuW0hpIf1MjE2OofOioQX1VQIDAQABoyowKDAOBgNVHQ8BAf8E&#xD;
+BAMCB4AwFgYDVR0lAQH/BAwwCgYIKwYBBQUHAwMwDQYJKoZIhvcNAQELBQADggEB&#xD;
+AEuzaV2fiiDlX6JyAI7f297Dc9Criv3LaoY7IZgkIVYaPQonncUziHFm+YESJn+s&#xD;
+4lQzJAn5NYe8zS68oJgE7GHJHRswu59gCDfvB59MtpEIv4WjfI3UigjbBd+89qqi&#xD;
+D3uTK7R328BjwhTsMuaH089iyoqyAKS+Ym3W+ch+DoYullCZGYO4oR0bUvBCEOYQ&#xD;
+BeedMwW8StDGtnbBMpWpJwd2TQk64lXINuGPZI07cy8u+LDs6sWjsQaX6nDEevpn&#xD;
+JqJ1tl6Fn4J5NKwtvFbd3Z+D3wWPzxJ4lsrX7gANYQE2nfsZTXjWzd9qhEGmPNe3&#xD;
+RhRzvvrBAEHlqiIEewI1Mw0=&#xD;
+-----END CERTIFICATE-----&#xD;
+</string>
+    <key>EXUpdatesCodeSigningMetadata</key>
+    <dict>
+      <key>keyid</key>
+      <string>main</string>
+      <key>alg</key>
+      <string>rsa-v1_5-sha256</string>
+    </dict>
     <key>EXUpdatesEnabled</key>
-    <false/>
+    <true/>
     <key>EXUpdatesLaunchWaitMs</key>
     <integer>0</integer>
     <key>EXUpdatesRuntimeVersion</key>
     <string>1.3.1</string>
+    <key>EXUpdatesURL</key>
+    <string>https://updates.smashchats.com/api/manifest</string>
   </dict>
 </plist>

@@ -17,18 +17,20 @@ import {
 } from "@/src/context/ChatListContext.js";
 import { PROFILE_KEY, saveObject } from "@/src/utils/StorageUtils";
 
+// Types & Interfaces
 export interface Settings {
     telemetryEnabled: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
-    telemetryEnabled: false, // opt-in, so default is false
+    telemetryEnabled: false,
 };
 
 export interface GlobalActionBase {
     type: `${string}_ACTION`;
 }
 
+// Action Interfaces
 export interface LatestMessageIdInDiscussionAction extends GlobalActionBase {
     type: "LATEST_MESSAGE_ID_IN_DISCUSSION_ACTION";
     discussionId: string;
@@ -94,6 +96,7 @@ export type Action =
     | SetShownMediaInGalleryAction
     | AddShownMediaInGalleryAction;
 
+// Global State Interface
 export type GlobalParams = {
     chatList: ChatListParams;
     latestMessageIdInDiscussion: Record<string, sha256>;
@@ -106,6 +109,7 @@ export type GlobalParams = {
     shownMediaInGallery: string[];
 };
 
+// Initial State
 export const INITIAL_GLOBAL_STATE: GlobalParams = {
     chatList: INITIAL_CHAT_LIST_STATE,
     latestMessageIdInDiscussion: {},
@@ -122,11 +126,13 @@ export const INITIAL_GLOBAL_STATE: GlobalParams = {
     shownMediaInGallery: [],
 };
 
+// Context Types
 type GlobalContextType = [
     state: GlobalParams,
     dispatch: React.Dispatch<Action>
 ];
 
+// Context Creation
 const GlobalContext = React.createContext<GlobalContextType>([
     INITIAL_GLOBAL_STATE,
     {} as React.Dispatch<Action>,
@@ -137,6 +143,7 @@ const GlobalDispatchContext = createContext<React.Dispatch<Action>>(
     {} as React.Dispatch<Action>
 );
 
+// Root Reducer
 export const rootReducer = (
     state: GlobalParams,
     action: Action
@@ -163,6 +170,7 @@ export const rootReducer = (
     };
 };
 
+// Individual Reducers
 export function appWorkflowReducer(
     appWorkflow: AppWorkflow,
     action: SetAppWorkflowAction | Action
@@ -171,45 +179,21 @@ export function appWorkflowReducer(
         return appWorkflow;
     }
 
-    // Validate state transitions
-    switch (appWorkflow) {
-        case "LOADING":
-            // From LOADING, can only go to CONNECTING or REGISTERING
-            if (
-                action.appWorkflow === "CONNECTING" ||
-                action.appWorkflow === "REGISTERING"
-            ) {
-                return action.appWorkflow;
-            }
-            break;
+    const validTransitions: Record<AppWorkflow, AppWorkflow[]> = {
+        LOADING: ["CONNECTING", "REGISTERING"],
+        REGISTERING: ["REGISTERED"],
+        CONNECTING: ["CONNECTED"],
+        REGISTERED: ["CONNECTED"],
+        CONNECTED: ["CONNECTING"],
+    };
 
-        case "REGISTERING":
-            // From REGISTERING, can only go to REGISTERED
-            if (action.appWorkflow === "REGISTERED") {
-                return action.appWorkflow;
-            }
-            break;
-
-        case "CONNECTING":
-        // From CONNECTING, can only go to CONNECTED
-        case "REGISTERED":
-            // From REGISTERED, can only go to CONNECTED
-            if (action.appWorkflow === "CONNECTED") {
-                return action.appWorkflow;
-            }
-            break;
-
-        case "CONNECTED":
-            // From CONNECTED, can only go back to CONNECTING
-            if (action.appWorkflow === "CONNECTING") {
-                return action.appWorkflow;
-            }
-            break;
-    }
-    // If transition is not allowed, return current state
-    return appWorkflow;
+    const allowedTransitions = validTransitions[appWorkflow];
+    return allowedTransitions?.includes(action.appWorkflow)
+        ? action.appWorkflow
+        : appWorkflow;
 }
 
+// Context Provider Component
 export const GlobalProvider: React.FC<{
     children: React.ReactNode;
     initialState?: Partial<GlobalParams>;
@@ -219,6 +203,7 @@ export const GlobalProvider: React.FC<{
         ...initialState,
     });
 
+    // Persist settings and user meta changes
     React.useEffect(() => {
         if (state.settings) {
             saveObject("settings.settings", state.settings);
@@ -240,6 +225,7 @@ export const GlobalProvider: React.FC<{
     );
 };
 
+// Custom Hooks
 export function useGlobalState() {
     const context = useContext(GlobalStateContext);
     if (context === undefined) {
@@ -262,6 +248,7 @@ export const GlobalConsumer = GlobalContext.Consumer;
 
 export default GlobalContext;
 
+// Reducer Functions
 function latestMessageIdInDiscussionReducer(
     latestMessageIdInDiscussion: Record<string, sha256>,
     action: LatestMessageIdInDiscussionAction | Action
@@ -304,6 +291,7 @@ function selfSmashUserReducer(
     }
     return action.user;
 }
+
 export function selfDidReducer(
     selfDid: DIDDocument,
     action: Action
@@ -311,17 +299,16 @@ export function selfDidReducer(
     if (action.type !== "SET_SELF_DID_ACTION") {
         return selfDid;
     }
-    if (!action.selfDid) {
-        return selfDid;
-    }
-    return action.selfDid;
+    return action.selfDid ?? selfDid;
 }
+
 function loggerReducer(logger: Logger, action: Action): Logger {
     if (action.type !== "SET_LOGGER_ACTION") {
         return logger;
     }
     return action.logger;
 }
+
 function shownMediaInGalleryReducer(
     shownMediaInGallery: string[],
     action: Action
@@ -331,6 +318,7 @@ function shownMediaInGalleryReducer(
             return [...action.uris];
         case "ADD_SHOWN_MEDIA_IN_GALLERY_ACTION":
             return [...shownMediaInGallery, action.uri];
+        default:
+            return shownMediaInGallery;
     }
-    return shownMediaInGallery;
 }

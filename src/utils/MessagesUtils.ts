@@ -70,6 +70,7 @@ export const mapMessageToDisplayableMessage = (
         ...message,
         date: getMessageDate(message),
         content,
+        media: message.media,
         from: message.from_did_id,
         fromMe: message.from_did_id === selfDidString,
     };

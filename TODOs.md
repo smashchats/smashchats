@@ -32,6 +32,8 @@
 -   [ ] when enabling selection mode, ChatItem content should move animatedly away from the selection marker
 -   [ ] media organizer à la stash
 -   [ ] display version (.expo.runtimeVersion) somewhere + Updates.manifest version
+-   [ ] filter out audio messages from `getAllMediaInDiscussion` or create other specific methods.
+-   [ ] make sure gallery can display videos when they'll be supported
 
 ## In progress
 
