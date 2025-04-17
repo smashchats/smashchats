@@ -109,6 +109,7 @@ export const useAudioRecorder = ({
     };
 
     return {
+        audioRecorder,
         isRecording,
         recordingDuration,
         startRecording,

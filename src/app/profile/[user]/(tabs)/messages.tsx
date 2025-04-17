@@ -155,7 +155,7 @@ const ProfileMessages = forwardRef<
         try {
             await saveMessageFromSelfToLocalDb(
                 message,
-                globalState.selfDid.id as DIDString,
+                globalState.selfDid.id,
                 peerId as DIDString,
                 mediaMetadata
             );
