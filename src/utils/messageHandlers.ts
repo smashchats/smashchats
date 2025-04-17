@@ -1,3 +1,5 @@
+import * as ImagePicker from "expo-image-picker";
+
 import {
     DIDString,
     IM_CHAT_TEXT,
@@ -18,6 +20,11 @@ import {
     IM_MEDIA_EMBEDDED,
     reverseDNS,
     IMMediaEmbeddedMessage,
+    IMMediaEmbedded,
+    IMText,
+    encapsulateMessage,
+    ISO8601,
+    undefinedString,
 } from "@smashchats/library";
 
 import {
@@ -28,6 +35,7 @@ import {
     saveContactToDb,
     updateContact,
     ContactInsert,
+    markContactAsActive,
 } from "@/src/db/models/Contacts";
 import { mapReceivedMessageToEnrichedMessage } from "@/src/utils/mappers/messages";
 import { SmashProfileToContactMapper } from "@/src/utils/mappers/contacts";
@@ -35,7 +43,10 @@ import { EncapsulatedMessage } from "@/src/types/smash/lexicons";
 import {
     getMediaTypeFromMimeType,
     saveMediaFromBase64,
+    MediaMetadata,
+    getMediaBytes,
 } from "@/src/utils/MediaStorage";
+import { EnrichedSmashMessage } from "@/src/types/";
 
 const SUPPORTED_MESSAGE_TYPES: reverseDNS[] = [
     IM_CHAT_TEXT,
@@ -208,4 +219,119 @@ export const handleUserMessages = async (user: SmashUser, logger: Logger) => {
     return () => {
         unsubscribes.forEach((unsubscribe) => unsubscribe());
     };
+};
+
+export const createTextMessage = async (
+    content: string,
+    lastMessageId: sha256 | undefinedString
+): Promise<IMProtoMessage> => {
+    const message = await encapsulateMessage(
+        new IMText(content, lastMessageId)
+    );
+    message.type = IM_CHAT_TEXT;
+    return message;
+};
+
+export const createMediaMessage = async (
+    asset: ImagePicker.ImagePickerAsset,
+    mediaType: "image" | "video" | "audio",
+    lastMessageId: sha256 | undefinedString
+): Promise<{ message: IMProtoMessage; metadata: MediaMetadata }> => {
+    const mediaMetadata = await saveMediaFromBase64(
+        asset.base64!,
+        asset.mimeType!,
+        mediaType,
+        {
+            width: asset.width,
+            height: asset.height,
+            duration: asset.duration ?? undefined,
+            generateThumbnail: mediaType === "video" || mediaType === "image",
+        }
+    );
+
+    const message = IMMediaEmbedded.fromBase64(asset.base64!, asset.mimeType!);
+    message.after = lastMessageId;
+
+    const messageWithMetadata = {
+        ...message,
+        sha256: mediaMetadata.sha256 as sha256,
+        timestamp: new Date().toISOString() as ISO8601,
+    };
+
+    return { message: messageWithMetadata, metadata: mediaMetadata };
+};
+
+export const getMessageData = (
+    message: IMProtoMessage,
+    mediaMetadata?: MediaMetadata
+): { db_data: string; displayable_data: string } => {
+    switch (message.type) {
+        case IM_CHAT_TEXT:
+            return {
+                db_data: message.data as string,
+                displayable_data: message.data as string,
+            };
+        case IM_MEDIA_EMBEDDED:
+            return {
+                db_data: "",
+                displayable_data: mediaMetadata?.file_path ?? "",
+            };
+        default:
+            throw new Error(`Unknown message type: ${message.type}`);
+    }
+};
+
+export const saveMessageFromSelfToLocalDb = async (
+    message: IMProtoMessage,
+    selfDid: DIDString,
+    toDiscussionId: DIDString,
+    mediaMetadata?: MediaMetadata
+): Promise<void> => {
+    const { db_data } = getMessageData(message, mediaMetadata);
+
+    const msg = {
+        fromDid: selfDid,
+        toDiscussionId,
+        data: db_data,
+        sha256: message.sha256 as sha256,
+        timestamp: message.timestamp!,
+        type: message.type,
+        after: message.after as sha256,
+    } satisfies EnrichedSmashMessage;
+
+    await saveMessageToDb(msg, {
+        date_read: new Date(),
+    });
+};
+
+export const sendAudioMessage = async (
+    audioMetadata: MediaMetadata,
+    lastMessageId: sha256 | undefinedString,
+    toDiscussionId: DIDString,
+    sendMessage: (message: IMProtoMessage) => Promise<void>
+): Promise<void> => {
+    try {
+        const mediaBytes = await getMediaBytes(audioMetadata.file_path);
+        if (!mediaBytes) {
+            throw new Error("Failed to get media bytes");
+        }
+
+        const message = IMMediaEmbedded.fromBase64(
+            mediaBytes,
+            audioMetadata.mime_type
+        );
+
+        const messageWithMetadata = {
+            ...message,
+            after: lastMessageId,
+            sha256: audioMetadata.sha256 as sha256,
+            timestamp: new Date().toISOString() as ISO8601,
+        };
+
+        await sendMessage(messageWithMetadata);
+        await markContactAsActive(toDiscussionId);
+    } catch (error) {
+        console.error("Error sending audio message:", error);
+        throw error;
+    }
 };
