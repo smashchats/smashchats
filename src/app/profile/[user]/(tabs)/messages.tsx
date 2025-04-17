@@ -4,16 +4,13 @@ import React, {
     memo,
     useCallback,
     useEffect,
-    useRef,
     useState,
 } from "react";
 import {
     FlatList,
     Insets,
     ListRenderItem,
-    TouchableOpacity,
     StyleProp,
-    TextInput,
     StyleSheet,
     View,
     ViewStyle,
@@ -21,7 +18,6 @@ import {
     NativeScrollEvent,
     LayoutChangeEvent,
     Alert,
-    Pressable,
 } from "react-native";
 
 import { useLocalSearchParams } from "expo-router";
@@ -724,95 +720,21 @@ const ProfileMessages = forwardRef<
                 onEndReached={() => loadMoreMessages()}
                 onEndReachedThreshold={10}
             />
-            <Pressable onPress={() => inputFieldRef.current?.focus()}>
-                <Box
-                    backgroundColor={Colors.background}
-                    h={footerHeight + insets.bottom + 900}
-                    bottom={-insets.bottom + 30}
-                    width={"102%"}
-                    marginBottom={-900}
-                    left={"-1%"}
-                    position="relative"
-                    borderColor={Colors.darkGray}
-                    borderBottomWidth={0}
-                    borderWidth={3}
-                    borderRadius={20}
-                >
-                    <TextInput
-                        ref={inputFieldRef}
-                        placeholder="Share something..."
-                        returnKeyType="send"
-                        placeholderTextColor={Colors.textGray}
-                        value={newMessage}
-                        onChangeText={setNewMessage}
-                        onBlur={() => {
-                            if (newMessage.trim().length > 0) {
-                                dispatch({
-                                    type: "CHAT_LIST_DRAFT_ACTION",
-                                    draft: newMessage,
-                                    did_id: peerId,
-                                });
-                            } else {
-                                dispatch({
-                                    type: "CHAT_LIST_DRAFT_CLEAR_ACTION",
-                                    did_id: peerId,
-                                });
-                            }
-                        }}
-                        onSubmitEditing={handleSendMessage}
-                        style={styles.messageInput}
-                        onFocus={() => props.onCollapse()}
-                    />
 
-                    <TouchableOpacity
-                        style={styles.attachmentButton}
-                        onPress={handleSendMedia}
-                    >
-                        <MaterialCommunityIcons
-                            name="paperclip"
-                            size={24}
-                            color={Colors.textWhite}
-                        />
-                    </TouchableOpacity>
-
-                    {shouldShowSendIcon ? (
-                        <TouchableOpacity
-                            style={styles.sendButton}
-                            onPress={handleSendMessage}
-                        >
-                            <MaterialCommunityIcons
-                                name="chevron-right"
-                                size={24}
-                                color={Colors.textWhite}
-                            />
-                        </TouchableOpacity>
-                    ) : (
-                        <View style={styles.recordingContainer}>
-                            {isRecording && (
-                                <View style={styles.recordingDurationContainer}>
-                                    <Text
-                                        color={Colors.textWhite}
-                                        fontSize={12}
-                                    >
-                                        {formatDuration(recordingDuration)}
-                                    </Text>
-                                </View>
-                            )}
-                            <TouchableOpacity
-                                onPressIn={startRecording}
-                                onPressOut={stopRecording}
-                                style={styles.microphoneButton}
-                            >
-                                <MaterialCommunityIcons
-                                    name="microphone"
-                                    size={24}
-                                    color={Colors.textWhite}
-                                />
-                            </TouchableOpacity>
-                        </View>
-                    )}
-                </Box>
-            </Pressable>
+            <MessageInput
+                newMessage={newMessage}
+                setNewMessage={setNewMessage}
+                onSendMessage={handleSendMessage}
+                onSendMedia={handleSendMedia}
+                onCollapse={props.onCollapse}
+                isRecording={isRecording}
+                recordingDuration={recordingDuration}
+                onStartRecording={startRecording}
+                onStopRecording={stopRecording}
+                shouldShowSendIcon={shouldShowSendIcon}
+                footerHeight={footerHeight}
+                insets={insets}
+            />
         </Box>
     );
 });
@@ -821,56 +743,6 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: Colors.background,
         flex: 1,
-    },
-    messageContainer: {
-        padding: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: "#eee",
-    },
-    messageText: {
-        fontSize: 16,
-    },
-    timestamp: {
-        fontSize: 12,
-        color: "#666",
-        marginTop: 4,
-    },
-    messageInput: {
-        color: "white",
-        padding: 12,
-        marginRight: 60,
-        marginLeft: 60,
-        marginTop: 5,
-        borderRadius: 20,
-        borderWidth: 1,
-        borderColor: Colors.darkGray,
-    },
-    attachmentButton: {
-        position: "absolute",
-        padding: 14,
-    },
-    sendButton: {
-        position: "absolute",
-        right: 0,
-        padding: 14,
-    },
-    recordingContainer: {
-        position: "absolute",
-        right: 0,
-        top: 0,
-    },
-    recordingDurationContainer: {
-        position: "absolute",
-        top: -40,
-        right: 12,
-        backgroundColor: Colors.darkGray,
-        padding: 8,
-        borderRadius: 12,
-        minWidth: 60,
-        alignItems: "center",
-    },
-    microphoneButton: {
-        padding: 14,
     },
 });
 

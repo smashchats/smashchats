@@ -1,4 +1,4 @@
-import { formatDuration } from "../TimeUtils";
+import { formatDuration } from "@/src/utils/TimeUtils";
 
 describe("TimeUtils", () => {
     describe("formatDuration", () => {

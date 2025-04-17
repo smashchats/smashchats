@@ -12,14 +12,15 @@ index 0a1ce42..9d728b0 100644
          ...auth.encryptionAlgorithm,
          iv: new Uint8Array(ivBuffer),
 diff --git a/node_modules/@smashchats/library/dist/src/core/messaging/peer/SmashPeerEndpoint.js b/node_modules/@smashchats/library/dist/src/core/messaging/peer/SmashPeerEndpoint.js
-index e5ccb10..ba4d83e 100644
+index e5ccb10..2c0107e 100644
 --- a/node_modules/@smashchats/library/dist/src/core/messaging/peer/SmashPeerEndpoint.js
 +++ b/node_modules/@smashchats/library/dist/src/core/messaging/peer/SmashPeerEndpoint.js
-@@ -138,6 +138,7 @@ export class SmashPeerEndpoint {
+@@ -137,7 +137,7 @@ export class SmashPeerEndpoint {
+         }
      }
      async handleFlushError(error) {
-         this.logger.error(`Failed to flush messages to ${this.config.url}: ${error.message}`);
-+        globalThis.console.error(error);
+-        this.logger.error(`Failed to flush messages to ${this.config.url}: ${error.message}`);
++        this.logger.error(`Failed to flush messages to ${this.config.url}: ${typeof error === 'object' ? error.message : error}`);
          this.logger.info(`Resetting session: ${this.session?.id}`);
          this.session = undefined;
          throw error;

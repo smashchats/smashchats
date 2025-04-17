@@ -1,3 +1,3 @@
-import { IMEncapsulatedMessage } from "@smashchats/library";
+import { EncapsulatedIMProtoMessage } from "@smashchats/library";
 
-export type EncapsulatedMessage<T> = IMEncapsulatedMessage & T;
+export type EncapsulatedMessage<T> = EncapsulatedIMProtoMessage & T;
