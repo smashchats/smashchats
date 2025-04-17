@@ -8,20 +8,27 @@ import { Colors } from "@/src/constants/Colors.js";
 import { Box } from "@/src/ui/design-system/layout";
 import Animated from "react-native-reanimated";
 import { SCREEN_HEIGHT } from "@/src/ui/constants";
-import { getAllMediaInDiscussion } from "@/src/db/models/Media";
+import { getAllVisualMediaInDiscussion } from "@/src/db/models/Media";
 import { Text } from "@/src/ui/design-system/Text";
+import { GalleryMediaItem } from "@/src/app/gallery";
 
 export const ProfilePictures = forwardRef<Animated.ScrollView, ScrollViewProps>(
     function ProfilePictures(props, ref) {
         const { user: discussionId } = useLocalSearchParams();
-        const [images, setImages] = useState<string[]>([]);
+        const [images, setImages] = useState<GalleryMediaItem[]>([]);
 
         useEffect(() => {
             const fetchData = async () => {
                 setImages(
-                    (await getAllMediaInDiscussion(discussionId as string)).map(
-                        (d) => d.file_path
-                    )
+                    (
+                        await getAllVisualMediaInDiscussion(
+                            discussionId as string
+                        )
+                    ).map((d) => ({
+                        uri: d.file_path,
+                        type: d.media_type as "image" | "video",
+                        id: d.sha256,
+                    }))
                 );
             };
             fetchData();
@@ -43,7 +50,7 @@ export const ProfilePictures = forwardRef<Animated.ScrollView, ScrollViewProps>(
                         >
                             {images.map((p) => (
                                 <TouchableOpacity
-                                    key={p}
+                                    key={p.id}
                                     style={{
                                         width: "33.3333%",
                                         height: 120,
@@ -51,7 +58,7 @@ export const ProfilePictures = forwardRef<Animated.ScrollView, ScrollViewProps>(
                                     }}
                                     onPress={() => {
                                         router.push(
-                                            `/gallery?activePhotoUri=${p}`
+                                            `/gallery?activePhotoUri=${p.uri}&mediaType=${p.type}`
                                         );
                                     }}
                                 >
@@ -67,7 +74,7 @@ export const ProfilePictures = forwardRef<Animated.ScrollView, ScrollViewProps>(
                                                 { scaleX: 0.96 },
                                             ],
                                         }}
-                                        source={{ uri: p }}
+                                        source={{ uri: p.uri }}
                                     />
                                 </TouchableOpacity>
                             ))}

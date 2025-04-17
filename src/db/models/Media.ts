@@ -1,5 +1,13 @@
 import { media, messages } from "@/src/db/schema";
-import { asc, and, eq, isNotNull, InferInsertModel, InferSelectModel } from "drizzle-orm";
+import {
+    asc,
+    and,
+    eq,
+    isNotNull,
+    InferInsertModel,
+    InferSelectModel,
+    or,
+} from "drizzle-orm";
 
 import { drizzle_db } from "@/src/db/database";
 import { MediaType } from "@/src/utils/MediaStorage";
@@ -7,10 +15,10 @@ import { MediaType } from "@/src/utils/MediaStorage";
 export type Media = InferSelectModel<typeof media>;
 export type MediaInsert = InferInsertModel<typeof media>;
 
-export const getAllMediaInDiscussion = async (
+export const getAllVisualMediaInDiscussion = async (
     discussionId: string
 ): Promise<Media[]> => {
-    console.debug("getAllMediaInDiscussion", discussionId);
+    console.debug("getAllVisualMediaInDiscussion", discussionId);
     const results = (await drizzle_db
         .select({
             media: media,
@@ -20,7 +28,8 @@ export const getAllMediaInDiscussion = async (
         .where(
             and(
                 eq(messages.discussion_id, discussionId),
-                isNotNull(media.sha256)
+                isNotNull(media.sha256),
+                or(eq(media.media_type, "image"), eq(media.media_type, "video"))
             )
         )
         .orderBy(asc(messages.created_at))

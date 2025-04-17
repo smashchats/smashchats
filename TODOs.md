@@ -32,12 +32,11 @@
 -   [ ] when enabling selection mode, ChatItem content should move animatedly away from the selection marker
 -   [ ] media organizer à la stash
 -   [ ] display version (.expo.runtimeVersion) somewhere + Updates.manifest version
--   [ ] filter out audio messages from `getAllMediaInDiscussion` or create other specific methods.
--   [ ] make sure gallery can display videos when they'll be supported
 -   [ ] audio player should show length and current position
--   [ ] audio player should be able to seek forwards and backwards 
+-   [ ] audio player should be able to seek forwards and backwards
 -   [ ] audio player smooth animation
 -   [ ] add "loading" prop to Media messages
+-   [ ] gallery hide swiping-up bar since it's fullscreen mode
 
 ## In progress
 
@@ -56,6 +55,8 @@
     -   [ ] fix transparency behind header
     -   [ ] fix buggy-ness
     -   [~] implement gesture handler on tabs & user bio so that we can scroll to the top
+-   [~] make sure gallery can display videos when they'll be supported
+-   [x] filter out audio messages from `getAllVisualMediaInDiscussion` or create other specific methods.
 
 ## Done
 

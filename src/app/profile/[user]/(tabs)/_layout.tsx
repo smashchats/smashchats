@@ -66,7 +66,7 @@ import useScrollSync, {
 import { useKeyboard } from "@/src/hooks/useKeyboard";
 import { useCollapsibleHeaderTab } from "@/src/hooks/useCollapsibleHeaderTab";
 import { TrustedContact } from "@/src/types/Contacts.types";
-import { getAllMediaInDiscussion } from "@/src/db/models/Media";
+import { getAllVisualMediaInDiscussion } from "@/src/db/models/Media";
 
 type ProfileIdType = {
     profileId: string;
@@ -376,19 +376,23 @@ export const ProfileScreen = () => {
                 </Animated.View>
             </GestureDetector>
         ),
-        [tabBarStyle]
+        [tabBarStyle, panGesture]
     );
 
     useEffect(() => {
         const fetchMedia = async () => {
-            const media = await getAllMediaInDiscussion(user as string);
+            const media = await getAllVisualMediaInDiscussion(user as string);
             dispatch({
                 type: "SET_SHOWN_MEDIA_IN_GALLERY_ACTION",
-                uris: media.map((m) => m.file_path),
+                media: media.map((m) => ({
+                    uri: m.file_path,
+                    type: m.media_type as "image" | "video",
+                    id: m.sha256,
+                })),
             });
         };
         fetchMedia();
-    }, [user]);
+    }, [user, dispatch]);
 
     const renderMessages = useCallback(() => {
         const contentContainerStyle: StyleProp<ViewStyle> = {

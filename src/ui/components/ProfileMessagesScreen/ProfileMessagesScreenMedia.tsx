@@ -4,7 +4,7 @@ import { useRouter } from "expo-router";
 
 import { DisplayableMediaMessage } from "@/src/types/index";
 import { ProfileMessagesScreenBubble } from "./ProfileMessagesScreenBubble";
-import { AudioPlayer } from "@/src/ui/components/AudioPlayer/AudioPlayer";
+import { AudioPlayer } from "@/src/ui/components/MediaPlayers/AudioPlayer";
 
 export const ProfileMessagesScreenMedia = ({
     message,
@@ -25,7 +25,7 @@ export const ProfileMessagesScreenMedia = ({
                                 style={{ borderRadius: 4 }}
                                 onPress={() => {
                                     router.navigate(
-                                        `/gallery?activePhotoUri=${message.content}`
+                                        `/gallery?activePhotoUri=${message.content}&mediaType=${mediaType}`
                                     );
                                 }}
                             >

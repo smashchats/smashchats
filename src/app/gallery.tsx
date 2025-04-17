@@ -1,27 +1,38 @@
+import * as React from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { StatusBar, StyleSheet, Text, View } from "react-native";
+
 import {
     useNavigation,
     useIsFocused,
     NavigationProp,
 } from "@react-navigation/native";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { StatusBar, StyleSheet, Text, View } from "react-native";
 import AwesomeGallery, {
     GalleryRef,
     RenderItemInfo,
 } from "react-native-awesome-gallery";
-import * as React from "react";
-
 import * as ScreenOrientation from "expo-screen-orientation";
 import { Image } from "expo-image";
 import Animated, { FadeInUp, FadeOutUp } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useGlobalState } from "@/src/context/GlobalContext";
 import { useLocalSearchParams } from "expo-router";
+
+import { useGlobalState } from "@/src/context/GlobalContext";
+import VideoPlayer from "@/src/ui/components/MediaPlayers/VideoPlayer";
+
+export interface GalleryMediaItem {
+    uri: string;
+    type: "image" | "video";
+    id: string;
+}
 
 const renderItem = ({
     item,
     setImageDimensions,
-}: RenderItemInfo<{ uri: string }>) => {
+}: RenderItemInfo<GalleryMediaItem>) => {
+    if (item.type === "video") {
+        return <VideoPlayer uri={item.uri} />;
+    }
     return (
         <Image
             source={item.uri}
@@ -44,13 +55,18 @@ export const GalleryScreen = () => {
     const gallery = useRef<GalleryRef>(null);
     const [mounted, setMounted] = useState(false);
 
-    const { activePhotoUri } = useLocalSearchParams();
+    const { activePhotoUri, mediaType } = useLocalSearchParams();
+
     const { shownMediaInGallery } = globalState;
 
-    const [images, setImages] = useState<string[]>([activePhotoUri as string]);
-    const [index, setIndex] = useState<number>(
-        images.findIndex((image) => image === activePhotoUri)
-    );
+    const [images, setImages] = useState<GalleryMediaItem[]>([
+        {
+            uri: activePhotoUri as string,
+            type: mediaType as "image" | "video",
+            id: activePhotoUri as string,
+        },
+    ]);
+    const [index, setIndex] = useState<number>(0);
 
     useEffect(() => {
         const unlockScreenOrientation = async () => {
@@ -61,14 +77,16 @@ export const GalleryScreen = () => {
         unlockScreenOrientation();
 
         return () => {
-            ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
+            ScreenOrientation.lockAsync(
+                ScreenOrientation.OrientationLock.PORTRAIT_UP
+            );
         };
     }, []);
 
     useEffect(() => {
         setImages(shownMediaInGallery);
         const i = shownMediaInGallery.findIndex(
-            (uri) => uri === activePhotoUri
+            (media) => media.uri === activePhotoUri
         );
         setIndex(i);
         gallery.current?.setIndex(i);
@@ -98,6 +116,10 @@ export const GalleryScreen = () => {
         setInfoVisible(!infoVisible);
     };
 
+    if (images.length === 0) {
+        return null;
+    }
+
     return (
         <View style={styles.container}>
             {infoVisible && (
@@ -122,7 +144,7 @@ export const GalleryScreen = () => {
             )}
             <AwesomeGallery
                 ref={gallery}
-                data={images.map((uri) => ({ uri }))}
+                data={images}
                 keyExtractor={(item, index) => item.uri}
                 renderItem={renderItem}
                 initialIndex={index}

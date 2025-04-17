@@ -16,6 +16,7 @@ import {
     INITIAL_CHAT_LIST_STATE,
 } from "@/src/context/ChatListContext.js";
 import { PROFILE_KEY, saveObject } from "@/src/utils/StorageUtils";
+import { GalleryMediaItem } from "@/src/app/gallery";
 
 // Types & Interfaces
 export interface Settings {
@@ -76,12 +77,12 @@ export interface SetAppWorkflowAction extends GlobalActionBase {
 
 export interface SetShownMediaInGalleryAction extends GlobalActionBase {
     type: "SET_SHOWN_MEDIA_IN_GALLERY_ACTION";
-    uris: string[];
+    media: GalleryMediaItem[];
 }
 
 export interface AddShownMediaInGalleryAction extends GlobalActionBase {
     type: "ADD_SHOWN_MEDIA_IN_GALLERY_ACTION";
-    uri: string;
+    media: GalleryMediaItem;
 }
 
 // Media Player Types
@@ -135,7 +136,7 @@ export type GlobalParams = {
     userMeta: Partial<IMProfile>;
     appWorkflow: AppWorkflow;
     logger: Logger;
-    shownMediaInGallery: string[];
+    shownMediaInGallery: GalleryMediaItem[];
     mediaPlayer: MediaPlayerState;
 };
 
@@ -344,14 +345,14 @@ function loggerReducer(logger: Logger, action: Action): Logger {
 }
 
 function shownMediaInGalleryReducer(
-    shownMediaInGallery: string[],
+    shownMediaInGallery: GalleryMediaItem[],
     action: Action
-): string[] {
+): GalleryMediaItem[] {
     switch (action.type) {
         case "SET_SHOWN_MEDIA_IN_GALLERY_ACTION":
-            return [...action.uris];
+            return [...action.media];
         case "ADD_SHOWN_MEDIA_IN_GALLERY_ACTION":
-            return [...shownMediaInGallery, action.uri];
+            return [...shownMediaInGallery, action.media];
         default:
             return shownMediaInGallery;
     }
