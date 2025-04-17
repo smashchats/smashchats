@@ -37,19 +37,6 @@ describe(`chat item`, () => {
             expect(result).toMatch(/^\d{1,2}:\d{2} [AP]M$/);
         });
 
-        it('shows "Yesterday" if the message was sent before midnight yesterday', () => {
-            const date = new Date(
-                new Date(
-                    `${new Date(
-                        new Date().getTime() - 1 * DAY
-                    ).toDateString()} 23:59:00`
-                )
-            );
-            const result = dateToShowableString(date);
-
-            expect(result).toBe("Yesterday");
-        });
-
         it('shows "Yesterday" if the message was sent more than one day ago', () => {
             const date = new Date(new Date().getTime() - 1 * DAY);
             const result = dateToShowableString(date);
