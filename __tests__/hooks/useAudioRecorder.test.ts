@@ -36,7 +36,6 @@ jest.mock("@/src/utils/MediaStorage", () => ({
 
 jest.mock("react-native", () => {
     return {
-        // ...RN,
         Alert: {
             alert: jest.fn(),
         },
@@ -72,6 +71,23 @@ describe("useAudioRecorder", () => {
         expect(
             AudioModule.AudioModule.requestRecordingPermissionsAsync
         ).toHaveBeenCalled();
+    });
+
+    it("should show alert when microphone permission is denied", async () => {
+        (
+            AudioModule.AudioModule
+                .requestRecordingPermissionsAsync as jest.Mock
+        ).mockResolvedValueOnce({ granted: false });
+
+        const onRecordingFinished = jest.fn();
+        renderHook(() => useAudioRecorder({ onRecordingFinished }));
+
+        await act(async () => {});
+
+        expect(Alert.alert).toHaveBeenCalledWith(
+            "Permission required",
+            "Please grant microphone access to record audio messages."
+        );
     });
 
 
