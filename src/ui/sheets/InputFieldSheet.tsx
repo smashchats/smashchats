@@ -45,10 +45,19 @@ const InputFieldSheet = (props: Readonly<SheetProps<"input-field-sheet">>) => {
                     value={inputValue}
                     onChangeText={setInputValue}
                     placeholder={props.payload?.placeholder}
+                    testID="inputFieldSheetInput"
                 />
                 <View style={styles.buttonContainer}>
-                    <Button title="Cancel" onPress={handleCancel} />
-                    <Button title="Confirm" onPress={handleConfirm} />
+                    <Button
+                        title="Cancel"
+                        onPress={handleCancel}
+                        testID="inputFieldSheetCancelButton"
+                    />
+                    <Button
+                        title="Confirm"
+                        onPress={handleConfirm}
+                        testID="inputFieldSheetConfirmButton"
+                    />
                 </View>
             </View>
         </ActionSheet>

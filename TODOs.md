@@ -34,7 +34,8 @@
 -   [ ] display version (.expo.runtimeVersion) somewhere + Updates.manifest version
 -   [ ] filter out audio messages from `getAllMediaInDiscussion` or create other specific methods.
 -   [ ] make sure gallery can display videos when they'll be supported
--   [ ] add seeker to audio player
+-   [ ] audio player should show length and current position
+-   [ ] audio player should be able to seek forwards and backwards 
 -   [ ] audio player smooth animation
 
 ## In progress
