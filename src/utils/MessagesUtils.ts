@@ -2,7 +2,7 @@ import { DIDString, IM_MEDIA_EMBEDDED } from "@smashchats/library";
 
 import { Message } from "@/src/db/models/Messages";
 import { DisplayableMessage, DisplayableSystemMessage } from "@/src/types/";
-import { Media } from "@/src/db/models/Media";
+import { MediaMetadata } from "@/src/utils/MediaStorage";
 
 // Types
 type SystemMessageType = "system-date" | "system-unread";
@@ -55,7 +55,7 @@ const systemMessageGenerators: {
 
 // Message mapping
 export const mapMessageToDisplayableMessage = (
-    message: Message & { media?: Media },
+    message: Message & { media?: MediaMetadata },
     selfDidString: DIDString
 ): DisplayableMessage => {
     let content = "";
@@ -132,7 +132,7 @@ export const addSystemMessages = (
 };
 
 export const appendMessageToDisplayableMessages = (
-    db_message: Message,
+    db_message: Message & { media?: MediaMetadata },
     displayedMessages: DisplayableMessage[],
     selfDidString: DIDString
 ): DisplayableMessage[] => {

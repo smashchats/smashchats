@@ -29,6 +29,7 @@ import {
     useGlobalState,
     useGlobalDispatch,
 } from "@/src/context/GlobalContext.js";
+import { MediaMetadata } from "@/src/utils/MediaStorage";
 
 const DEFAULT_LOAD_LIMIT = __DEV__ ? 10 : 100;
 
@@ -181,12 +182,14 @@ export const useMessages = (peerId: string, scrollToBottom: () => void) => {
         after_sha256,
         from_self,
         type,
+        media,
     }: {
         data: any;
         sha256: sha256;
         after_sha256: sha256 | undefinedString;
         from_self: boolean;
         type: string;
+        media?: MediaMetadata;
     }) => {
         const now = new Date();
 
@@ -207,7 +210,8 @@ export const useMessages = (peerId: string, scrollToBottom: () => void) => {
                     status: from_self
                         ? ("sending" as MessageStatus)
                         : "received",
-                } satisfies Message,
+                    media,
+                } satisfies Message & { media?: MediaMetadata },
                 messages,
                 globalState.selfDid.id
             )
@@ -239,31 +243,47 @@ export const useMessages = (peerId: string, scrollToBottom: () => void) => {
                     discussionId: peerId,
                     messageId: message.sha256,
                 });
-                if (
-                    message.type === IM_MEDIA_EMBEDDED &&
-                    (message as IMMediaEmbeddedMessage).data.mimeType.split(
-                        "/"
-                    )[0] !== "audio"
-                ) {
-                    // TODO handle videos and video thumbnails
-                    dispatch({
-                        type: "ADD_SHOWN_MEDIA_IN_GALLERY_ACTION",
-                        uri:
+
+                let media_metadata: MediaMetadata | undefined;
+                let displayable_data;
+
+                if (message.type === IM_MEDIA_EMBEDDED) {
+                    const [media_type, extension] = (
+                        message as IMMediaEmbeddedMessage
+                    ).data.mimeType.split("/");
+
+                    media_metadata = {
+                        ...(message as IMMediaEmbeddedMessage).data,
+                        sha256: message.sha256,
+                        file_path: `${message.sha256}.${extension}`,
+                        mime_type: (message as IMMediaEmbeddedMessage).data
+                            .mimeType,
+                        media_type,
+                    } as unknown as MediaMetadata;
+
+                    if (media_type !== "audio") {
+                        // TODO handle videos and video thumbnails
+                        dispatch({
+                            type: "ADD_SHOWN_MEDIA_IN_GALLERY_ACTION",
+                            uri:
+                                "data:image/png;base64," +
+                                (message as IMMediaEmbeddedMessage).data
+                                    .content,
+                        });
+
+                        // TODO: find file URI for media messages instead of using base64
+
+                        displayable_data =
                             "data:image/png;base64," +
-                            (message as IMMediaEmbeddedMessage).data.content,
-                    });
+                            (message as IMMediaEmbeddedMessage).data.content;
+                    }
+                } else {
+                    displayable_data = message.data;
                 }
 
                 if (!hasUserScrolledToOlderMessages) {
                     scrollToBottom();
                 }
-
-                // TODO: find file URI for media messages instead of using base64
-                const displayable_data =
-                    message.type === IM_MEDIA_EMBEDDED
-                        ? "data:image/png;base64," +
-                          (message as IMMediaEmbeddedMessage).data.content
-                        : message.data;
 
                 appendMessage({
                     data: displayable_data as string,
@@ -271,6 +291,7 @@ export const useMessages = (peerId: string, scrollToBottom: () => void) => {
                     after_sha256: message.after,
                     from_self: false,
                     type: message.type,
+                    media: media_metadata,
                 });
             }
         };

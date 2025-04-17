@@ -4,7 +4,7 @@ import ActionSheet, {
     SheetProps,
 } from "react-native-actions-sheet";
 import { Text } from "@/src/ui/design-system/Text";
-import { HStack } from "../design-system/layout";
+import { HStack } from "@/src/ui/design-system/layout";
 
 export type ConfirmSheetProps = {
     message: string;

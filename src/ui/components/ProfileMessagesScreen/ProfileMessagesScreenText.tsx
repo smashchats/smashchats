@@ -1,12 +1,11 @@
 import React from "react";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+
 import { MessageStatus } from "@smashchats/library";
 
 import { Colors } from "@/src/constants/Colors.js";
-
 import { Text } from "@/src/ui/design-system/Text";
-
 import { DisplayableMessage } from "@/src/types/index";
 import { ProfileMessagesScreenBubble } from "./ProfileMessagesScreenBubble";
 
@@ -17,15 +16,13 @@ type MessageStatusProps = {
 export function MessageStatusIcon({ status }: Readonly<MessageStatusProps>) {
     const color = (() => {
         switch (status) {
-            // @ts-expect-error
             case "sending":
             case "delivered": // to SME
             case "received": // by peer
                 return Colors.textLightGray;
             case "read": // by peer
                 return Colors.blue;
-            // @ts-expect-error
-            case "failed":
+            case "error":
                 return Colors.red;
             default:
                 return Colors.yellow;
@@ -33,7 +30,6 @@ export function MessageStatusIcon({ status }: Readonly<MessageStatusProps>) {
     })();
     const name = (() => {
         switch (status) {
-            // @ts-expect-error
             case "sending":
                 return "clock-outline";
             case "delivered": // to SME
@@ -42,8 +38,7 @@ export function MessageStatusIcon({ status }: Readonly<MessageStatusProps>) {
                 return "check";
             case "read": // by peer
                 return "check-all";
-            // @ts-expect-error
-            case "failed":
+            case "error":
                 return "alert-circle-outline";
             default:
                 return "crosshairs-question";

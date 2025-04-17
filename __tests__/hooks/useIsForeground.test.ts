@@ -22,8 +22,8 @@ describe("useIsForeground", () => {
         const appStateSpy = jest.spyOn(AppState, "addEventListener");
 
         const { result } = renderHook(useIsForeground);
-        act(async () => {
-            await appStateSpy.mock.calls[0][1]("inactive");
+        await act(async () => {
+            appStateSpy.mock.calls[0][1]("inactive");
             await sleep(250);
             expect(result.current).toBe(false);
         });

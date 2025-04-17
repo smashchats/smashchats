@@ -2,11 +2,7 @@ import { render } from "@testing-library/react-native";
 
 import { RenderMessageListItem } from "@/src/ui/fragments/MessagesList";
 import { DisplayableMessage } from "@/src/types/";
-import {
-    IM_CHAT_TEXT,
-    IM_MEDIA_EMBEDDED,
-    MessageStatus,
-} from "@smashchats/library";
+import { IM_CHAT_TEXT, MessageStatus } from "@smashchats/library";
 
 jest.mock("drizzle-orm/expo-sqlite", () => ({
     useLiveQuery: () => ({

@@ -1,5 +1,5 @@
 import { MessageStatus } from "@smashchats/library";
-import { Media } from "@/src/db/models/Media";
+import { MediaMetadata } from "@/src/utils/MediaStorage";
 
 export interface BaseDisplayableMessage {
     content: string | number;
@@ -19,7 +19,7 @@ export interface DisplayableChatMessage extends BaseDisplayableMessage {
 }
 
 export interface DisplayableMediaMessage extends BaseDisplayableMessage {
-    media: Media;
+    media: MediaMetadata;
 }
 
 export type DisplayableMessage =

@@ -308,7 +308,10 @@ export const sendAudioMessage = async (
     audioMetadata: MediaMetadata,
     lastMessageId: sha256 | undefinedString,
     toDiscussionId: DIDString,
-    sendMessage: (message: IMProtoMessage) => Promise<void>
+    sendMessage: (
+        message: IMProtoMessage,
+        metadata: MediaMetadata
+    ) => Promise<void>
 ): Promise<void> => {
     try {
         const mediaBytes = await getMediaBytes(audioMetadata.file_path);
@@ -328,7 +331,7 @@ export const sendAudioMessage = async (
             timestamp: new Date().toISOString() as ISO8601,
         };
 
-        await sendMessage(messageWithMetadata);
+        await sendMessage(messageWithMetadata, audioMetadata);
         await markContactAsActive(toDiscussionId);
     } catch (error) {
         console.error("Error sending audio message:", error);

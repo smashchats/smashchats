@@ -1,12 +1,11 @@
 import { IM_CHAT_TEXT, IM_MEDIA_EMBEDDED } from "@smashchats/library";
-
 import {
     createTextMessage,
     createMediaMessage,
     saveMessageFromSelfToLocalDb,
     sendAudioMessage,
 } from "@/src/utils/messageHandlers";
-
+import { MediaMetadata } from "@/src/utils/MediaStorage";
 import * as MediaStorage from "@/src/utils/MediaStorage";
 import * as Messages from "@/src/db/models/Messages";
 import * as Contacts from "@/src/db/models/Contacts";
@@ -156,10 +155,12 @@ describe("messageHandlers", () => {
                 timestamp: "2023-01-01T00:00:00Z",
             };
 
-            const mockMediaMetadata = {
+            const mockMediaMetadata: MediaMetadata = {
                 file_path: "test-file-path",
                 sha256: "media-sha256",
                 mime_type: "image/jpeg",
+                media_type: "image",
+                size: 100,
             };
 
             await saveMessageFromSelfToLocalDb(
@@ -188,10 +189,12 @@ describe("messageHandlers", () => {
 
     describe("sendAudioMessage", () => {
         it("should send an audio message with the correct metadata", async () => {
-            const mockAudioMetadata = {
+            const mockAudioMetadata: MediaMetadata = {
                 file_path: "test-audio-path",
                 sha256: "audio-sha256",
                 mime_type: "audio/m4a",
+                media_type: "audio",
+                size: 100,
             };
 
             const mockMediaBytes = "audio-bytes";
@@ -210,23 +213,34 @@ describe("messageHandlers", () => {
             expect(MediaStorage.getMediaBytes).toHaveBeenCalledWith(
                 "test-audio-path"
             );
-            expect(mockSendMessage).toHaveBeenCalledWith({
-                type: "media",
-                data: { content: "audio-bytes", mimeType: "audio/m4a" },
-                after: mockLastMessageId,
-                sha256: "audio-sha256",
-                timestamp: expect.any(String),
-            });
+            expect(mockSendMessage).toHaveBeenCalledWith(
+                {
+                    type: "media",
+                    data: { content: "audio-bytes", mimeType: "audio/m4a" },
+                    after: mockLastMessageId,
+                    sha256: "audio-sha256",
+                    timestamp: expect.any(String),
+                },
+                {
+                    sha256: "audio-sha256",
+                    file_path: "test-audio-path",
+                    mime_type: "audio/m4a",
+                    media_type: "audio",
+                    size: 100,
+                }
+            );
             expect(Contacts.markContactAsActive).toHaveBeenCalledWith(
                 mockToDiscussionId
             );
         });
 
         it("should throw an error if media bytes cannot be retrieved", async () => {
-            const mockAudioMetadata = {
+            const mockAudioMetadata: MediaMetadata = {
                 file_path: "test-audio-path",
                 sha256: "audio-sha256",
                 mime_type: "audio/m4a",
+                media_type: "audio",
+                size: 100,
             };
 
             (MediaStorage.getMediaBytes as jest.Mock).mockResolvedValue(null);
@@ -235,7 +249,6 @@ describe("messageHandlers", () => {
                 sendAudioMessage(
                     mockAudioMetadata,
                     mockLastMessageId,
-                    mockFromDid,
                     mockToDiscussionId,
                     mockSendMessage
                 )

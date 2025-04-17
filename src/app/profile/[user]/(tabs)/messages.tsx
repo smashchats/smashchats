@@ -166,6 +166,7 @@ const ProfileMessages = forwardRef<
                 after_sha256: message.after,
                 from_self: true,
                 type: message.type,
+                media: mediaMetadata,
             });
 
             await globalState.selfSmashUser.send(

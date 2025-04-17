@@ -37,6 +37,7 @@
 -   [ ] audio player should show length and current position
 -   [ ] audio player should be able to seek forwards and backwards 
 -   [ ] audio player smooth animation
+-   [ ] add "loading" prop to Media messages
 
 ## In progress
 
