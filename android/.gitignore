@@ -15,8 +15,6 @@ local.properties
 # Bundle artifacts
 *.jsbundle
 
-app/*.keystore
-
 # fastlane specific
 fastlane/report.xml
 key.json

@@ -112,16 +112,16 @@ Or visit `http://<your-ip>:8081/_expo/plugins/expo-drizzle-studio-plugin`
 
 After modifying the schema, you need to run `npx drizzle-kit generate` before running the app again.
 
-### Personal notes
+## Personal notes
 
 More info about the DID format [here](https://dev.smashchats.com/Peer%20Identity). Otherwise a summary:
 
 ```typescript
 export interface SmashDID {
     id: string; // did:plc:...
-    ik: string; // identity key pour signer
-    ek: string; // exchange key pour chiffrer
-    signature: string; // signature de ek par ik, peut changer
+    ik: string; // identity key to sign
+    ek: string; // exchange key to encrypt
+    signature: string; // ek signed by ik, it can change
     // endpoints: SmashEndpoint[];
 }
 ```

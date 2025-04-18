@@ -262,17 +262,24 @@ export const useMessages = (peerId: string, scrollToBottom: () => void) => {
                     } as unknown as MediaMetadata;
 
                     if (media_type !== "audio") {
-                        // TODO handle videos and video thumbnails
+                        // TODO: find file URI for media messages instead of using base64
                         dispatch({
                             type: "ADD_SHOWN_MEDIA_IN_GALLERY_ACTION",
-                            uri:
-                                "data:image/png;base64," +
-                                (message as IMMediaEmbeddedMessage).data
-                                    .content,
+                            media: {
+                                uri:
+                                    "data:image/png;base64," +
+                                    (message as IMMediaEmbeddedMessage).data
+                                        .content,
+                                id: message.sha256,
+                                type: (
+                                    message as IMMediaEmbeddedMessage
+                                ).data.mimeType.split("/")[0] as
+                                    | "image"
+                                    | "video",
+                            },
                         });
 
-                        // TODO: find file URI for media messages instead of using base64
-
+                        // TODO handle videos and video thumbnails
                         displayable_data =
                             "data:image/png;base64," +
                             (message as IMMediaEmbeddedMessage).data.content;

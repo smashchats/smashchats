@@ -37,6 +37,7 @@
 -   [ ] audio player smooth animation
 -   [ ] add "loading" prop to Media messages
 -   [ ] gallery hide swiping-up bar since it's fullscreen mode
+-   [ ] allow users to report child safety concerns in-app
 
 ## In progress
 

@@ -1,12 +1,23 @@
 import { useEffect, useState } from "react";
-import { Button, View, TextInput, Switch } from "react-native";
+import {
+    Button,
+    View,
+    TextInput,
+    Switch,
+    StyleSheet,
+    TouchableOpacity,
+} from "react-native";
+
 import { SafeAreaView } from "react-native-safe-area-context";
+import * as WebBrowser from "expo-web-browser";
 
 import { ThemedText } from "@/src/ui/components/ThemedText";
 import { Avatar } from "@/src/ui/components/Avatar";
 import { useGlobalState, useGlobalDispatch } from "@/src/context/GlobalContext";
 import { Colors } from "@/src/constants/Colors";
 import { PickImage } from "@/src/utils/ImageUtils";
+
+const FEATURE_FLAG_ENABLE_AVATAR = false;
 
 export default function ProfileLayout() {
     const dispatch = useGlobalDispatch();
@@ -22,6 +33,12 @@ export default function ProfileLayout() {
         setInputTitle(state.userMeta.title ?? "");
         setInputDescription(state.userMeta.description ?? "");
     }, [state.userMeta]);
+
+    useEffect(() => {
+        (async () => {
+            await WebBrowser.warmUpAsync();
+        })();
+    }, []);
 
     const handleInputTitleToMeta = () => {
         dispatch({
@@ -63,114 +80,66 @@ export default function ProfileLayout() {
     return (
         <SafeAreaView
             edges={["top", "bottom"]}
-            style={{ flex: 1, padding: 15, backgroundColor: Colors.background }}
+            style={styles.safeAreaView}
         >
-            <View style={{ flex: 1, padding: 15 }}>
-                <View
-                    style={{ alignItems: "center", justifyContent: "center" }}
-                >
-                    <Avatar
-                        contact={{
-                            meta_avatar: state.userMeta.avatar,
-                        }}
-                        variant="xlarge"
-                    />
-                    <View style={{ marginTop: 15 }}>
-                        <Button
-                            title="Change image"
-                            onPress={pickAndSetImage}
+            <View style={styles.viewContainer}>
+                <View style={styles.section}>
+                    <ThemedText style={styles.sectionTitle}>
+                        your public profile
+                    </ThemedText>
+                    {FEATURE_FLAG_ENABLE_AVATAR && (
+                        <View style={styles.avatarContainer}>
+                            <Avatar
+                                contact={{
+                                    meta_avatar: state.userMeta.avatar,
+                                }}
+                                variant="xlarge"
+                            />
+                            <View style={styles.avatarButton}>
+                                <Button
+                                    title="Change image"
+                                    onPress={pickAndSetImage}
+                                />
+                            </View>
+                        </View>
+                    )}
+                    <View style={styles.inputContainer}>
+                        <ThemedText style={styles.inputLabel}>
+                            Display Name
+                        </ThemedText>
+                        <TextInput
+                            style={styles.textInput}
+                            placeholder="Enter your name"
+                            placeholderTextColor={Colors.textLightGray}
+                            value={inputTitle}
+                            onChangeText={setInputTitle}
+                            onEndEditing={handleInputTitleToMeta}
+                            onBlur={handleInputTitleToMeta}
                         />
                     </View>
+                    <View style={[styles.inputContainer, { marginTop: 20 }]}>  
+                        <ThemedText style={styles.inputLabel}>
+                            Description
+                        </ThemedText>
+                        <TextInput
+                            style={[styles.textInput, styles.descriptionInput]}
+                            placeholder="Enter a description about yourself"
+                            placeholderTextColor={Colors.textLightGray}
+                            multiline={true}
+                            numberOfLines={4}
+                            value={inputDescription}
+                            onEndEditing={handleInputDescriptionToMeta}
+                            onBlur={handleInputDescriptionToMeta}
+                            onChangeText={setInputDescription}
+                        />
+                    </View>
+                    <View style={styles.divider} />
                 </View>
-                <View style={{ marginTop: 20, width: "100%" }}>
-                    <ThemedText
-                        style={{
-                            marginBottom: 10,
-                            color: Colors.dark.text,
-                        }}
-                    >
-                        Display Name
-                    </ThemedText>
-                    <TextInput
-                        style={{
-                            borderWidth: 1,
-                            borderColor: Colors.textLightGray,
-                            color: Colors.dark.text,
-                            padding: 10,
-                            borderRadius: 5,
-                            width: "100%",
-                        }}
-                        placeholder="Enter your name"
-                        placeholderTextColor={Colors.textLightGray}
-                        value={inputTitle}
-                        onChangeText={setInputTitle}
-                        onEndEditing={handleInputTitleToMeta}
-                        onBlur={handleInputTitleToMeta}
-                    />
-                </View>
-                <View style={{ marginTop: 20, width: "100%" }}>
-                    <ThemedText
-                        style={{
-                            marginBottom: 10,
-                            color: Colors.dark.text,
-                        }}
-                    >
-                        Description
-                    </ThemedText>
-                    <TextInput
-                        style={{
-                            borderWidth: 1,
-                            borderColor: Colors.textLightGray,
-                            color: Colors.dark.text,
-                            padding: 10,
-                            borderRadius: 5,
-                            width: "100%",
-                            height: 100,
-                            textAlignVertical: "top",
-                        }}
-                        placeholder="Enter a description about yourself"
-                        placeholderTextColor={Colors.textLightGray}
-                        multiline={true}
-                        numberOfLines={4}
-                        value={inputDescription}
-                        onEndEditing={handleInputDescriptionToMeta}
-                        onBlur={handleInputDescriptionToMeta}
-                        onChangeText={setInputDescription}
-                    />
-                </View>
-                <View
-                    style={{
-                        marginTop: 20,
-                        marginBottom: 20,
-                        height: 1,
-                        backgroundColor: Colors.textLightGray,
-                        width: "100%",
-                        opacity: 0.2,
-                    }}
-                />
-                <ThemedText
-                    style={{
-                        fontSize: 16,
-                        fontWeight: "500",
-                        marginBottom: 10,
-                        color: Colors.dark.text,
-                    }}
-                >
-                    Privacy
-                </ThemedText>
-                <View style={{ marginTop: 20, width: "100%" }}>
-                    <View
-                        style={{
-                            flexDirection: "row",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                        }}
-                    >
-                        <ThemedText
-                            style={{
-                                color: Colors.dark.text,
-                            }}
-                        >
+
+                <View style={styles.section}>
+                    <ThemedText style={styles.sectionTitle}>privacy</ThemedText>
+                    <View style={styles.row}>
+                        <ThemedText style={{ color: Colors.dark.text }}>
                             Enable Analytics
                         </ThemedText>
                         <Switch
@@ -186,18 +155,105 @@ export default function ProfileLayout() {
                             }}
                         />
                     </View>
-                    <ThemedText
-                        style={{
-                            marginTop: 8,
-                            fontSize: 12,
-                            color: Colors.textLightGray,
-                        }}
-                    >
+                    <ThemedText style={styles.description}>
                         Help improve SmashChats by sharing anonymous usage data.
                         No personal information is collected.
                     </ThemedText>
+
+                    <View style={styles.link}>
+                        <TouchableOpacity
+                            onPress={async () => {
+                                await WebBrowser.openBrowserAsync(
+                                    "https://smashchats.com/privacy"
+                                );
+                            }}
+                        >
+                            <ThemedText style={styles.linkText}>
+                                Privacy Policy
+                            </ThemedText>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </View>
         </SafeAreaView>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
+    content: {
+        padding: 16,
+    },
+    section: {
+        marginBottom: 24,
+    },
+    row: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginVertical: 8,
+    },
+    sectionTitle: {
+        fontSize: 20,
+        fontWeight: "600",
+        marginBottom: 16,
+        color: Colors.dark.text,
+    },
+    description: {
+        marginTop: 8,
+        fontSize: 12,
+        color: Colors.textLightGray,
+    },
+    link: {
+        marginTop: 20,
+    },
+    linkText: {
+        color: Colors.dark.text,
+        textDecorationLine: "underline",
+    },
+    safeAreaView: {
+        flex: 1,
+        padding: 15,
+        backgroundColor: Colors.background,
+    },
+    viewContainer: {
+        flex: 1,
+        paddingHorizontal: 15,
+    },
+    avatarContainer: {
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    avatarButton: {
+        marginTop: 15,
+    },
+    inputContainer: {
+        width: "100%",
+    },
+    inputLabel: {
+        marginBottom: 10,
+        color: Colors.dark.text,
+    },
+    textInput: {
+        borderWidth: 1,
+        borderColor: Colors.textLightGray,
+        color: Colors.dark.text,
+        padding: 10,
+        borderRadius: 5,
+        width: "100%",
+    },
+    descriptionInput: {
+        height: 100,
+        textAlignVertical: "top",
+    },
+    divider: {
+        marginTop: 20,
+        marginBottom: 20,
+        height: 1,
+        backgroundColor: Colors.textLightGray,
+        width: "100%",
+        opacity: 0.2,
+    },
+});
