@@ -11,6 +11,9 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as WebBrowser from "expo-web-browser";
 import { Link } from "expo-router";
+import * as Updates from "expo-updates";
+import { ExpoUpdatesManifest } from "expo/config";
+import { EmbeddedManifest } from "expo-manifests";
 
 import { ThemedText } from "@/src/ui/components/ThemedText";
 import { Avatar } from "@/src/ui/components/Avatar";
@@ -37,11 +40,26 @@ function Section({
     );
 }
 
-export default function ProfileLayout() {
+const getVersion = () => {
+    if (
+        Updates.manifest &&
+        "extra" in Updates.manifest &&
+        (Updates.manifest as ExpoUpdatesManifest).extra.expoClient?.version
+    ) {
+        const manifest = Updates.manifest as ExpoUpdatesManifest;
+        return `version ${manifest.extra.expoClient?.version} (${manifest.runtimeVersion} — ${manifest.id})`;
+    }
+    const manifest = Updates.manifest as EmbeddedManifest;
+    if (typeof manifest === "object" && manifest !== null && "id" in manifest) {
+        return `version ${manifest?.id} (${manifest?.commitTime})`;
+    }
+    return "development version";
+};
+
+export default function SettingsScreen() {
     const dispatch = useGlobalDispatch();
     const state = useGlobalState();
 
-    // Local state for input values
     const [inputTitle, setInputTitle] = useState(state.userMeta.title ?? "");
     const [inputDescription, setInputDescription] = useState(
         state.userMeta.description ?? ""
@@ -202,6 +220,13 @@ export default function ProfileLayout() {
                         </ThemedText>
                     </Link>
                 </Section>
+                <View style={{ alignItems: "center" }}>
+                    <ThemedText
+                        style={{ color: Colors.dark.darkGray, fontSize: 12 }}
+                    >
+                        {getVersion()}
+                    </ThemedText>
+                </View>
             </ScrollView>
         </SafeAreaView>
     );
