@@ -5,20 +5,37 @@ import {
     TextInput,
     Switch,
     StyleSheet,
-    TouchableOpacity,
+    ScrollView,
 } from "react-native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as WebBrowser from "expo-web-browser";
+import { Link } from "expo-router";
 
 import { ThemedText } from "@/src/ui/components/ThemedText";
 import { Avatar } from "@/src/ui/components/Avatar";
 import { useGlobalState, useGlobalDispatch } from "@/src/context/GlobalContext";
 import { Colors } from "@/src/constants/Colors";
 import { PickImage } from "@/src/utils/ImageUtils";
-import { Link } from "expo-router";
+import { InAppWebLink } from "@/src/ui/components/InAppWebLink/InAppWebLink";
 
 const FEATURE_FLAG_ENABLE_AVATAR = false;
+
+function Section({
+    children,
+    name,
+}: Readonly<{
+    children: React.ReactNode;
+    name: string;
+}>) {
+    return (
+        <View style={styles.section}>
+            <ThemedText style={styles.sectionTitle}>{name}</ThemedText>
+            {children}
+            <View style={styles.divider} />
+        </View>
+    );
+}
 
 export default function ProfileLayout() {
     const dispatch = useGlobalDispatch();
@@ -80,17 +97,16 @@ export default function ProfileLayout() {
 
     return (
         <SafeAreaView edges={["top", "bottom"]} style={styles.safeAreaView}>
-            <View style={styles.viewContainer}>
-                <View style={styles.section}>
-                    <ThemedText style={styles.sectionTitle}>
-                        your public profile
-                    </ThemedText>
+            <ScrollView
+                style={{ flex: 1 }}
+                keyboardShouldPersistTaps="never"
+                contentContainerStyle={{ paddingHorizontal: 20 }}
+            >
+                <Section name="your public profile">
                     {FEATURE_FLAG_ENABLE_AVATAR && (
                         <View style={styles.avatarContainer}>
                             <Avatar
-                                contact={{
-                                    meta_avatar: state.userMeta.avatar,
-                                }}
+                                contact={{ meta_avatar: state.userMeta.avatar }}
                                 variant="xlarge"
                             />
                             <View style={styles.avatarButton}>
@@ -123,67 +139,70 @@ export default function ProfileLayout() {
                             style={[styles.textInput, styles.descriptionInput]}
                             placeholder="Enter a description about yourself"
                             placeholderTextColor={Colors.textLightGray}
-                            multiline={true}
+                            multiline
                             numberOfLines={4}
                             value={inputDescription}
+                            onChangeText={setInputDescription}
                             onEndEditing={handleInputDescriptionToMeta}
                             onBlur={handleInputDescriptionToMeta}
-                            onChangeText={setInputDescription}
                         />
                     </View>
-                    <View style={styles.divider} />
-                </View>
+                </Section>
 
-                <View style={styles.section}>
-                    <ThemedText style={styles.sectionTitle}>privacy</ThemedText>
+                <Section name="privacy">
                     <View style={styles.row}>
                         <ThemedText style={{ color: Colors.dark.text }}>
                             Enable Analytics
                         </ThemedText>
                         <Switch
                             value={state.settings?.telemetryEnabled ?? false}
-                            onValueChange={(value) => {
+                            onValueChange={(value) =>
                                 dispatch({
                                     type: "SET_SETTINGS_ACTION",
                                     settings: {
                                         ...state.settings,
                                         telemetryEnabled: value,
                                     },
-                                });
-                            }}
+                                })
+                            }
                         />
                     </View>
                     <ThemedText style={styles.description}>
                         Help improve SmashChats by sharing anonymous usage data.
                         No personal information is collected.
                     </ThemedText>
+                    <InAppWebLink
+                        style={styles.link}
+                        textStyle={styles.linkText}
+                        url="https://smashchats.com/privacy"
+                        text="Privacy Policy"
+                    />
+                </Section>
 
-                    <View style={styles.link}>
-                        <TouchableOpacity
-                            onPress={async () => {
-                                await WebBrowser.openBrowserAsync(
-                                    "https://smashchats.com/privacy"
-                                );
-                            }}
+                <Section name="about">
+                    <InAppWebLink
+                        url="https://smashchats.com/"
+                        text="About smashchats"
+                        textStyle={styles.linkText}
+                    />
+                    <InAppWebLink
+                        style={styles.link}
+                        url="https://dev.smashchats.com/"
+                        text="I'm a developer"
+                        textStyle={styles.linkText}
+                    />
+                    <Link href="/licenses" style={styles.link}>
+                        <ThemedText
+                            style={[
+                                styles.linkText,
+                                { textDecorationLine: "underline" },
+                            ]}
                         >
-                            <ThemedText style={styles.linkText}>
-                                Privacy Policy
-                            </ThemedText>
-                        </TouchableOpacity>
-                    </View>
-
-                    <View style={styles.divider} />
-
-                    <Link
-                        href="/licenses"
-                        style={{ textDecorationLine: "underline" }}
-                    >
-                        <ThemedText style={styles.linkText}>
                             Licenses
                         </ThemedText>
                     </Link>
-                </View>
-            </View>
+                </Section>
+            </ScrollView>
         </SafeAreaView>
     );
 }
@@ -220,7 +239,6 @@ const styles = StyleSheet.create({
     },
     linkText: {
         color: Colors.dark.text,
-        textDecorationLine: "underline",
     },
     safeAreaView: {
         flex: 1,
