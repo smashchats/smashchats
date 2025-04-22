@@ -202,12 +202,18 @@ export default function LoaderScreen() {
                             name="camera"
                             options={{ title: "Camera" }}
                         />
-                        <Stack.Screen 
-                            name="secret" 
-                            options={{ 
+
+                        <Stack.Screen
+                            name="licenses"
+                            options={{ title: "Licenses", headerShown: true }}
+                        />
+
+                        <Stack.Screen
+                            name="secret"
+                            options={{
                                 title: "Secret",
-                                headerShown: true 
-                            }} 
+                                headerShown: true,
+                            }}
                         />
                         <Stack.Screen name="+not-found" />
                     </Stack>

@@ -16,6 +16,7 @@ import { Avatar } from "@/src/ui/components/Avatar";
 import { useGlobalState, useGlobalDispatch } from "@/src/context/GlobalContext";
 import { Colors } from "@/src/constants/Colors";
 import { PickImage } from "@/src/utils/ImageUtils";
+import { Link } from "expo-router";
 
 const FEATURE_FLAG_ENABLE_AVATAR = false;
 
@@ -78,10 +79,7 @@ export default function ProfileLayout() {
     };
 
     return (
-        <SafeAreaView
-            edges={["top", "bottom"]}
-            style={styles.safeAreaView}
-        >
+        <SafeAreaView edges={["top", "bottom"]} style={styles.safeAreaView}>
             <View style={styles.viewContainer}>
                 <View style={styles.section}>
                     <ThemedText style={styles.sectionTitle}>
@@ -117,7 +115,7 @@ export default function ProfileLayout() {
                             onBlur={handleInputTitleToMeta}
                         />
                     </View>
-                    <View style={[styles.inputContainer, { marginTop: 20 }]}>  
+                    <View style={[styles.inputContainer, { marginTop: 20 }]}>
                         <ThemedText style={styles.inputLabel}>
                             Description
                         </ThemedText>
@@ -173,6 +171,17 @@ export default function ProfileLayout() {
                             </ThemedText>
                         </TouchableOpacity>
                     </View>
+
+                    <View style={styles.divider} />
+
+                    <Link
+                        href="/licenses"
+                        style={{ textDecorationLine: "underline" }}
+                    >
+                        <ThemedText style={styles.linkText}>
+                            Licenses
+                        </ThemedText>
+                    </Link>
                 </View>
             </View>
         </SafeAreaView>

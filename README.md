@@ -126,9 +126,23 @@ export interface SmashDID {
 }
 ```
 
-## Releasing 
+## Releasing
 
 Follow this guide: https://docs.expo.dev/guides/local-app-production
+
+### Pre-requisites
+
+Verify all licenses are included. The following command should return an empty array [].
+
+```bash
+node ./scripts/extract-licenses.cjs | jq .ko
+```
+
+Extract a list of used libraries and their licenses.
+
+```bash
+node ./scripts/extract-licenses.cjs | jq .libraries > ./assets/licenses.json
+```
 
 Update version in `app.json`. Run `npx expo prebuild` to update native files to include the newly set version. Build as described below.
 
@@ -144,7 +158,7 @@ open ./android/app/build/outputs/bundle/release/
 
 This will have created `app-release.aab` in `android/app/build/outputs/bundle/release/` directory.
 
-- [Create a new alpha/internal release](https://play.google.com/console/u/0/developers/9150193425219657230/app/4976355900096563201/tracks/4701103354613619379/create)
+-   [Create a new alpha/internal release](https://play.google.com/console/u/0/developers/9150193425219657230/app/4976355900096563201/tracks/4701103354613619379/create)
 
 ### Releasing for iOS
 
@@ -154,9 +168,9 @@ Open Xcode:
 xed ios
 ```
 
-- Select the target "SmashChats" and click on the play button.
-- Menubar: Product > Archive
-- Select "SmashChats" and click on "Distribute App"
+-   Select the target "SmashChats" and click on the play button.
+-   Menubar: Product > Archive
+-   Select "SmashChats" and click on "Distribute App"
 
 ### Fastlane
 
