@@ -3,13 +3,19 @@ import { Pressable, View } from "react-native";
 
 import { useRouter } from "expo-router";
 import { Image } from "expo-image";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { SheetManager } from "react-native-actions-sheet";
+
+import { Contact } from "@/src/db/models/Contacts";
 
 export const ProfileHeader = ({
     headerHeight,
     onExpand,
+    peer,
 }: {
     headerHeight: number;
     onExpand: () => void;
+    peer: Contact;
 }) => {
     const router = useRouter();
 
@@ -59,6 +65,23 @@ export const ProfileHeader = ({
                         marginVertical: -20,
                     }}
                 />
+
+                <Pressable
+                    onPress={() =>
+                        SheetManager.show("report-sheet", {
+                            payload: {
+                                peer,
+                                messages: [], // TODO: add messages
+                            },
+                        })
+                    }
+                >
+                    <MaterialCommunityIcons
+                        name="alert-outline"
+                        size={24}
+                        color="white"
+                    />
+                </Pressable>
             </View>
         </View>
     );

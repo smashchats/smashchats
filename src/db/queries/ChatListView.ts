@@ -1,4 +1,4 @@
-import { desc, eq, sql } from "drizzle-orm";
+import { desc, eq, isNull, sql } from "drizzle-orm";
 
 import { drizzle_db } from "@/src/db/database";
 import { contacts, messages, trustRelations } from "@/src/db/schema.js";
@@ -16,10 +16,9 @@ export const chatListView = drizzle_db
         most_recent_message_type: messages.type,
         trusted_name: trustRelations.name,
         created_at: contacts.created_at,
-        most_recent_message_date:
-            sql<number>`MAX(${messages.created_at})`.as(
-                "most_recent_message_date"
-            ),
+        most_recent_message_date: sql<number>`MAX(${messages.created_at})`.as(
+            "most_recent_message_date"
+        ),
         unread_count:
             sql<number>`COUNT(${messages.sha256}) - COUNT(${messages.date_read})`.as(
                 "unread_count"
@@ -28,5 +27,6 @@ export const chatListView = drizzle_db
     .from(contacts)
     .leftJoin(messages, eq(contacts.did_id, messages.discussion_id))
     .leftJoin(trustRelations, eq(contacts.did_id, trustRelations.did_id))
+    .where(isNull(contacts.blocked_at))
     .groupBy(contacts.did_id)
     .orderBy(desc(messages.created_at));

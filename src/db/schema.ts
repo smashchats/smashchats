@@ -24,7 +24,7 @@ export const contacts = sqliteTable("contacts", {
     meta_avatar: text(),
     scores: text("scores", { mode: "json" }),
     smashed: boolean("smashed"),
-    blocked: boolean("blocked"),
+    blocked_at: timestamp("blocked_at"),
     active: boolean("active"),
     created_at: defaultTimestamp("created_at"),
     updated_at: defaultTimestamp("updated_at"),

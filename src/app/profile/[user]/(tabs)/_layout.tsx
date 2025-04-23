@@ -505,7 +505,13 @@ export const ProfileScreen = () => {
                 </Tab.Screen>
             </Tab.Navigator>
 
-            <ProfileHeader headerHeight={HEADER_HEIGHT} onExpand={expand} />
+            {peer && (
+                <ProfileHeader
+                    headerHeight={HEADER_HEIGHT}
+                    onExpand={expand}
+                    peer={peer}
+                />
+            )}
         </KeyboardAvoidingView>
     );
 };

@@ -125,9 +125,26 @@ export const getAllContactNotes = async (): Promise<string[]> => {
 };
 
 export const markContactAsActive = async (did_id: string) => {
-    await drizzle_db.update(contacts).set({ active: true }).where(eq(contacts.did_id, did_id));
+    await drizzle_db
+        .update(contacts)
+        .set({ active: true })
+        .where(eq(contacts.did_id, did_id));
 };
 
 export const deleteContact = async (did_id: string) => {
     await drizzle_db.delete(contacts).where(eq(contacts.did_id, did_id));
+};
+
+export const blockContact = async (did_id: string) => {
+    await drizzle_db
+        .update(contacts)
+        .set({ blocked_at: new Date() })
+        .where(eq(contacts.did_id, did_id));
+};
+
+export const unblockContact = async (did_id: string) => {
+    await drizzle_db
+        .update(contacts)
+        .set({ blocked_at: null })
+        .where(eq(contacts.did_id, did_id));
 };

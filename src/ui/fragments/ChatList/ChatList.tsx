@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { RefreshControl, ScrollView, TouchableOpacity } from "react-native";
+import {
+    RefreshControl,
+    ScrollView,
+    TouchableOpacity,
+    View,
+} from "react-native";
 import { Href, Link } from "expo-router";
 
 import { Box } from "@/src/ui/design-system/layout";
@@ -13,6 +18,7 @@ import { ChatListView } from "@/src/types/ChatListScreen.types";
 import { deleteAllMessagesInDiscussion } from "@/src/db/models/Messages";
 import { deleteContact } from "@/src/db/models/Contacts";
 import { dev_nab_join_action } from "@/data/dev";
+import { ThemedText } from "@/src/ui/components/ThemedText";
 
 interface Props {
     chats: ChatListView[];
@@ -83,6 +89,22 @@ export function ChatList({ chats }: Readonly<Props>) {
                     {/* 10 v 128 based on idk what */}
                     <Box width="100%" />
                 </Box>
+                {chats.length === 0 && (
+                    <View
+                        style={{
+                            flex: 1,
+                            justifyContent: "center",
+                            alignItems: "center",
+                            minHeight: "80%",
+                            paddingHorizontal: 32,
+                        }}
+                    >
+                        <ThemedText type="defaultSemiBold">
+                            No chats yet. Add a contact by scanning their QR
+                            code.
+                        </ThemedText>
+                    </View>
+                )}
                 {shownChats.map((d) => (
                     <Link
                         key={d.did_id}

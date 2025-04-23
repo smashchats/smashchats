@@ -10,11 +10,13 @@ import InputFieldSheet, {
 import BadgeDetailsSheet, {
     BadgeDetailsSheetProps,
 } from "@/src/ui/sheets/BadgeDetailsSheet";
+import ReportSheet, { ReportSheetProps } from "@/src/ui/sheets/ReportSheet";
 
 registerSheet("profile-details-sheet", ProfileDetailsSheet);
 registerSheet("badge-details-sheet", BadgeDetailsSheet);
 registerSheet("confirm-sheet", ConfirmSheet);
 registerSheet("input-field-sheet", InputFieldSheet);
+registerSheet("report-sheet", ReportSheet);
 
 declare module "react-native-actions-sheet" {
     interface Sheets {
@@ -31,6 +33,9 @@ declare module "react-native-actions-sheet" {
         "input-field-sheet": SheetDefinition<{
             payload: InputFieldSheetProps;
             returnValue: string | undefined;
+        }>;
+        "report-sheet": SheetDefinition<{
+            payload: ReportSheetProps;
         }>;
     }
 }
