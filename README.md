@@ -149,11 +149,13 @@ Update version in `app.json`. Run `npx expo prebuild` to update native files to 
 ### Releasing for Android
 
 ```bash
+npx expo prebuild
 rm ./android/app/build/outputs/bundle/release/app-release.aab
 cd android
 ./gradlew app:bundleRelease
 cd -
 open ./android/app/build/outputs/bundle/release/
+echo "open https://play.google.com/console/u/0/developers/9150193425219657230/app/4976355900096563201/tracks/4701103354613619379/create&hl=en"
 ```
 
 This will have created `app-release.aab` in `android/app/build/outputs/bundle/release/` directory.
