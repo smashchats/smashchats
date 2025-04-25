@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Pressable } from "react-native";
 
-import { Feather } from "@expo/vector-icons";
+import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Link, useRouter } from "expo-router";
+import { SheetManager } from "react-native-actions-sheet";
+
+import { DIDDocument } from "@smashchats/library";
 
 import { NeonBadge } from "@/src/ui/components/NeonBadge";
 import { Colors } from "@/src/constants/Colors.js";
@@ -11,6 +14,8 @@ import { NEIGHBOURHOOD_DOMAIN } from "@/data/neighbourhood.js";
 import { useGlobalState } from "@/src/context/GlobalContext";
 import { ChatListView } from "@/src/types/ChatListScreen.types";
 import { Text } from "@/src/ui/design-system/Text";
+import { saveContactToDb } from "@/src/db/models/Contacts";
+import { MapDidToContactInsert } from "@/src/utils/mappers/contacts";
 
 type ChatListHeaderProps = {
     selectionEnabled: boolean;
@@ -39,7 +44,13 @@ export function ChatListHeader({
         if (count === DEV_SECRET_COUNT - 1) {
             router.push("/secret");
         }
-    }, [count, globalState.selfDid]);
+    }, [count, globalState.selfDid, router]);
+
+    const handleScan = async (did: DIDDocument) => {
+        await saveContactToDb(MapDidToContactInsert(did));
+        router.push(`/profile/${did.id}`);
+    };
+
     return (
         <Box>
             {selectionEnabled && (
@@ -86,9 +97,41 @@ export function ChatListHeader({
                         />
                     </HStack>
 
-                    <HStack>
-                        {/* <Feather name="plus" size={28} color={Colors.purple} /> */}
-                        {/* <Feather name="search" size={28} color={Colors.purple} /> */}
+                    <HStack alignItems="center" gap={8}>
+                        <Pressable
+                            onPress={async () => {
+                                const result = await SheetManager.show(
+                                    "code-scanner-sheet"
+                                );
+                                if (result) {
+                                    const did: DIDDocument = JSON.parse(result);
+                                    await handleScan(did);
+                                }
+                            }}
+                        >
+                            <MaterialCommunityIcons
+                                name="qrcode"
+                                size={28}
+                                color={"white"}
+                                style={{
+                                    transform: [
+                                        { scaleX: 0.8 },
+                                        { scaleY: 0.8 },
+                                    ],
+                                }}
+                            />
+                            <MaterialCommunityIcons
+                                name="scan-helper"
+                                size={28}
+                                color={Colors.purple}
+                                style={{
+                                    position: "absolute",
+                                    top: 0,
+                                    left: 0,
+                                }}
+                            />
+                        </Pressable>
+
                         <Link href="/settings" asChild>
                             <Pressable>
                                 <Feather
