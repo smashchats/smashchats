@@ -71,7 +71,6 @@ export const ProfileHeader = ({
                         SheetManager.show("report-sheet", {
                             payload: {
                                 peer,
-                                messages: [], // TODO: add messages
                             },
                         })
                     }

@@ -33,7 +33,7 @@ import { MediaMetadata } from "@/src/utils/MediaStorage";
 
 const DEFAULT_LOAD_LIMIT = __DEV__ ? 10 : 100;
 
-export const useMessages = (peerId: string, scrollToBottom: () => void) => {
+export const useMessages = (peerId: string, scrollToBottom?: () => void) => {
     const globalState = useGlobalState();
     const dispatch = useGlobalDispatch();
     const [messages, setMessages] = useState<DisplayableMessage[]>([]);
@@ -288,7 +288,7 @@ export const useMessages = (peerId: string, scrollToBottom: () => void) => {
                     displayable_data = message.data;
                 }
 
-                if (!hasUserScrolledToOlderMessages) {
+                if (!hasUserScrolledToOlderMessages && scrollToBottom) {
                     scrollToBottom();
                 }
 

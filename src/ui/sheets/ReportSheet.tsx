@@ -13,16 +13,17 @@ import ActionSheet, {
 } from "react-native-actions-sheet";
 import { useRouter } from "expo-router";
 
+import { IM_MEDIA_EMBEDDED } from "@smashchats/library";
+
 import { useGlobalState } from "@/src/context/GlobalContext";
 import { ThemedText } from "@/src/ui/components/ThemedText";
 import { Contact, blockContact } from "@/src/db/models/Contacts";
 import { Colors } from "@/src/constants/Colors";
 import { Button as Button2 } from "@/src/ui/components/Button";
 import { MapContactToDidDocument } from "@/src/utils/mappers/contacts";
-
+import { useMessages } from "@/src/hooks/useMessages";
 export interface ReportSheetProps {
     peer: Contact;
-    messages: any[];
 }
 
 export enum ModalMode {
@@ -30,6 +31,10 @@ export enum ModalMode {
     REPORT_REASON = "report-reason",
     REPORT_DETAILS = "report-details",
 }
+
+const SAFETY_REPORT_URL = __DEV__
+    ? "https://safety-reporting.dev.smashchats.com/v0/report"
+    : "https://safety-reporting.smashchats.com/v0/report";
 
 const ReportSheet = (props: Readonly<SheetProps<"report-sheet">>) => {
     const [inputValue, setInputValue] = useState("");
@@ -40,6 +45,8 @@ const ReportSheet = (props: Readonly<SheetProps<"report-sheet">>) => {
     const [reportReason, setReportReason] = useState<string>("");
 
     const router = useRouter();
+
+    const { messages } = useMessages(props.payload?.peer.did_id!, () => {});
 
     const handleCancel = () => {
         SheetManager.hide("report-sheet");
@@ -52,38 +59,52 @@ const ReportSheet = (props: Readonly<SheetProps<"report-sheet">>) => {
 
     const sendReportAndBlock = async () => {
         try {
-            await fetch(
-                __DEV__
-                    ? "https://safety-reporting.dev.smashchats.com/v0/report"
-                    : "https://safety-reporting.smashchats.com/v0/report",
-                {
-                    method: "POST",
-                    body: JSON.stringify({
-                        reportee: {
-                            did: MapContactToDidDocument(props.payload?.peer!),
-                            bio: {
-                                name: props.payload?.peer.meta_title,
-                                description:
-                                    props.payload?.peer.meta_description,
-                            },
-                            extra: {
-                                ...props.payload?.peer,
-                            },
-                        },
-                        reporter: {
-                            did: selfSmashUser?.did,
-                            bio: {
-                                name: userMeta?.title,
-                                description: userMeta?.description,
-                            },
-                        },
-                        // TODO: Add messages
-                        messages: joinMessages ? [] : [],
-                        reason: reportReason,
-                        details: inputValue,
-                    }),
-                }
-            );
+            const report = {
+                reportee: {
+                    did: MapContactToDidDocument(props.payload?.peer!),
+                    bio: {
+                        name: props.payload?.peer.meta_title,
+                        description: props.payload?.peer.meta_description,
+                    },
+                    extra: {
+                        ...props.payload?.peer,
+                    },
+                },
+                reporter: {
+                    did: selfSmashUser?.did,
+                    bio: {
+                        name: userMeta?.title,
+                        description: userMeta?.description,
+                    },
+                },
+                messages: joinMessages
+                    ? messages
+                          .filter((m) => !m.type.startsWith("system"))
+                          .map((m) => {
+                              let content = m.content;
+                              if (m.type === IM_MEDIA_EMBEDDED) {
+                                  const parts = m.content.toString().split("/");
+                                  content = `File: [${
+                                      parts[parts.length - 1]
+                                  }]`;
+                              }
+                              return {
+                                  id: m.sha256,
+                                  content,
+                                  date: m.date,
+                                  author: m.from,
+                              };
+                          })
+                          .sort((a, b) => a.date.getTime() - b.date.getTime())
+                    : [],
+                reason: reportReason,
+                details: inputValue,
+            };
+            await fetch(SAFETY_REPORT_URL, {
+                method: "POST",
+                body: JSON.stringify(report),
+            });
+
             handleBlock();
         } catch (error) {
             console.error(error);
