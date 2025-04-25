@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Pressable } from "react-native";
+import { Alert, Pressable } from "react-native";
 
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Link, useRouter } from "expo-router";
 import { SheetManager } from "react-native-actions-sheet";
-
-import { DIDDocument } from "@smashchats/library";
 
 import { NeonBadge } from "@/src/ui/components/NeonBadge";
 import { Colors } from "@/src/constants/Colors.js";
@@ -16,6 +14,7 @@ import { ChatListView } from "@/src/types/ChatListScreen.types";
 import { Text } from "@/src/ui/design-system/Text";
 import { saveContactToDb } from "@/src/db/models/Contacts";
 import { MapDidToContactInsert } from "@/src/utils/mappers/contacts";
+import { DIDDocumentSchema } from "@/src/utils/schemas/didSchema";
 
 type ChatListHeaderProps = {
     selectionEnabled: boolean;
@@ -46,9 +45,18 @@ export function ChatListHeader({
         }
     }, [count, globalState.selfDid, router]);
 
-    const handleScan = async (did: DIDDocument) => {
-        await saveContactToDb(MapDidToContactInsert(did));
-        router.push(`/profile/${did.id}`);
+    const handleScan = async (data: string | undefined) => {
+        if (!data) {
+            return;
+        }
+        try {
+            const did = DIDDocumentSchema.parse(data);
+            await saveContactToDb(MapDidToContactInsert(did));
+            router.push(`/profile/${did.id}/messages`);
+        } catch (error) {
+            console.debug(error);
+            Alert.alert("The ID you scanned is not valid");
+        }
     };
 
     return (
@@ -103,10 +111,7 @@ export function ChatListHeader({
                                 const result = await SheetManager.show(
                                     "code-scanner-sheet"
                                 );
-                                if (result) {
-                                    const did: DIDDocument = JSON.parse(result);
-                                    await handleScan(did);
-                                }
+                                handleScan(result);
                             }}
                         >
                             <MaterialCommunityIcons

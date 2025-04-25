@@ -1,9 +1,20 @@
-import { DIDDocument, DIDString, IMProfile, SmashEndpoint, SmashMessaging, SmashProfileList } from "@smashchats/library";
+import {
+    DIDString,
+    IMProfile,
+    SmashEndpoint,
+    SmashMessaging,
+    SmashProfileList,
+} from "@smashchats/library";
 
 import { Contact, ContactInsert } from "@/src/db/models/Contacts";
+import { DIDDocument } from "@/src/utils/schemas/didSchema";
 
-export const SmashProfileToContactMapper = async (profile: SmashProfileList[0]) => {
-    const did = MapDidToContactInsert(await SmashMessaging.resolve(profile.did));
+export const SmashProfileToContactMapper = async (
+    profile: SmashProfileList[0]
+) => {
+    const did = MapDidToContactInsert(
+        await SmashMessaging.resolve(profile.did)
+    );
 
     return {
         ...did,
@@ -19,7 +30,7 @@ export const MapContactToDidDocument = (c: Contact): DIDDocument => {
         ik: c.did_ik as string,
         ek: c.did_ek as string,
         signature: c.did_signature as string,
-        endpoints: c.did_endpoints as SmashEndpoint[] ?? [],
+        endpoints: (c.did_endpoints as SmashEndpoint[]) ?? [],
     };
 };
 
@@ -33,7 +44,9 @@ export const MapDidToContactInsert = (did: DIDDocument): ContactInsert => {
     };
 };
 
-export const ResolveDidAndMapToContactInsert = async (profile: IMProfile): Promise<ContactInsert> => {
+export const ResolveDidAndMapToContactInsert = async (
+    profile: IMProfile
+): Promise<ContactInsert> => {
     const did = await SmashMessaging.resolve(profile.did);
     return MapDidToContactInsert(did);
 };
