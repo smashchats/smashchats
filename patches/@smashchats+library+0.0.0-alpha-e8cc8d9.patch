@@ -25,7 +25,7 @@ index e5ccb10..2c0107e 100644
          this.session = undefined;
          throw error;
 diff --git a/node_modules/@smashchats/library/dist/src/core/messaging/session/SignalSession.js b/node_modules/@smashchats/library/dist/src/core/messaging/session/SignalSession.js
-index c603536..8dc8daa 100644
+index c603536..e607a7a 100644
 --- a/node_modules/@smashchats/library/dist/src/core/messaging/session/SignalSession.js
 +++ b/node_modules/@smashchats/library/dist/src/core/messaging/session/SignalSession.js
 @@ -27,7 +27,7 @@ export class SignalSession {
@@ -46,3 +46,12 @@ index c603536..8dc8daa 100644
              const peerIk = await KeyUtils.encodeKeyAsString(preKeyMessage.identity.signingKey.key);
              const session = new SignalSession(sessionId, cipher, peerIk, logger);
              const messages = await session.decryptMessages(preKeyMessage.signedMessage);
+@@ -102,7 +102,7 @@ export class SignalSession {
+             return BufferUtils.bufferToObject(decrypted);
+         }
+         catch (err) {
+-            this.logger.warn('Cannot decrypt messages.');
++            this.logger.warn('Cannot decrypt messages. ' + (typeof err === 'object' ? err.message : err));
+             throw err;
+         }
+     }

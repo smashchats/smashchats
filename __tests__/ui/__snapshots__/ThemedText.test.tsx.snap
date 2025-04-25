@@ -1,11 +1,175 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`ThemedText with custom color renders correctly with a light theme custom color 1`] = `
+<Text
+  style={
+    [
+      {
+        "color": "red",
+      },
+      {
+        "marginBottom": 12,
+      },
+      {
+        "fontSize": 16,
+        "lineHeight": 24,
+      },
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+    ]
+  }
+>
+  Snapshot test!
+</Text>
+`;
+
+exports[`ThemedText with type renders correctly with type default 1`] = `
+<Text
+  style={
+    [
+      {
+        "color": "#11181C",
+      },
+      {
+        "marginBottom": 12,
+      },
+      {
+        "fontSize": 16,
+        "lineHeight": 24,
+      },
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+    ]
+  }
+>
+  Snapshot test!
+</Text>
+`;
+
+exports[`ThemedText with type renders correctly with type defaultSemiBold 1`] = `
+<Text
+  style={
+    [
+      {
+        "color": "#11181C",
+      },
+      {
+        "marginBottom": 12,
+      },
+      undefined,
+      undefined,
+      {
+        "fontSize": 16,
+        "fontWeight": "600",
+        "lineHeight": 24,
+      },
+      undefined,
+      undefined,
+      undefined,
+    ]
+  }
+>
+  Snapshot test!
+</Text>
+`;
+
+exports[`ThemedText with type renders correctly with type link 1`] = `
+<Text
+  style={
+    [
+      {
+        "color": "#11181C",
+      },
+      {
+        "marginBottom": 12,
+      },
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      {
+        "color": "#0a7ea4",
+        "fontSize": 16,
+        "lineHeight": 30,
+      },
+      undefined,
+    ]
+  }
+>
+  Snapshot test!
+</Text>
+`;
+
+exports[`ThemedText with type renders correctly with type subtitle 1`] = `
+<Text
+  style={
+    [
+      {
+        "color": "#11181C",
+      },
+      {
+        "marginBottom": 12,
+      },
+      undefined,
+      undefined,
+      undefined,
+      {
+        "fontSize": 20,
+        "fontWeight": "bold",
+        "marginBottom": 16,
+      },
+      undefined,
+      undefined,
+    ]
+  }
+>
+  Snapshot test!
+</Text>
+`;
+
+exports[`ThemedText with type renders correctly with type title 1`] = `
+<Text
+  style={
+    [
+      {
+        "color": "#11181C",
+      },
+      {
+        "marginBottom": 12,
+      },
+      undefined,
+      {
+        "fontSize": 32,
+        "fontWeight": "bold",
+        "lineHeight": 32,
+        "marginBottom": 20,
+      },
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+    ]
+  }
+>
+  Snapshot test!
+</Text>
+`;
+
 exports[`renders correctly 1`] = `
 <Text
   style={
     [
       {
         "color": "#11181C",
+      },
+      {
+        "marginBottom": 12,
       },
       {
         "fontSize": 16,
