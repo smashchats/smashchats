@@ -31,3 +31,7 @@ console.warn = (...args: any[]) => {
     }
     originalConsoleWarn.apply(console, args);
 };
+
+ErrorUtils.setGlobalHandler((error, isFatal) => {
+    console.error("Global error:", error, "Fatal:", isFatal);
+});

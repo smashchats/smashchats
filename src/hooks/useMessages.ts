@@ -304,12 +304,12 @@ export const useMessages = (peerId: string, scrollToBottom?: () => void) => {
         };
 
         // SUPPORT FOR NEW MESSAGE TYPES SHOULD BE ADDED HERE
-        globalState.selfSmashUser.on(IM_CHAT_TEXT, onNewMessageByPeer);
-        globalState.selfSmashUser.on(IM_MEDIA_EMBEDDED, onNewMessageByPeer);
+        globalState.selfSmashUser?.on(IM_CHAT_TEXT, onNewMessageByPeer);
+        globalState.selfSmashUser?.on(IM_MEDIA_EMBEDDED, onNewMessageByPeer);
 
         return () => {
             [IM_CHAT_TEXT, IM_MEDIA_EMBEDDED].forEach((type) => {
-                globalState.selfSmashUser.removeListener(
+                globalState.selfSmashUser?.removeListener(
                     type,
                     onNewMessageByPeer
                 );
@@ -319,10 +319,12 @@ export const useMessages = (peerId: string, scrollToBottom?: () => void) => {
         globalState.selfSmashUser,
         messages,
         peerId,
-        globalState.selfDid.id,
+        globalState.selfDid?.id,
         dispatch,
         hasUserScrolledToOlderMessages,
         globalState.logger,
+        appendMessage,
+        scrollToBottom,
     ]);
 
     // SUPPORT FOR NEW MESSAGE TYPES SHOULD BE ADDED HERE
