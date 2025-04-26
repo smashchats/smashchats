@@ -5,6 +5,7 @@ import { useRouter } from "expo-router";
 import { DisplayableMediaMessage } from "@/src/types/index";
 import { ProfileMessagesScreenBubble } from "./ProfileMessagesScreenBubble";
 import { AudioPlayer } from "@/src/ui/components/MediaPlayers/AudioPlayer";
+import { MEDIA_DIR, THUMBNAILS_DIR } from "@/src/utils/MediaStorage";
 
 export const ProfileMessagesScreenMedia = ({
     message,
@@ -13,6 +14,9 @@ export const ProfileMessagesScreenMedia = ({
 }) => {
     const router = useRouter();
     const mediaType = message.media?.media_type;
+
+    const mediaUri = MEDIA_DIR + (message.media?.file_path ?? message.content);
+    const thumbnailUri = THUMBNAILS_DIR + (message.media?.thumbnail_path ?? mediaUri);
 
     return (
         <ProfileMessagesScreenBubble message={message} padding={10}>
@@ -25,12 +29,12 @@ export const ProfileMessagesScreenMedia = ({
                                 style={{ borderRadius: 4 }}
                                 onPress={() => {
                                     router.navigate(
-                                        `/gallery?activePhotoUri=${message.content}&mediaType=${mediaType}`
+                                        `/gallery?activePhotoUri=${mediaUri}&mediaType=${mediaType}`
                                     );
                                 }}
                             >
                                 <Image
-                                    source={{ uri: message.content }}
+                                    source={{ uri: thumbnailUri }}
                                     cachePolicy="memory-disk"
                                     style={{
                                         width: 200,

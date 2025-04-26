@@ -67,6 +67,7 @@ import { useKeyboard } from "@/src/hooks/useKeyboard";
 import { useCollapsibleHeaderTab } from "@/src/hooks/useCollapsibleHeaderTab";
 import { TrustedContact } from "@/src/types/Contacts.types";
 import { getAllVisualMediaInDiscussion } from "@/src/db/models/Media";
+import { MEDIA_DIR } from "@/src/utils/MediaStorage";
 
 type ProfileIdType = {
     profileId: string;
@@ -385,7 +386,7 @@ export const ProfileScreen = () => {
             dispatch({
                 type: "SET_SHOWN_MEDIA_IN_GALLERY_ACTION",
                 media: media.map((m) => ({
-                    uri: m.file_path,
+                    uri: MEDIA_DIR + m.file_path,
                     type: m.media_type as "image" | "video",
                     id: m.sha256,
                 })),

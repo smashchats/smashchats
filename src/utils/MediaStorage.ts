@@ -6,8 +6,8 @@ import * as VideoThumbnails from "expo-video-thumbnails";
 import { drizzle_db } from "@/src/db/database";
 import { media } from "@/src/db/schema";
 
-const MEDIA_DIR = `${FileSystem.documentDirectory}media/`;
-const THUMBNAILS_DIR = `${MEDIA_DIR}thumbnails/`;
+export const MEDIA_DIR = `${FileSystem.documentDirectory}media/`;
+export const THUMBNAILS_DIR = `${MEDIA_DIR}thumbnails/`;
 
 export type MediaType = "image" | "video" | "audio";
 
@@ -37,21 +37,25 @@ export const ensureMediaDirectories = async () => {
     }
 };
 
-const generateUniqueFilePath = (mimeType: string): string => {
+const generateUniqueFileName = (mimeType: string): string => {
     const mediaHash = uuidv7();
     const fileExtension = mimeType.split("/")[1];
-    return `${MEDIA_DIR}${mediaHash}.${fileExtension}`;
+    return `${mediaHash}.${fileExtension}`;
 };
 
-const generateVideoThumbnail = async (filePath: string, mediaHash: string): Promise<string | undefined> => {
+const generateVideoThumbnail = async (
+    filePath: string,
+    mediaHash: string
+): Promise<string | undefined> => {
     try {
         const { uri } = await VideoThumbnails.getThumbnailAsync(filePath);
-        const thumbnailPath = `${THUMBNAILS_DIR}${mediaHash}.jpg`;
+        const thumbnailName = `${mediaHash}.jpg`;
+        const thumbnailPath = `${THUMBNAILS_DIR}${thumbnailName}`;
         await FileSystem.copyAsync({
             from: uri,
             to: thumbnailPath,
         });
-        return thumbnailPath;
+        return thumbnailName;
     } catch (error) {
         console.warn("Failed to generate video thumbnail:", error);
         return undefined;
@@ -71,8 +75,9 @@ export const saveMediaFromBase64 = async (
 ): Promise<MediaMetadata> => {
     await ensureMediaDirectories();
 
-    const filePath = generateUniqueFilePath(mimeType);
-    const mediaHash = filePath.split("/").pop()?.split(".")[0] || "";
+    const fileName = generateUniqueFileName(mimeType);
+    const filePath = `${MEDIA_DIR}${fileName}`;
+    const mediaHash = fileName.split(".")[0] ?? "";
 
     await FileSystem.writeAsStringAsync(filePath, base64Data, {
         encoding: FileSystem.EncodingType.Base64,
@@ -83,21 +88,21 @@ export const saveMediaFromBase64 = async (
         throw new Error("Failed to save media file");
     }
 
-    let thumbnailPath: string | undefined;
+    let thumbnailName: string | undefined;
     if (options.generateThumbnail && mediaType === "video") {
-        thumbnailPath = await generateVideoThumbnail(filePath, mediaHash);
+        thumbnailName = await generateVideoThumbnail(filePath, mediaHash);
     }
 
     const metadata: MediaMetadata = {
         sha256: mediaHash,
-        file_path: filePath,
+        file_path: fileName,
         mime_type: mimeType,
         media_type: mediaType,
         width: options.width,
         height: options.height,
         duration: options.duration,
         size: fileInfo.size || 0,
-        thumbnail_path: thumbnailPath,
+        thumbnail_path: thumbnailName,
     };
 
     await drizzle_db.insert(media).values({
@@ -121,8 +126,9 @@ export const saveMediaFromUri = async (
 ): Promise<MediaMetadata> => {
     await ensureMediaDirectories();
 
-    const filePath = generateUniqueFilePath(mimeType);
-    const mediaHash = filePath.split("/").pop()?.split(".")[0] ?? "";
+    const fileName = generateUniqueFileName(mimeType);
+    const filePath = `${MEDIA_DIR}${fileName}`;
+    const mediaHash = fileName.split(".")[0] ?? "";
 
     await FileSystem.copyAsync({
         from: uri,
@@ -134,21 +140,21 @@ export const saveMediaFromUri = async (
         throw new Error("Failed to save media file");
     }
 
-    let thumbnailPath: string | undefined;
+    let thumbnailName: string | undefined;
     if (options.generateThumbnail && mediaType === "video") {
-        thumbnailPath = await generateVideoThumbnail(filePath, mediaHash);
+        thumbnailName = await generateVideoThumbnail(filePath, mediaHash);
     }
 
     const metadata: MediaMetadata = {
         sha256: mediaHash,
-        file_path: filePath,
+        file_path: fileName,
         mime_type: mimeType,
         media_type: mediaType,
         width: options.width,
         height: options.height,
         duration: options.duration,
         size: fileInfo.size || 0,
-        thumbnail_path: thumbnailPath,
+        thumbnail_path: thumbnailName,
     };
 
     await drizzle_db.insert(media).values({

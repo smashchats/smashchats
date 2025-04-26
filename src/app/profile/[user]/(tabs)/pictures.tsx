@@ -11,6 +11,7 @@ import { SCREEN_HEIGHT } from "@/src/ui/constants";
 import { getAllVisualMediaInDiscussion } from "@/src/db/models/Media";
 import { Text } from "@/src/ui/design-system/Text";
 import { GalleryMediaItem } from "@/src/app/gallery";
+import { MEDIA_DIR, THUMBNAILS_DIR } from "@/src/utils/MediaStorage";
 
 export const ProfilePictures = forwardRef<Animated.ScrollView, ScrollViewProps>(
     function ProfilePictures(props, ref) {
@@ -25,9 +26,13 @@ export const ProfilePictures = forwardRef<Animated.ScrollView, ScrollViewProps>(
                             discussionId as string
                         )
                     ).map((d) => ({
-                        uri: d.file_path,
+                        uri: MEDIA_DIR + d.file_path,
                         type: d.media_type as "image" | "video",
                         id: d.sha256,
+                        thumbnailUri:
+                            d.thumbnail_path && d.thumbnail_path !== ""
+                                ? THUMBNAILS_DIR + d.thumbnail_path
+                                : MEDIA_DIR + d.file_path,
                     }))
                 );
             };
@@ -74,7 +79,7 @@ export const ProfilePictures = forwardRef<Animated.ScrollView, ScrollViewProps>(
                                                 { scaleX: 0.96 },
                                             ],
                                         }}
-                                        source={{ uri: p.uri }}
+                                        source={{ uri: p.thumbnailUri }}
                                     />
                                 </TouchableOpacity>
                             ))}

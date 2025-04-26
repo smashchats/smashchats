@@ -24,6 +24,7 @@ export interface GalleryMediaItem {
     uri: string;
     type: "image" | "video";
     id: string;
+    thumbnailUri?: string;
 }
 
 const renderItem = ({
