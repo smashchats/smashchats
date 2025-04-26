@@ -2,7 +2,6 @@ import React from "react";
 import { Pressable, View } from "react-native";
 
 import { useRouter } from "expo-router";
-import { Image } from "expo-image";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { SheetManager } from "react-native-actions-sheet";
 
@@ -48,11 +47,10 @@ export const ProfileHeader = ({
                         marginLeft: -20,
                     }}
                 >
-                    <Image
-                        alt="Close profile"
-                        cachePolicy="memory-disk"
-                        style={{ width: 18, height: 18 }}
-                        source={require("@/assets/icon_x.png")}
+                    <MaterialCommunityIcons
+                        name="close"
+                        size={24}
+                        color="white"
                     />
                 </Pressable>
 
