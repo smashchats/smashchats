@@ -6,11 +6,12 @@ import {
     Switch,
     StyleSheet,
     ScrollView,
+    TouchableOpacity,
 } from "react-native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as WebBrowser from "expo-web-browser";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import * as Updates from "expo-updates";
 import { ExpoUpdatesManifest } from "expo/config";
 import { EmbeddedManifest } from "expo-manifests";
@@ -21,6 +22,7 @@ import { useGlobalState, useGlobalDispatch } from "@/src/context/GlobalContext";
 import { Colors } from "@/src/constants/Colors";
 import { PickImage } from "@/src/utils/ImageUtils";
 import { InAppWebLink } from "@/src/ui/components/InAppWebLink/InAppWebLink";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const FEATURE_FLAG_ENABLE_AVATAR = false;
 
@@ -59,6 +61,8 @@ const getVersion = () => {
 export default function SettingsScreen() {
     const dispatch = useGlobalDispatch();
     const state = useGlobalState();
+
+    const router = useRouter();
 
     const [inputTitle, setInputTitle] = useState(state.userMeta.title ?? "");
     const [inputDescription, setInputDescription] = useState(
@@ -113,12 +117,24 @@ export default function SettingsScreen() {
         }
     };
 
+    const handleBack = () => {
+        handleInputTitleToMeta();
+        handleInputDescriptionToMeta();
+
+        if (router.canGoBack()) {
+            router.back();
+        }
+    };
+
     return (
         <SafeAreaView edges={["top", "bottom"]} style={styles.safeAreaView}>
             <ScrollView
                 style={{ flex: 1 }}
                 keyboardShouldPersistTaps="never"
-                contentContainerStyle={{ paddingHorizontal: 20 }}
+                contentContainerStyle={{
+                    paddingHorizontal: 20,
+                    paddingTop: 70,
+                }}
             >
                 <Section name="your public profile">
                     {FEATURE_FLAG_ENABLE_AVATAR && (
@@ -228,11 +244,38 @@ export default function SettingsScreen() {
                     </ThemedText>
                 </View>
             </ScrollView>
+            <TouchableOpacity
+                activeOpacity={0.8}
+                style={styles.backButton}
+                onPress={handleBack}
+            >
+                <MaterialCommunityIcons
+                    name="arrow-left"
+                    style={styles.backButtonIcon}
+                    size={24}
+                    color="white"
+                />
+            </TouchableOpacity>
         </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
+    backButton: {
+        height: 45,
+        width: 45,
+        backgroundColor: "#00000055",
+        position: "absolute",
+        borderRadius: 100,
+        left: 20,
+        top: 75,
+    },
+    backButtonIcon: {
+        position: "absolute",
+        left: 0,
+        top: 0,
+        padding: 10,
+    },
     container: {
         flex: 1,
     },

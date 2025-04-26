@@ -50,9 +50,6 @@ const NeighbourhoodCategoriesAndBadges = ({
                                 <TouchableOpacity
                                     activeOpacity={0.8}
                                     key={badge.id}
-                                    onPress={() =>
-                                        handleOpenBadgeDetailsSheet(badge)
-                                    }
                                 >
                                     <Badge
                                         badge={badge}
