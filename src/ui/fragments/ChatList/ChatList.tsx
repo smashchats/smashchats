@@ -17,7 +17,6 @@ import { SCREEN_HEIGHT } from "@/src/ui/constants";
 import { ChatListView } from "@/src/types/ChatListScreen.types";
 import { deleteAllMessagesInDiscussion } from "@/src/db/models/Messages";
 import { deleteContact } from "@/src/db/models/Contacts";
-import { dev_nab_join_action } from "@/data/dev";
 import { ThemedText } from "@/src/ui/components/ThemedText";
 
 interface Props {
@@ -54,12 +53,9 @@ export function ChatList({ chats }: Readonly<Props>) {
     };
 
     const [refreshing, setRefreshing] = useState(false);
-    const { selfSmashUser } = useGlobalState();
 
     const handleRefresh = async () => {
         setRefreshing(true);
-        await selfSmashUser.join(dev_nab_join_action);
-        await selfSmashUser.discover();
         setRefreshing(false);
     };
 

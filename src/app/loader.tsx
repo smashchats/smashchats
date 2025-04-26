@@ -4,7 +4,7 @@ import { SplashScreen, Stack } from "expo-router";
 import { PostHogProvider } from "posthog-react-native";
 import changeNavigationBarColor from "react-native-navigation-bar-color";
 
-import { Logger, SmashUser, DIDDocument, IMProfile } from "@smashchats/library";
+import { Logger, SmashUser, IMProfile } from "@smashchats/library";
 
 import { loadIdentity } from "@/src/utils/IdentityUtils";
 import { handleUserMessages } from "@/src/utils/messageHandlers";
@@ -16,10 +16,6 @@ import {
 } from "@/src/context/GlobalContext";
 import { PROFILE_KEY, getData } from "@/src/utils/StorageUtils";
 import { ThemedText } from "@/src/ui/components/ThemedText";
-import { dev_nab_join_action, didId } from "@/data/dev";
-import { createTrustRelation } from "@/src/db/models/TrustRelation";
-import { saveContactToDb } from "@/src/db/models/Contacts";
-import { MapDidToContactInsert } from "@/src/utils/mappers/contacts";
 import { Colors } from "@/src/constants/Colors";
 
 export default function LoaderScreen() {
@@ -28,18 +24,7 @@ export default function LoaderScreen() {
 
     const initializeUserAndDiscoverNetwork = async (user: SmashUser) => {
         try {
-            await Promise.all([
-                createTrustRelation(didId, "Neighborhood Admin"),
-                user.join(dev_nab_join_action),
-                saveContactToDb(
-                    MapDidToContactInsert(
-                        dev_nab_join_action.did as DIDDocument
-                    )
-                ),
-                new Promise((resolve) => setTimeout(resolve, 3 * 1_000)),
-            ]);
             state.logger.debug("Discovering network");
-            await user.discover();
         } catch (error) {
             state.logger.error("Error creating trust relation", error);
         }
