@@ -1,6 +1,7 @@
 import * as FileSystem from "expo-file-system";
 import { eq } from "drizzle-orm";
 import { v7 as uuidv7 } from "uuid";
+import * as VideoThumbnails from "expo-video-thumbnails";
 
 import { drizzle_db } from "@/src/db/database";
 import { media } from "@/src/db/schema";
@@ -36,6 +37,27 @@ export const ensureMediaDirectories = async () => {
     }
 };
 
+const generateUniqueFilePath = (mimeType: string): string => {
+    const mediaHash = uuidv7();
+    const fileExtension = mimeType.split("/")[1];
+    return `${MEDIA_DIR}${mediaHash}.${fileExtension}`;
+};
+
+const generateVideoThumbnail = async (filePath: string, mediaHash: string): Promise<string | undefined> => {
+    try {
+        const { uri } = await VideoThumbnails.getThumbnailAsync(filePath);
+        const thumbnailPath = `${THUMBNAILS_DIR}${mediaHash}.jpg`;
+        await FileSystem.copyAsync({
+            from: uri,
+            to: thumbnailPath,
+        });
+        return thumbnailPath;
+    } catch (error) {
+        console.warn("Failed to generate video thumbnail:", error);
+        return undefined;
+    }
+};
+
 export const saveMediaFromBase64 = async (
     base64Data: string,
     mimeType: string,
@@ -49,17 +71,13 @@ export const saveMediaFromBase64 = async (
 ): Promise<MediaMetadata> => {
     await ensureMediaDirectories();
 
-    // Generate a unique filename
-    const mediaHash = uuidv7();
-    const fileExtension = mimeType.split("/")[1];
-    const filePath = `${MEDIA_DIR}${mediaHash}.${fileExtension}`;
+    const filePath = generateUniqueFilePath(mimeType);
+    const mediaHash = filePath.split("/").pop()?.split(".")[0] || "";
 
-    // Save the media file
     await FileSystem.writeAsStringAsync(filePath, base64Data, {
         encoding: FileSystem.EncodingType.Base64,
     });
 
-    // Get file info
     const fileInfo = await FileSystem.getInfoAsync(filePath);
     if (!fileInfo.exists) {
         throw new Error("Failed to save media file");
@@ -67,13 +85,9 @@ export const saveMediaFromBase64 = async (
 
     let thumbnailPath: string | undefined;
     if (options.generateThumbnail && mediaType === "video") {
-        // For videos, we'll generate a thumbnail
-        // Note: This is a placeholder - you'll need to implement actual video thumbnail generation
-        // You might want to use a library like react-native-video-thumbnails
-        thumbnailPath = `${THUMBNAILS_DIR}${mediaHash}.jpg`;
+        thumbnailPath = await generateVideoThumbnail(filePath, mediaHash);
     }
 
-    // Save metadata to database
     const metadata: MediaMetadata = {
         sha256: mediaHash,
         file_path: filePath,
@@ -88,7 +102,7 @@ export const saveMediaFromBase64 = async (
 
     await drizzle_db.insert(media).values({
         ...metadata,
-        media_type: mediaType as string, // Type assertion needed for database schema
+        media_type: mediaType as string,
     });
 
     return metadata;
@@ -107,9 +121,8 @@ export const saveMediaFromUri = async (
 ): Promise<MediaMetadata> => {
     await ensureMediaDirectories();
 
-    const mediaHash = uuidv7();
-    const fileExtension = mimeType.split("/")[1];
-    const filePath = `${MEDIA_DIR}${mediaHash}.${fileExtension}`;
+    const filePath = generateUniqueFilePath(mimeType);
+    const mediaHash = filePath.split("/").pop()?.split(".")[0] ?? "";
 
     await FileSystem.copyAsync({
         from: uri,
@@ -123,8 +136,7 @@ export const saveMediaFromUri = async (
 
     let thumbnailPath: string | undefined;
     if (options.generateThumbnail && mediaType === "video") {
-        // TODO For videos, we'll generate a thumbnail (use a library like react-native-video-thumbnails ?)
-        // thumbnailPath = `${THUMBNAILS_DIR}${mediaHash}.jpg`;
+        thumbnailPath = await generateVideoThumbnail(filePath, mediaHash);
     }
 
     const metadata: MediaMetadata = {
@@ -141,7 +153,7 @@ export const saveMediaFromUri = async (
 
     await drizzle_db.insert(media).values({
         ...metadata,
-        media_type: mediaType as string, // Type assertion needed for database schema
+        media_type: mediaType as string,
     });
 
     return metadata;
@@ -185,7 +197,6 @@ export const getMedia = async (
     };
 };
 
-// Helper function to determine media type from mime type
 export const getMediaTypeFromMimeType = (mimeType: string): MediaType => {
     if (mimeType.startsWith("image/")) return "image";
     if (mimeType.startsWith("video/")) return "video";
