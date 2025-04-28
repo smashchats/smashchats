@@ -45,20 +45,14 @@ export const Avatar = ({ contact, variant = "small" }: AvatarProps) => {
         >
             {!hasImage && (
                 <AvatarFallbackText
-                    name={
-                        contact.trusted_name ??
-                        contact.meta_title ??
-                        "unnamed contact"
-                    }
+                    name={contact.trusted_name ?? contact.meta_title ?? ""}
                 />
             )}
             {hasImage && (
                 <AvatarImage
                     transition={0}
                     alt={`${
-                        contact.trusted_name ??
-                        contact.meta_title ??
-                        "unnamed contact"
+                        contact.trusted_name ?? contact.meta_title ?? ""
                     }'s avatar'`}
                     borderRadius={avatarSize / 4}
                     size={avatarSize}

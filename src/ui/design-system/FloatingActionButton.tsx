@@ -1,10 +1,9 @@
 import React from "react";
-import { Pressable } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { MaterialCommunityIcon } from "@/src/ui/design-system/MaterialCommunityIconsType";
+import { View } from "react-native";
 
-import { Colors } from "@/src/constants/Colors.js";
+import { MaterialCommunityIcon } from "@/src/ui/design-system/MaterialCommunityIconsType";
 import { SCREEN_HEIGHT } from "@/src/ui/constants";
+import { IconButton } from "@/src/ui/components/IconButton";
 
 type Props = {
     icon: MaterialCommunityIcon;
@@ -16,27 +15,23 @@ export function FloatingActionButton({
     onPress,
 }: Readonly<Props>): JSX.Element {
     return (
-        <Pressable
-            testID="FloatingActionButton::Pressable"
+        <View
             style={{
                 zIndex: 99,
-                width: 50,
-                height: 50,
                 position: "absolute",
                 right: 0,
                 top: SCREEN_HEIGHT - 75,
-                backgroundColor: Colors.purple,
-                borderRadius: 25,
                 marginRight: 20,
                 marginBottom: 20,
-                justifyContent: "center",
-                alignItems: "center",
-            }}
-            onPress={() => {
-                onPress();
             }}
         >
-            <MaterialCommunityIcons name={icon} size={28} color={"white"} />
-        </Pressable>
+            <IconButton
+                icon={icon}
+                onPress={onPress}
+                size={28}
+                variant="primary"
+                buttonSize={50}
+            />
+        </View>
     );
 }

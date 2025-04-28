@@ -1,45 +1,62 @@
-import { TouchableOpacity, StyleSheet, ViewStyle } from "react-native";
-
+import React from "react";
+import {
+  TouchableOpacity,
+  StyleSheet,
+  StyleProp,
+  ViewStyle,
+  TouchableOpacityProps,
+} from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialCommunityIcon } from "@/src/ui/design-system/MaterialCommunityIconsType";
+import { Colors } from "@/src/constants/Colors";
 
-export const IconButton = ({
-    onPress,
-    icon,
-    style,
-}: {
-    onPress: () => void;
-    icon: MaterialCommunityIcon;
-    style?: ViewStyle;
+interface IconButtonProps extends TouchableOpacityProps {
+  icon: MaterialCommunityIcon;
+  size?: number;
+  variant?: "primary" | "secondary";
+  buttonSize?: number;
+  style?: StyleProp<ViewStyle>;
+}
+
+export const IconButton: React.FC<IconButtonProps> = ({
+  icon,
+  onPress,
+  size = 24,
+  variant = "secondary",
+  buttonSize = 45,
+  style,
+  ...touchableProps
 }) => {
-    return (
-        <TouchableOpacity
-            activeOpacity={0.8}
-            style={[styles.backButton, style]}
-            onPress={onPress}
-            testID={`IconButton::${icon}`}
-        >
-            <MaterialCommunityIcons
-                name={icon}
-                style={styles.backButtonIcon}
-                size={24}
-                color="white"
-            />
-        </TouchableOpacity>
-    );
+  const variantStyle =
+    variant === "primary" ? styles.primary : styles.secondary;
+
+  return (
+    <TouchableOpacity
+      activeOpacity={0.8}
+      onPress={onPress}
+      style={[
+        styles.container,
+        variantStyle,
+        { width: buttonSize, height: buttonSize, borderRadius: buttonSize / 2 },
+        style,
+      ]}
+      testID={`IconButton::${icon}`}
+      {...touchableProps}
+    >
+      <MaterialCommunityIcons name={icon} size={size} color="white" />
+    </TouchableOpacity>
+  );
 };
 
 const styles = StyleSheet.create({
-    backButton: {
-        height: 45,
-        width: 45,
-        backgroundColor: "#00000055",
-        borderRadius: 100,
-    },
-    backButtonIcon: {
-        position: "absolute",
-        left: 0,
-        top: 0,
-        padding: 10,
-    },
+  container: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  primary: {
+    backgroundColor: Colors.purple,
+  },
+  secondary: {
+    backgroundColor: "rgba(0, 0, 0, 0.33)",
+  },
 });

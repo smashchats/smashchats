@@ -14,7 +14,7 @@ describe("FloatingActionButton", () => {
         const { getByTestId } = render(
             <FloatingActionButton icon="camera" onPress={fn} />
         );
-        const pressable = getByTestId("FloatingActionButton::Pressable");
+        const pressable = getByTestId("IconButton::camera");
         await act(async () => {
             fireEvent.press(pressable);
         });

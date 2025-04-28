@@ -31,9 +31,11 @@ exports[`BackButton renders BackButton correctly 1`] = `
   onStartShouldSetResponder={[Function]}
   style={
     {
-      "backgroundColor": "#00000055",
-      "borderRadius": 100,
+      "alignItems": "center",
+      "backgroundColor": "rgba(0, 0, 0, 0.33)",
+      "borderRadius": 22.5,
       "height": 45,
+      "justifyContent": "center",
       "left": 20,
       "opacity": 1,
       "position": "absolute",
@@ -80,9 +82,11 @@ exports[`BackButton renders BareBackButton correctly 1`] = `
   onStartShouldSetResponder={[Function]}
   style={
     {
-      "backgroundColor": "#00000055",
-      "borderRadius": 100,
+      "alignItems": "center",
+      "backgroundColor": "rgba(0, 0, 0, 0.33)",
+      "borderRadius": 22.5,
       "height": 45,
+      "justifyContent": "center",
       "opacity": 1,
       "width": 45,
     }

@@ -31,9 +31,11 @@ exports[`IconButton Component should match snapshot with 'cog' icon 1`] = `
   onStartShouldSetResponder={[Function]}
   style={
     {
-      "backgroundColor": "#00000055",
-      "borderRadius": 100,
+      "alignItems": "center",
+      "backgroundColor": "rgba(0, 0, 0, 0.33)",
+      "borderRadius": 22.5,
       "height": 45,
+      "justifyContent": "center",
       "opacity": 1,
       "width": 45,
     }
@@ -77,9 +79,11 @@ exports[`IconButton Component should match snapshot with 'home' icon 1`] = `
   onStartShouldSetResponder={[Function]}
   style={
     {
-      "backgroundColor": "#00000055",
-      "borderRadius": 100,
+      "alignItems": "center",
+      "backgroundColor": "rgba(0, 0, 0, 0.33)",
+      "borderRadius": 22.5,
       "height": 45,
+      "justifyContent": "center",
       "opacity": 1,
       "width": 45,
     }

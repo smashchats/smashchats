@@ -6,7 +6,7 @@ exports[`chat item draft is shown in italics 1`] = `
     {
       "backgroundColor": undefined,
       "flex": 1,
-      "height": 80,
+      "height": 70,
       "marginTop": 8,
       "paddingHorizontal": 10,
     }
@@ -15,12 +15,12 @@ exports[`chat item draft is shown in italics 1`] = `
   <View
     style={
       {
-        "alignContent": "flex-start",
+        "alignContent": undefined,
         "alignItems": "center",
         "backgroundColor": undefined,
         "flex": undefined,
         "flexDirection": "row",
-        "gap": 12,
+        "gap": undefined,
         "height": undefined,
         "justifyContent": undefined,
         "marginBottom": undefined,
@@ -30,14 +30,7 @@ exports[`chat item draft is shown in italics 1`] = `
     }
   >
     <View
-      style={
-        [
-          {},
-          {
-            "flex": 1,
-          },
-        ]
-      }
+      style={{}}
     >
       <View
         style={
@@ -45,7 +38,7 @@ exports[`chat item draft is shown in italics 1`] = `
             "alignContent": "flex-start",
             "alignItems": "center",
             "backgroundColor": undefined,
-            "flex": undefined,
+            "flex": 1,
             "flexDirection": "row",
             "gap": 12,
             "height": undefined,
@@ -60,15 +53,15 @@ exports[`chat item draft is shown in italics 1`] = `
           style={
             {
               "backgroundColor": "#64189b",
-              "borderRadius": 16,
+              "borderRadius": 14,
               "flex": undefined,
-              "height": 64,
-              "maxHeight": 64,
-              "maxWidth": 64,
-              "minHeight": 64,
-              "minWidth": 64,
+              "height": 56,
+              "maxHeight": 56,
+              "maxWidth": 56,
+              "minHeight": 56,
+              "minWidth": 56,
               "overflow": "hidden",
-              "width": 64,
+              "width": 56,
             }
           }
         >
@@ -98,122 +91,194 @@ exports[`chat item draft is shown in italics 1`] = `
         <View
           style={
             {
-              "alignItems": undefined,
               "backgroundColor": undefined,
-              "flex": 1,
-              "flexDirection": "column",
-              "gap": 4,
-              "height": 40,
-              "justifyContent": "center",
-              "marginBottom": 12,
-              "marginHorizontal": undefined,
-              "marginVertical": undefined,
+              "height": undefined,
+              "style": {
+                "flex": 1,
+                "paddingRight": 16,
+                "width": "100%",
+              },
             }
           }
         >
           <View
             style={
               {
+                "alignItems": undefined,
                 "backgroundColor": undefined,
-                "flex": undefined,
-                "height": undefined,
-                "marginBottom": undefined,
+                "flex": 1,
+                "flexDirection": "column",
+                "gap": 4,
+                "height": 40,
+                "justifyContent": "center",
+                "marginBottom": 12,
+                "marginHorizontal": undefined,
+                "marginVertical": undefined,
               }
             }
           >
-            <Text
+            <View
               style={
                 {
-                  "color": "white",
-                  "fontFamily": "Didot",
-                  "fontSize": 20,
-                  "fontWeight": undefined,
-                  "marginVertical": 4,
+                  "alignContent": undefined,
+                  "alignItems": "center",
+                  "backgroundColor": undefined,
+                  "flex": undefined,
+                  "flexDirection": "row",
+                  "gap": undefined,
+                  "height": undefined,
+                  "justifyContent": undefined,
+                  "marginBottom": undefined,
+                  "marginHorizontal": undefined,
+                  "marginVertical": undefined,
                 }
               }
             >
-              trusted_name
-               
-              <Text>
-                check-circle
+              <View
+                style={
+                  {
+                    "backgroundColor": undefined,
+                    "height": undefined,
+                    "style": {
+                      "flexDirection": "row",
+                      "flexShrink": 1,
+                      "marginRight": 4,
+                    },
+                  }
+                }
+              >
+                <View
+                  style={
+                    {
+                      "backgroundColor": undefined,
+                      "flex": undefined,
+                      "height": undefined,
+                      "marginBottom": undefined,
+                    }
+                  }
+                >
+                  <Text
+                    style={
+                      {
+                        "color": "white",
+                        "fontFamily": "Didot",
+                        "fontSize": 20,
+                        "fontWeight": undefined,
+                        "marginVertical": 4,
+                      }
+                    }
+                  >
+                    trusted_name
+                  </Text>
+                </View>
+              </View>
+              <View
+                style={
+                  {
+                    "backgroundColor": undefined,
+                    "height": undefined,
+                    "style": {
+                      "alignSelf": "flex-start",
+                      "flexShrink": 0,
+                    },
+                  }
+                }
+              >
+                <Text>
+                  check-circle
+                </Text>
+              </View>
+            </View>
+            <View
+              style={
+                {
+                  "backgroundColor": undefined,
+                  "flex": undefined,
+                  "height": 18,
+                  "marginBottom": undefined,
+                }
+              }
+            >
+              <Text
+                numberOfLines={2}
+                style={
+                  {
+                    "color": "#9B9B9B",
+                    "fontFamily": undefined,
+                    "fontSize": 12,
+                    "fontStyle": "italic",
+                    "fontWeight": "400",
+                  }
+                }
+              >
+                Draft: draft
               </Text>
-            </Text>
+            </View>
           </View>
-          <View
+        </View>
+      </View>
+    </View>
+    <View
+      style={
+        {
+          "backgroundColor": undefined,
+          "height": 40,
+          "style": {
+            "position": "absolute",
+            "right": 0,
+            "zIndex": 10,
+          },
+          "width": 70,
+        }
+      }
+    >
+      <View
+        style={
+          {
+            "alignItems": "flex-end",
+            "backgroundColor": undefined,
+            "flex": undefined,
+            "flexDirection": "column",
+            "gap": 12,
+            "height": 40,
+            "justifyContent": "center",
+            "marginHorizontal": undefined,
+            "marginVertical": undefined,
+          }
+        }
+      >
+        <View
+          style={
+            {
+              "backgroundColor": undefined,
+              "flex": undefined,
+              "height": 16,
+              "marginBottom": -2,
+            }
+          }
+        >
+          <Text
+            numberOfLines={2}
             style={
               {
-                "backgroundColor": undefined,
-                "flex": undefined,
-                "height": 16,
-                "marginBottom": undefined,
+                "color": "#F0F0F0",
+                "fontFamily": "Cairo, apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif",
+                "fontSize": 12,
+                "fontWeight": "100",
               }
             }
           >
-            <Text
-              numberOfLines={2}
-              style={
-                {
-                  "color": "#9B9B9B",
-                  "fontFamily": undefined,
-                  "fontSize": 12,
-                  "fontStyle": "italic",
-                  "fontWeight": "400",
-                }
-              }
-            >
-              Draft: draft
-            </Text>
-          </View>
+            Yesterday
+          </Text>
         </View>
         <View
           style={
             {
-              "alignItems": "flex-end",
               "backgroundColor": undefined,
-              "flex": undefined,
-              "flexDirection": "column",
-              "gap": 12,
-              "height": 40,
-              "justifyContent": "center",
-              "marginHorizontal": undefined,
-              "marginVertical": undefined,
-              "minWidth": 60,
+              "height": 20,
             }
           }
-        >
-          <View
-            style={
-              {
-                "backgroundColor": undefined,
-                "flex": undefined,
-                "height": 16,
-                "marginBottom": -2,
-              }
-            }
-          >
-            <Text
-              numberOfLines={2}
-              style={
-                {
-                  "color": "#F0F0F0",
-                  "fontFamily": "Cairo, apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif",
-                  "fontSize": 12,
-                  "fontWeight": "100",
-                }
-              }
-            >
-              Yesterday
-            </Text>
-          </View>
-          <View
-            style={
-              {
-                "backgroundColor": undefined,
-                "height": 20,
-              }
-            }
-          />
-        </View>
+        />
       </View>
     </View>
   </View>
@@ -223,7 +288,7 @@ exports[`chat item draft is shown in italics 1`] = `
         "backgroundColor": "#292929",
         "height": 1,
         "marginRight": -10,
-        "marginTop": 8,
+        "marginTop": 18,
       }
     }
   />
@@ -236,7 +301,7 @@ exports[`chat item unreadMessagesAmount is shown 1`] = `
     {
       "backgroundColor": undefined,
       "flex": 1,
-      "height": 80,
+      "height": 70,
       "marginTop": 8,
       "paddingHorizontal": 10,
     }
@@ -245,12 +310,12 @@ exports[`chat item unreadMessagesAmount is shown 1`] = `
   <View
     style={
       {
-        "alignContent": "flex-start",
+        "alignContent": undefined,
         "alignItems": "center",
         "backgroundColor": undefined,
         "flex": undefined,
         "flexDirection": "row",
-        "gap": 12,
+        "gap": undefined,
         "height": undefined,
         "justifyContent": undefined,
         "marginBottom": undefined,
@@ -260,14 +325,7 @@ exports[`chat item unreadMessagesAmount is shown 1`] = `
     }
   >
     <View
-      style={
-        [
-          {},
-          {
-            "flex": 1,
-          },
-        ]
-      }
+      style={{}}
     >
       <View
         style={
@@ -275,7 +333,7 @@ exports[`chat item unreadMessagesAmount is shown 1`] = `
             "alignContent": "flex-start",
             "alignItems": "center",
             "backgroundColor": undefined,
-            "flex": undefined,
+            "flex": 1,
             "flexDirection": "row",
             "gap": 12,
             "height": undefined,
@@ -290,15 +348,15 @@ exports[`chat item unreadMessagesAmount is shown 1`] = `
           style={
             {
               "backgroundColor": "#64189b",
-              "borderRadius": 16,
+              "borderRadius": 14,
               "flex": undefined,
-              "height": 64,
-              "maxHeight": 64,
-              "maxWidth": 64,
-              "minHeight": 64,
-              "minWidth": 64,
+              "height": 56,
+              "maxHeight": 56,
+              "maxWidth": 56,
+              "minHeight": 56,
+              "minWidth": 56,
               "overflow": "hidden",
-              "width": 64,
+              "width": 56,
             }
           }
         >
@@ -328,156 +386,228 @@ exports[`chat item unreadMessagesAmount is shown 1`] = `
         <View
           style={
             {
-              "alignItems": undefined,
               "backgroundColor": undefined,
-              "flex": 1,
-              "flexDirection": "column",
-              "gap": 4,
-              "height": 40,
-              "justifyContent": "center",
-              "marginBottom": 12,
-              "marginHorizontal": undefined,
-              "marginVertical": undefined,
+              "height": undefined,
+              "style": {
+                "flex": 1,
+                "paddingRight": 16,
+                "width": "100%",
+              },
             }
           }
         >
           <View
             style={
               {
+                "alignItems": undefined,
                 "backgroundColor": undefined,
-                "flex": undefined,
-                "height": undefined,
-                "marginBottom": undefined,
-              }
-            }
-          >
-            <Text
-              style={
-                {
-                  "color": "white",
-                  "fontFamily": "Didot",
-                  "fontSize": 20,
-                  "fontWeight": undefined,
-                  "marginVertical": 4,
-                }
-              }
-            >
-              trusted_name
-               
-              <Text>
-                check-circle
-              </Text>
-            </Text>
-          </View>
-          <View
-            style={
-              {
-                "backgroundColor": undefined,
-                "flex": undefined,
-                "height": 16,
-                "marginBottom": undefined,
-              }
-            }
-          >
-            <Text
-              numberOfLines={2}
-              style={
-                {
-                  "color": "white",
-                  "fontFamily": undefined,
-                  "fontSize": 12,
-                  "fontStyle": "normal",
-                  "fontWeight": "400",
-                }
-              }
-            >
-              unsupported message
-            </Text>
-          </View>
-        </View>
-        <View
-          style={
-            {
-              "alignItems": "flex-end",
-              "backgroundColor": undefined,
-              "flex": undefined,
-              "flexDirection": "column",
-              "gap": 12,
-              "height": 40,
-              "justifyContent": "center",
-              "marginHorizontal": undefined,
-              "marginVertical": undefined,
-              "minWidth": 60,
-            }
-          }
-        >
-          <View
-            style={
-              {
-                "backgroundColor": undefined,
-                "flex": undefined,
-                "height": 16,
-                "marginBottom": -2,
-              }
-            }
-          >
-            <Text
-              numberOfLines={2}
-              style={
-                {
-                  "color": "#F0F0F0",
-                  "fontFamily": "Cairo, apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif",
-                  "fontSize": 12,
-                  "fontWeight": "100",
-                }
-              }
-            >
-              Yesterday
-            </Text>
-          </View>
-          <View
-            style={
-              {
-                "alignItems": "center",
-                "backgroundColor": "#3f3f3f",
-                "borderColor": "#3f3f3f",
-                "borderRadius": 16,
-                "borderWidth": 2,
-                "flex": undefined,
-                "flexDirection": "row",
-                "height": undefined,
+                "flex": 1,
+                "flexDirection": "column",
+                "gap": 4,
+                "height": 40,
                 "justifyContent": "center",
+                "marginBottom": 12,
                 "marginHorizontal": undefined,
-                "marginRight": undefined,
-                "paddingHorizontal": 8,
-                "paddingVertical": 1,
-                "width": undefined,
+                "marginVertical": undefined,
               }
             }
           >
             <View
               style={
                 {
+                  "alignContent": undefined,
+                  "alignItems": "center",
                   "backgroundColor": undefined,
                   "flex": undefined,
+                  "flexDirection": "row",
+                  "gap": undefined,
                   "height": undefined,
+                  "justifyContent": undefined,
+                  "marginBottom": undefined,
+                  "marginHorizontal": undefined,
+                  "marginVertical": undefined,
+                }
+              }
+            >
+              <View
+                style={
+                  {
+                    "backgroundColor": undefined,
+                    "height": undefined,
+                    "style": {
+                      "flexDirection": "row",
+                      "flexShrink": 1,
+                      "marginRight": 4,
+                    },
+                  }
+                }
+              >
+                <View
+                  style={
+                    {
+                      "backgroundColor": undefined,
+                      "flex": undefined,
+                      "height": undefined,
+                      "marginBottom": undefined,
+                    }
+                  }
+                >
+                  <Text
+                    style={
+                      {
+                        "color": "white",
+                        "fontFamily": "Didot",
+                        "fontSize": 20,
+                        "fontWeight": undefined,
+                        "marginVertical": 4,
+                      }
+                    }
+                  >
+                    trusted_name
+                  </Text>
+                </View>
+              </View>
+              <View
+                style={
+                  {
+                    "backgroundColor": undefined,
+                    "height": undefined,
+                    "style": {
+                      "alignSelf": "flex-start",
+                      "flexShrink": 0,
+                    },
+                  }
+                }
+              >
+                <Text>
+                  check-circle
+                </Text>
+              </View>
+            </View>
+            <View
+              style={
+                {
+                  "backgroundColor": undefined,
+                  "flex": undefined,
+                  "height": 18,
+                  "marginBottom": undefined,
                 }
               }
             >
               <Text
+                numberOfLines={2}
                 style={
                   {
-                    "color": "#F0F0F0",
-                    "fontFamily": "Cairo, apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif",
+                    "color": "white",
+                    "fontFamily": undefined,
                     "fontSize": 12,
-                    "fontWeight": "100",
-                    "textTransform": "uppercase",
+                    "fontStyle": "normal",
+                    "fontWeight": "400",
                   }
                 }
               >
-                73
+                unsupported message
               </Text>
             </View>
+          </View>
+        </View>
+      </View>
+    </View>
+    <View
+      style={
+        {
+          "backgroundColor": undefined,
+          "height": 40,
+          "style": {
+            "position": "absolute",
+            "right": 0,
+            "zIndex": 10,
+          },
+          "width": 70,
+        }
+      }
+    >
+      <View
+        style={
+          {
+            "alignItems": "flex-end",
+            "backgroundColor": undefined,
+            "flex": undefined,
+            "flexDirection": "column",
+            "gap": 12,
+            "height": 40,
+            "justifyContent": "center",
+            "marginHorizontal": undefined,
+            "marginVertical": undefined,
+          }
+        }
+      >
+        <View
+          style={
+            {
+              "backgroundColor": undefined,
+              "flex": undefined,
+              "height": 16,
+              "marginBottom": -2,
+            }
+          }
+        >
+          <Text
+            numberOfLines={2}
+            style={
+              {
+                "color": "#F0F0F0",
+                "fontFamily": "Cairo, apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif",
+                "fontSize": 12,
+                "fontWeight": "100",
+              }
+            }
+          >
+            Yesterday
+          </Text>
+        </View>
+        <View
+          style={
+            {
+              "alignItems": "center",
+              "backgroundColor": "#3f3f3f",
+              "borderColor": "#3f3f3f",
+              "borderRadius": 16,
+              "borderWidth": 2,
+              "flex": undefined,
+              "flexDirection": "row",
+              "height": undefined,
+              "justifyContent": "center",
+              "marginHorizontal": undefined,
+              "marginRight": undefined,
+              "paddingHorizontal": 8,
+              "paddingVertical": 1,
+              "width": undefined,
+            }
+          }
+        >
+          <View
+            style={
+              {
+                "backgroundColor": undefined,
+                "flex": undefined,
+                "height": undefined,
+              }
+            }
+          >
+            <Text
+              style={
+                {
+                  "color": "#F0F0F0",
+                  "fontFamily": "Cairo, apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif",
+                  "fontSize": 12,
+                  "fontWeight": "100",
+                  "textTransform": "uppercase",
+                }
+              }
+            >
+              73
+            </Text>
           </View>
         </View>
       </View>
@@ -489,7 +619,7 @@ exports[`chat item unreadMessagesAmount is shown 1`] = `
         "backgroundColor": "#292929",
         "height": 1,
         "marginRight": -10,
-        "marginTop": 8,
+        "marginTop": 18,
       }
     }
   />

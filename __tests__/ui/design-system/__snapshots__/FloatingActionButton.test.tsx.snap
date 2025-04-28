@@ -2,55 +2,61 @@
 
 exports[`FloatingActionButton Renders correctly 1`] = `
 <View
-  accessibilityState={
-    {
-      "busy": undefined,
-      "checked": undefined,
-      "disabled": undefined,
-      "expanded": undefined,
-      "selected": undefined,
-    }
-  }
-  accessibilityValue={
-    {
-      "max": undefined,
-      "min": undefined,
-      "now": undefined,
-      "text": undefined,
-    }
-  }
-  accessible={true}
-  collapsable={false}
-  focusable={true}
-  onBlur={[Function]}
-  onClick={[Function]}
-  onFocus={[Function]}
-  onResponderGrant={[Function]}
-  onResponderMove={[Function]}
-  onResponderRelease={[Function]}
-  onResponderTerminate={[Function]}
-  onResponderTerminationRequest={[Function]}
-  onStartShouldSetResponder={[Function]}
   style={
     {
-      "alignItems": "center",
-      "backgroundColor": "#64189b",
-      "borderRadius": 25,
-      "height": 50,
-      "justifyContent": "center",
       "marginBottom": 20,
       "marginRight": 20,
       "position": "absolute",
       "right": 0,
       "top": 1259,
-      "width": 50,
       "zIndex": 99,
     }
   }
-  testID="FloatingActionButton::Pressable"
 >
-  <Text>
-    camera
-  </Text>
+  <View
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": undefined,
+        "expanded": undefined,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      {
+        "alignItems": "center",
+        "backgroundColor": "#64189b",
+        "borderRadius": 25,
+        "height": 50,
+        "justifyContent": "center",
+        "opacity": 1,
+        "width": 50,
+      }
+    }
+    testID="IconButton::camera"
+  >
+    <Text>
+      camera
+    </Text>
+  </View>
 </View>
 `;

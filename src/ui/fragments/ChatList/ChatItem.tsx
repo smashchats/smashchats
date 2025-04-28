@@ -117,7 +117,7 @@ export function ChatItem({
     const displayName =
         trusted_name ??
         meta_title ??
-        (__DEV__ ? did_id.substring(did_id.length - 4) : "unnamed contact");
+        `unnamed contact (${did_id.substring(did_id.length - 4)})`;
 
     return (
         <Box
