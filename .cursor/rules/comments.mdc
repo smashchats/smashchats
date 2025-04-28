@@ -6,8 +6,14 @@ alwaysApply: true
 # Comments
 
 -   basic comments should be avoided
+    example
+    ```js
+    // Mocking Reanimated
+    jest.mock('react-native-reanimated');
+    ```
 -   function names and variables should be explicit and tell exactly what they do / mean.
 -   it's preferable to have a long function name that one that's not understandable
 -   the code should be self-documented and be easy to read. no comment should be needed to understand what a function does
 -   some comments are allowed when there's some code that provides non-self-explanatory / obvious functionalities
 -   comments to separate large sections of related code are allowed
+-   if you feel you need to add a comment, think that your code is not clear enough and that you need to rewrite it in order to avoid commenting it.

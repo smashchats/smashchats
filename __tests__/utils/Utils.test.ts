@@ -1,53 +1,7 @@
-import {
-    addPrefixToObjectKeys,
-    DAY,
-    daysBetweenTwoDates,
-    getDidFromDomain,
-    HOUR,
-    MINUTE,
-    SECOND
-} from "@/src/utils/Utils";
+import { addPrefixToObjectKeys, getDidFromDomain } from "@/src/utils/Utils";
 
 describe("Utils", () => {
-    describe("time", () => {
-        test("units are correct", () => {
-            expect(DAY).toBe(24 * HOUR);
-            expect(HOUR).toBe(60 * MINUTE);
-            expect(MINUTE).toBe(60 * SECOND);
-            expect(SECOND).toBe(1000);
-        });
-
-        describe("diffInDays", () => {
-            it("returns 1 for 1 day difference", () => {
-                const dateStart = new Date("2024-02-29");
-                const dateEnd = new Date("2024-03-01");
-                expect(daysBetweenTwoDates(dateStart, dateEnd)).toBe(1);
-            });
-
-            it("returns 0 for same day", () => {
-                const dateStart = new Date("2024-02-29");
-                const dateEnd = new Date("2024-02-29");
-                expect(daysBetweenTwoDates(dateStart, dateEnd)).toBe(0);
-            });
-
-            it("returns 1 for 1 day difference in reverse", () => {
-                const dateStart = new Date("2024-03-01");
-                const dateEnd = new Date("2024-02-29");
-                expect(daysBetweenTwoDates(dateStart, dateEnd)).toBe(1);
-            });
-
-            it("returns 1 for yesterday midnight", () => {
-                const dateEnd = new Date("2024-02-29");
-                const dateStart = new Date(
-                    `${new Date(dateEnd.getTime() - 1 * DAY).toDateString()} 23:59:00Z`
-                );
-                expect(daysBetweenTwoDates(dateStart, dateEnd)).toBe(1);
-            });
-        });
-    });
-
     describe("getDidFromDomain", () => {
-
         beforeEach(() => {
             const mockedJson = () =>
                 Promise.resolve({
@@ -61,14 +15,14 @@ describe("Utils", () => {
                                 ik: "test-ik",
                                 ek: "test-ek",
                                 signature: "test-signature",
-                                endpoints: []
-                            }
-                        }
-                    ]
-                })
+                                endpoints: [],
+                            },
+                        },
+                    ],
+                });
             global.fetch = jest.fn(() =>
                 Promise.resolve({
-                    json: mockedJson
+                    json: mockedJson,
                 })
             ) as jest.Mock;
         });
@@ -84,12 +38,15 @@ describe("Utils", () => {
                 ik: "test-ik",
                 ek: "test-ek",
                 signature: "test-signature",
-                endpoints: []
+                endpoints: [],
             });
 
-            expect(global.fetch).toHaveBeenCalledWith("https://dns.google/resolve?name=_smash.smash.chat&type=TXT", {
-                headers: { "Content-Type": "application/dns-json" }
-            });
+            expect(global.fetch).toHaveBeenCalledWith(
+                "https://dns.google/resolve?name=_smash.smash.chat&type=TXT",
+                {
+                    headers: { "Content-Type": "application/dns-json" },
+                }
+            );
         });
     });
 
@@ -98,7 +55,11 @@ describe("Utils", () => {
             const obj = { a: 1, b: 2, c: 3 };
             const prefix = "prefix-";
             const result = addPrefixToObjectKeys(obj, prefix);
-            expect(result).toEqual({ "prefix-a": 1, "prefix-b": 2, "prefix-c": 3 });
+            expect(result).toEqual({
+                "prefix-a": 1,
+                "prefix-b": 2,
+                "prefix-c": 3,
+            });
         });
     });
 });

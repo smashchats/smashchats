@@ -24,17 +24,7 @@ export const getDidFromDomain = async (domain: string): Promise<DIDDocument> => 
 
 // Quicktyped from data available here: https://developers.google.com/speed/public-dns/docs/doh/
 
-export const SECOND = 1000;
-export const MINUTE = 60 * SECOND;
-export const HOUR = 60 * MINUTE;
-export const DAY = 24 * HOUR;
 
-export const daysBetweenTwoDates = (dateStart: Date, dateEnd: Date): number => {
-    const diff =
-        new Date(dateEnd.toISOString().substring(0, 10)).getTime() -
-        new Date(dateStart.toISOString().substring(0, 10)).getTime();
-    return Math.abs(Math.floor(diff / DAY));
-};
 
 export const addPrefixToObjectKeys = (obj: Record<string, any>, prefix: string) => {
     return Object.fromEntries(

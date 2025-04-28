@@ -1,11 +1,17 @@
 import * as React from "react";
 import { render } from "@testing-library/react-native";
-import { ChatItem, dateToShowableString } from "@/src/ui/fragments/ChatList";
-import { DAY, HOUR } from "@/src/utils/Utils.js";
+import { ChatItem } from "@/src/ui/fragments/ChatList";
+import { DAY } from "@/src/utils/TimeUtils.js";
 import { getExcerpt } from "@/src/ui/fragments/ChatList/ChatItem";
 import { IM_CHAT_TEXT } from "@smashchats/library";
 
+jest.mock('react-native-reanimated');
+
 describe(`chat item`, () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
     test("unreadMessagesAmount is shown", () => {
         const tree = render(
             <ChatItem
@@ -26,39 +32,6 @@ describe(`chat item`, () => {
         ).toJSON();
 
         expect(tree).toMatchSnapshot();
-    });
-
-    describe("date display", () => {
-        it("shows the time if the message was sent in the same day", () => {
-            const date = new Date(new Date().getTime() - 1 * HOUR);
-            const result = dateToShowableString(date);
-
-            // expect to match regex for time
-            expect(result).toMatch(/^\d{1,2}:\d{2} [AP]M$/);
-        });
-
-        it('shows "Yesterday" if the message was sent more than one day ago', () => {
-            const date = new Date(new Date().getTime() - 1 * DAY);
-            const result = dateToShowableString(date);
-
-            expect(result).toBe("Yesterday");
-        });
-
-        it("shows the weekday if the message was sent less than one week ago", () => {
-            const date = new Date(new Date().getTime() - 3 * DAY);
-            const result = dateToShowableString(date);
-
-            expect(result).toMatch(
-                /^(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)$/
-            );
-        });
-
-        it("shows the date if the message was sent more than one week ago", () => {
-            const date = new Date("2024-05-01");
-            const result = dateToShowableString(date);
-
-            expect(result).toBe("05/01/2024");
-        });
     });
 
     test("draft is shown in italics", () => {

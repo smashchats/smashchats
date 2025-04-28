@@ -8,12 +8,13 @@ import { ContactPreview } from "@/src/types/Contacts.types";
 
 type AvatarProps = {
     contact: ContactPreview;
-    variant?: "small" | "large" | "xlarge";
+    variant?: "small" | "medium" | "large" | "xlarge";
 };
 
 export const Avatar = ({ contact, variant = "small" }: AvatarProps) => {
     const dimensions = {
         small: 40,
+        medium: 56,
         large: 64,
         xlarge: 128,
     };
