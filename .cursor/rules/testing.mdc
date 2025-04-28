@@ -1,0 +1,8 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+- Tests should be added inside [__tests__](mdc:__tests__)
+- When testing hooks, use `import { renderHook, act } from "@testing-library/react-native";`
+- Mocks already exist in [__mocks__](mdc:__mocks__). When you feel adding mocks is needed, check that folder for existing mocks and ponder whether adding a mock here is relevant or alongside the new tests.

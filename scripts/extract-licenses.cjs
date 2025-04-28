@@ -1,4 +1,4 @@
-const { readFileSync } = require('fs');
+const { readFileSync, existsSync } = require('fs');
 const packageJson = require("../package.json");
 
 const LICENSE_GENERATOR = {
@@ -245,24 +245,36 @@ const MANUAL_LICENSES = {
 }
 
 const libraries = Object.keys(packageJson.dependencies).map(k => {
-    let license = ''
+    let licenseFileContent = ''
     const licenseFiles = ['LICENSE', 'LICENSE.txt', 'LICENSE.md']
     for (const fileName of licenseFiles) {
         try {
-            license = readFileSync(`./node_modules/${k}/${fileName}`, { encoding: 'utf8', flag: 'r' })
-            break
-        } catch {}
+            const filePath = `./node_modules/${k}/${fileName}`
+            if (existsSync(filePath)) {
+                licenseFileContent = readFileSync(filePath, { encoding: 'utf8', flag: 'r' })
+                break
+            }
+        } catch { }
     }
-    if (!license) {
+    if (!licenseFileContent) {
+        const packageJsonPath = `./node_modules/${k}/package.json`
+
         if (MANUAL_LICENSES[k]) {
-            license = MANUAL_LICENSES[k]
+            licenseFileContent = MANUAL_LICENSES[k]
         } else if (k.startsWith('expo-')) {
-            license = MANUAL_LICENSES['expo']
+            licenseFileContent = MANUAL_LICENSES['expo']
+        } else if (existsSync(packageJsonPath)) {
+            const packageJson = JSON.parse(readFileSync(packageJsonPath, { encoding: 'utf8', flag: 'r' }))
+            if (packageJson.license) {
+                console.warn(`License found for ${k} at ${packageJsonPath}: ${packageJson.license}`)
+                console.warn(`\t - Open ${packageJsonPath} to see the license`)
+                console.warn(`\t - Open ${packageJson.homepage ?? packageJson.repository.url.split('+')[1]} to see the source code`)
+            }
         } else {
             throw new Error(`No license found for ${k}`)
         }
     }
-    return { name: k, license }
+    return { name: k, license: licenseFileContent }
 })
 
 const output = {
