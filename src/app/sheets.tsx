@@ -11,14 +11,12 @@ import BadgeDetailsSheet, {
     BadgeDetailsSheetProps,
 } from "@/src/ui/sheets/BadgeDetailsSheet";
 import ReportSheet, { ReportSheetProps } from "@/src/ui/sheets/ReportSheet";
-import CodeScannerSheet from "@/src/ui/sheets/CodeScannerSheet";
 
 registerSheet("profile-details-sheet", ProfileDetailsSheet);
 registerSheet("badge-details-sheet", BadgeDetailsSheet);
 registerSheet("confirm-sheet", ConfirmSheet);
 registerSheet("input-field-sheet", InputFieldSheet);
 registerSheet("report-sheet", ReportSheet);
-registerSheet("code-scanner-sheet", CodeScannerSheet);
 
 declare module "react-native-actions-sheet" {
     interface Sheets {
@@ -38,9 +36,6 @@ declare module "react-native-actions-sheet" {
         }>;
         "report-sheet": SheetDefinition<{
             payload: ReportSheetProps;
-        }>;
-        "code-scanner-sheet": SheetDefinition<{
-            returnValue: string | undefined;
         }>;
     }
 }

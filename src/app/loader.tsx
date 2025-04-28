@@ -189,6 +189,11 @@ export default function LoaderScreen() {
                         />
 
                         <Stack.Screen
+                            name="code-scanner"
+                            options={{ headerShown: false }}
+                        />
+
+                        <Stack.Screen
                             name="licenses"
                             options={{ title: "Licenses", headerShown: true }}
                         />

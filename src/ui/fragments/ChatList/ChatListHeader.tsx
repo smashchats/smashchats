@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Pressable } from "react-native";
+import { ActivityIndicator, Pressable } from "react-native";
 
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Link, useRouter } from "expo-router";
-import { SheetManager } from "react-native-actions-sheet";
 
 import { NeonBadge } from "@/src/ui/components/NeonBadge";
 import { Colors } from "@/src/constants/Colors.js";
@@ -12,9 +11,7 @@ import { NEIGHBOURHOOD_DOMAIN } from "@/data/neighbourhood.js";
 import { useGlobalState } from "@/src/context/GlobalContext";
 import { ChatListView } from "@/src/types/ChatListScreen.types";
 import { Text } from "@/src/ui/design-system/Text";
-import { saveContactToDb } from "@/src/db/models/Contacts";
-import { MapDidToContactInsert } from "@/src/utils/mappers/contacts";
-import { DIDDocumentSchema } from "@/src/utils/schemas/didSchema";
+
 import usePermission from "@/src/hooks/usePermission";
 
 type ChatListHeaderProps = {
@@ -47,20 +44,6 @@ export function ChatListHeader({
             router.push("/secret");
         }
     }, [count, router]);
-
-    const handleScan = async (data: string | undefined) => {
-        if (!data) {
-            return;
-        }
-        try {
-            const did = DIDDocumentSchema.parse(data);
-            await saveContactToDb(MapDidToContactInsert(did));
-            router.push(`/profile/${did.id}/messages`);
-        } catch (error) {
-            console.debug(error);
-            Alert.alert("The ID you scanned is not valid");
-        }
-    };
 
     return (
         <Box>
@@ -131,10 +114,7 @@ export function ChatListHeader({
                         <Pressable
                             onPress={async () => {
                                 await guardCameraPermission();
-                                const result = await SheetManager.show(
-                                    "code-scanner-sheet"
-                                );
-                                handleScan(result);
+                                router.push("/code-scanner");
                             }}
                         >
                             <MaterialCommunityIcons

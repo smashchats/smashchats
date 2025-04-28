@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`BackButton renders BackButton correctly 1`] = `
+exports[`IconButton Component should match snapshot with 'cog' icon 1`] = `
 <View
   accessibilityState={
     {
@@ -34,22 +34,19 @@ exports[`BackButton renders BackButton correctly 1`] = `
       "backgroundColor": "#00000055",
       "borderRadius": 100,
       "height": 45,
-      "left": 20,
       "opacity": 1,
-      "position": "absolute",
-      "top": 75,
       "width": 45,
     }
   }
-  testID="IconButton::arrow-left"
+  testID="IconButton::cog"
 >
   <Text>
-    arrow-left
+    cog
   </Text>
 </View>
 `;
 
-exports[`BackButton renders BareBackButton correctly 1`] = `
+exports[`IconButton Component should match snapshot with 'home' icon 1`] = `
 <View
   accessibilityState={
     {
@@ -87,10 +84,10 @@ exports[`BackButton renders BareBackButton correctly 1`] = `
       "width": 45,
     }
   }
-  testID="IconButton::arrow-left"
+  testID="IconButton::home"
 >
   <Text>
-    arrow-left
+    home
   </Text>
 </View>
 `;

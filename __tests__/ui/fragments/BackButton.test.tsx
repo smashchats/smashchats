@@ -31,7 +31,7 @@ describe("BackButton", () => {
     it("calls onPress when BackButton is pressed", () => {
         const onPressMock = jest.fn();
         const { getByTestId } = render(<BackButton onPress={onPressMock} />);
-        const button = getByTestId("BackButton");
+        const button = getByTestId("IconButton::arrow-left");
         fireEvent.press(button);
         expect(onPressMock).toHaveBeenCalled();
     });
@@ -41,7 +41,7 @@ describe("BackButton", () => {
         const { getByTestId } = render(
             <BareBackButton onPress={onPressMock} />
         );
-        const button = getByTestId("BackButton");
+        const button = getByTestId("IconButton::arrow-left");
         fireEvent.press(button);
         expect(onPressMock).toHaveBeenCalled();
     });
@@ -50,7 +50,7 @@ describe("BackButton", () => {
         const { __backMock } = require("expo-router");
 
         const { getByTestId } = render(<BareBackButton />);
-        const button = getByTestId("BackButton");
+        const button = getByTestId("IconButton::arrow-left");
         fireEvent.press(button);
         expect(__backMock).toHaveBeenCalled();
     });

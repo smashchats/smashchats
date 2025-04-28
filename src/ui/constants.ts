@@ -9,3 +9,5 @@ export const SCREEN_HEIGHT = Platform.select<number>({
         StaticSafeAreaInsets.safeAreaInsetsBottom,
     ios: Dimensions.get("window").height,
 }) as number;
+
+export const INSETS = StaticSafeAreaInsets;

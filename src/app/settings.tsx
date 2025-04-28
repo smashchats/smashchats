@@ -6,7 +6,6 @@ import {
     Switch,
     StyleSheet,
     ScrollView,
-    TouchableOpacity,
 } from "react-native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -22,7 +21,7 @@ import { useGlobalState, useGlobalDispatch } from "@/src/context/GlobalContext";
 import { Colors } from "@/src/constants/Colors";
 import { PickImage } from "@/src/utils/ImageUtils";
 import { InAppWebLink } from "@/src/ui/components/InAppWebLink/InAppWebLink";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { BackButton } from "@/src/ui/fragments/BackButton";
 
 const FEATURE_FLAG_ENABLE_AVATAR = false;
 
@@ -244,38 +243,12 @@ export default function SettingsScreen() {
                     </ThemedText>
                 </View>
             </ScrollView>
-            <TouchableOpacity
-                activeOpacity={0.8}
-                style={styles.backButton}
-                onPress={handleBack}
-            >
-                <MaterialCommunityIcons
-                    name="arrow-left"
-                    style={styles.backButtonIcon}
-                    size={24}
-                    color="white"
-                />
-            </TouchableOpacity>
+            <BackButton onPress={handleBack} />
         </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
-    backButton: {
-        height: 45,
-        width: 45,
-        backgroundColor: "#00000055",
-        position: "absolute",
-        borderRadius: 100,
-        left: 20,
-        top: 75,
-    },
-    backButtonIcon: {
-        position: "absolute",
-        left: 0,
-        top: 0,
-        padding: 10,
-    },
     container: {
         flex: 1,
     },

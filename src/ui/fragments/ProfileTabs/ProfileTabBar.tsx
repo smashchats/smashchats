@@ -116,6 +116,7 @@ export function ProfileTabBar({
                             accessibilityLabel={
                                 options.tabBarAccessibilityLabel
                             }
+                            // @ts-expect-error
                             testID={options.tabBarTestID}
                             onPress={onPress}
                             onLongPress={onLongPress}

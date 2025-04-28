@@ -1,7 +1,8 @@
-import { TouchableOpacity, StyleSheet, ViewStyle } from "react-native";
+import { StyleSheet, ViewStyle } from "react-native";
 
 import { useRouter } from "expo-router";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+
+import { IconButton } from "@/src/ui/components/IconButton";
 
 export const BackButton = ({ onPress }: { onPress?: () => void }) => {
     return (
@@ -18,19 +19,11 @@ export const BareBackButton = ({
 }) => {
     const router = useRouter();
     return (
-        <TouchableOpacity
-            activeOpacity={0.8}
-            style={[styles.backButton, style]}
+        <IconButton
+            icon="arrow-left"
             onPress={onPress ?? router.back}
-            testID="BackButton"
-        >
-            <MaterialCommunityIcons
-                name="arrow-left"
-                style={styles.backButtonIcon}
-                size={24}
-                color="white"
-            />
-        </TouchableOpacity>
+            style={style}
+        />
     );
 };
 
@@ -39,17 +32,5 @@ const styles = StyleSheet.create({
         position: "absolute",
         left: 20,
         top: 75,
-    },
-    backButton: {
-        height: 45,
-        width: 45,
-        backgroundColor: "#00000055",
-        borderRadius: 100,
-    },
-    backButtonIcon: {
-        position: "absolute",
-        left: 0,
-        top: 0,
-        padding: 10,
     },
 });
