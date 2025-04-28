@@ -15,6 +15,7 @@ import { Text } from "@/src/ui/design-system/Text";
 import { saveContactToDb } from "@/src/db/models/Contacts";
 import { MapDidToContactInsert } from "@/src/utils/mappers/contacts";
 import { DIDDocumentSchema } from "@/src/utils/schemas/didSchema";
+import usePermission from "@/src/hooks/usePermission";
 
 type ChatListHeaderProps = {
     selectionEnabled: boolean;
@@ -35,10 +36,12 @@ export function ChatListHeader({
     const [count, setCount] = useState(0);
     const [qrCode, setQrCode] = useState<string | undefined>(undefined);
     const router = useRouter();
+    const { guardCameraPermission } = usePermission();
 
     const handlePress = () => {
         setCount((count + 1) % DEV_SECRET_COUNT);
     };
+
     useEffect(() => {
         if (count === DEV_SECRET_COUNT - 1) {
             router.push("/secret");
@@ -108,6 +111,7 @@ export function ChatListHeader({
                     <HStack alignItems="center" gap={8}>
                         <Pressable
                             onPress={async () => {
+                                await guardCameraPermission();
                                 const result = await SheetManager.show(
                                     "code-scanner-sheet"
                                 );

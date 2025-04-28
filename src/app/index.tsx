@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from "react";
 
 import { SafeAreaView } from "react-native-safe-area-context";
-import {
-    useCameraPermission,
-    useMicrophonePermission,
-    Camera,
-} from "react-native-vision-camera";
 import { useRouter } from "expo-router";
 
 import { Colors } from "@/src/constants/Colors.js";
@@ -15,18 +10,13 @@ import { useGlobalState } from "@/src/context/GlobalContext.js";
 import { ChatListView } from "@/src/types/ChatListScreen.types";
 import { useLiveTablesQuery } from "@/src/hooks/useLiveQuery";
 import { chatListView } from "@/src/db/queries/ChatListView";
+import usePermission from "@/src/hooks/usePermission";
 
 export function Home() {
     const { logger } = useGlobalState();
     const router = useRouter();
-    const {
-        hasPermission: hasCameraPermission,
-        requestPermission: requestCameraPermission,
-    } = useCameraPermission();
-    const {
-        hasPermission: hasMicrophonePermission,
-        requestPermission: requestMicrophonePermission,
-    } = useMicrophonePermission();
+    const { guardCameraPermission, guardMicrophonePermission } =
+        usePermission();
     const [chats, setChats] = useState<ChatListView[]>([]);
 
     const { data: chat_list_data } = useLiveTablesQuery(chatListView, [
@@ -51,43 +41,8 @@ export function Home() {
 
     async function handleFABCameraPress(): Promise<void> {
         try {
-            let cameraPermissionStatus = Camera.getCameraPermissionStatus();
-            let microphonePermissionStatus =
-                Camera.getMicrophonePermissionStatus();
-
-            if (
-                !hasCameraPermission &&
-                cameraPermissionStatus === "not-determined"
-            ) {
-                await requestCameraPermission();
-            }
-            if (
-                !hasMicrophonePermission &&
-                microphonePermissionStatus === "not-determined"
-            ) {
-                await requestMicrophonePermission();
-            }
-
-            cameraPermissionStatus = Camera.getCameraPermissionStatus();
-            microphonePermissionStatus = Camera.getMicrophonePermissionStatus();
-
-            let errors = 0;
-            if (cameraPermissionStatus === "denied") {
-                errors++;
-                alert(
-                    "You need to grant camera permission to use this feature. Please go to settings and grant permission."
-                );
-            }
-            if (microphonePermissionStatus === "denied") {
-                errors++;
-                alert(
-                    "You need to grant microphone permission to use this feature. Please go to settings and grant permission."
-                );
-            }
-
-            if (errors > 0) {
-                return;
-            }
+            await guardCameraPermission();
+            await guardMicrophonePermission();
 
             return router.push("/camera");
         } catch (error) {
