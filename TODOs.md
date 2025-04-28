@@ -23,7 +23,6 @@
 -   [ ] DID set (when contact sends profile) vs DID patch (when resolving? & when nab sends profiles)
 -   [ ] delete own avatar
 -   [ ] mark as unread
--   [ ] hide screen on connecting and show connecting status
 -   [ ] fetch badges from somewhere(?)
 -   [ ] add unit preferences to settings screen
 -   [ ] add interests somewhere(?)
@@ -31,7 +30,6 @@
     -   [ ] store alt + ratio
 -   [ ] when enabling selection mode, ChatItem content should move animatedly away from the selection marker
 -   [ ] media organizer à la stash
--   [ ] display version (.expo.runtimeVersion) somewhere + Updates.manifest version
 -   [ ] audio player should show length and current position
 -   [ ] audio player should be able to seek forwards and backwards
 -   [ ] audio player smooth animation
@@ -40,6 +38,8 @@
 
 ## In progress
 
+-   [~] display version (.expo.runtimeVersion) somewhere + Updates.manifest version
+-   [~] hide screen on connecting and show connecting status
 -   [~] allow users to report child safety concerns in-app
 -   [~] replace Pressable with TouchableOpacity where needed
 -   [~] drawing feature on camera w/ Skia

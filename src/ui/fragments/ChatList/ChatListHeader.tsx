@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Pressable } from "react-native";
+import { ActivityIndicator, Alert, Pressable } from "react-native";
 
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Link, useRouter } from "expo-router";
@@ -32,7 +32,7 @@ export function ChatListHeader({
     onDone,
     onDelete,
 }: Readonly<ChatListHeaderProps>): JSX.Element {
-    const globalState = useGlobalState();
+    const { appWorkflow } = useGlobalState();
     const [count, setCount] = useState(0);
     const [qrCode, setQrCode] = useState<string | undefined>(undefined);
     const router = useRouter();
@@ -46,7 +46,7 @@ export function ChatListHeader({
         if (count === DEV_SECRET_COUNT - 1) {
             router.push("/secret");
         }
-    }, [count, globalState.selfDid, router]);
+    }, [count, router]);
 
     const handleScan = async (data: string | undefined) => {
         if (!data) {
@@ -89,25 +89,44 @@ export function ChatListHeader({
                     marginVertical={16}
                     justifyContent="space-between"
                 >
-                    <HStack alignItems="center">
-                        <NeonBadge title={NEIGHBOURHOOD_DOMAIN} />
-                        <Link href="https://smashchats.com" asChild>
-                            <Feather
-                                name="external-link"
-                                size={18}
-                                color={Colors.purple}
+                    {["LOADING", "CONNECTING", "REGISTERING"].includes(
+                        appWorkflow
+                    ) && (
+                        <HStack
+                            marginHorizontal={10}
+                            paddingVertical={8}
+                            alignItems="center"
+                        >
+                            <Text fontWeight={"bold"}>Connecting...</Text>
+                            <ActivityIndicator
+                                size="small"
+                                color={"white"}
                                 style={{ marginLeft: 10 }}
                             />
-                        </Link>
-                        <Pressable
-                            onPress={handlePress}
-                            style={{
-                                width: 40,
-                                height: 25,
-                            }}
-                        />
-                    </HStack>
-
+                        </HStack>
+                    )}
+                    {!["LOADING", "CONNECTING", "REGISTERING"].includes(
+                        appWorkflow
+                    ) && (
+                        <HStack alignItems="center">
+                            <NeonBadge title={NEIGHBOURHOOD_DOMAIN} />
+                            <Link href="https://smashchats.com" asChild>
+                                <Feather
+                                    name="external-link"
+                                    size={18}
+                                    color={Colors.purple}
+                                    style={{ marginLeft: 10 }}
+                                />
+                            </Link>
+                            <Pressable
+                                onPress={handlePress}
+                                style={{
+                                    width: 40,
+                                    height: 25,
+                                }}
+                            />
+                        </HStack>
+                    )}
                     <HStack alignItems="center" gap={8}>
                         <Pressable
                             onPress={async () => {
