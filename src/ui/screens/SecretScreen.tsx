@@ -1,16 +1,8 @@
 import React, { Dispatch, useEffect, useState } from "react";
-import {
-    View,
-    Text,
-    StyleSheet,
-    Image,
-    ScrollView,
-    Button,
-} from "react-native";
+import { View, Text, StyleSheet, ScrollView, Button } from "react-native";
 
-import { generateQrCode } from "react-native-qr";
+import QRCode from "react-qr-code";
 import * as Updates from "expo-updates";
-import { DIDDocument } from "@smashchats/library";
 
 import {
     Action,
@@ -28,17 +20,6 @@ const SecretScreen = () => {
 
     const [qrCode, setQrCode] = useState<string | undefined>(undefined);
 
-    const generateQrCodeWithDid = async (did: DIDDocument) => {
-        generateQrCode(JSON.stringify(did), 300).then(
-            (img: string | undefined) => {
-                if (!img) {
-                    return;
-                }
-                setQrCode(img);
-            }
-        );
-    };
-
     const refreshDid = async () => {
         const user = globalState.selfSmashUser;
         if (!user) {
@@ -48,10 +29,13 @@ const SecretScreen = () => {
             type: "SET_SELF_DID_ACTION",
             selfDid: await user.getDIDDocument(),
         });
-        generateQrCodeWithDid(await user.getDIDDocument());
+        setQrCode(JSON.stringify(await user.getDIDDocument()));
     };
 
     async function onFetchUpdateAsync() {
+        if (__DEV__) {
+            return;
+        }
         try {
             const update = await Updates.checkForUpdateAsync();
             globalState.logger.debug("update", update);
@@ -72,7 +56,7 @@ const SecretScreen = () => {
     }
 
     useEffect(() => {
-        generateQrCodeWithDid(globalState.selfDid);
+        setQrCode(JSON.stringify(globalState.selfDid));
         onFetchUpdateAsync();
     }, []);
 
@@ -86,7 +70,7 @@ const SecretScreen = () => {
             const newIdentity = await generateNewIdentity(getDIDManager());
             saveObject(IDENTITY_KEY, await newIdentity.serialize());
             const user = await setupUser(globalDispatch);
-            generateQrCodeWithDid(await user.getDIDDocument());
+            setQrCode(JSON.stringify(await user.getDIDDocument()));
             console.log(await user.getDIDDocument());
         }
     }
@@ -118,26 +102,26 @@ const SecretScreen = () => {
             />
             <Button title="refresh did" onPress={refreshDid} />
             <View style={styles.qrContainer}>
-                <Image
-                    style={{
-                        width: 300,
-                        height: 300,
-                        display: "flex",
-                    }}
-                    source={{ uri: qrCode }}
-                />
+                <QRCode value={qrCode ?? ""} size={300} />
             </View>
             <Text style={styles.textTitle}>did</Text>
             <Text selectable style={styles.textContent}>
                 {JSON.stringify(globalState.selfDid)}
             </Text>
 
-            <Text style={styles.textTitle}>Updates</Text>
-            <Button title="check for update" onPress={onFetchUpdateAsync} />
-            <Text style={styles.textTitle}>manifest</Text>
-            <Text selectable style={styles.textContent}>
-                {JSON.stringify(Updates.manifest)}
-            </Text>
+            {!__DEV__ && (
+                <>
+                    <Text style={styles.textTitle}>Updates</Text>
+                    <Button
+                        title="check for update"
+                        onPress={onFetchUpdateAsync}
+                    />
+                    <Text style={styles.textTitle}>manifest</Text>
+                    <Text selectable style={styles.textContent}>
+                        {JSON.stringify(Updates.manifest)}
+                    </Text>
+                </>
+            )}
         </ScrollView>
     );
 };

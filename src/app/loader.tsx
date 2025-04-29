@@ -1,4 +1,4 @@
-import { Dispatch, useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { View } from "react-native";
 import { SplashScreen, Stack } from "expo-router";
 import { PostHogProvider } from "posthog-react-native";
@@ -9,7 +9,6 @@ import { Logger, SmashUser, IMProfile } from "@smashchats/library";
 import { loadIdentity } from "@/src/utils/IdentityUtils";
 import { handleUserMessages } from "@/src/utils/messageHandlers";
 import {
-    Action,
     Settings,
     useGlobalDispatch,
     useGlobalState,
@@ -22,72 +21,46 @@ export default function LoaderScreen() {
     const dispatch = useGlobalDispatch();
     const state = useGlobalState();
 
-    const initializeUserAndDiscoverNetwork = async (user: SmashUser) => {
-        try {
-            state.logger.debug("Discovering network");
-        } catch (error) {
-            state.logger.error("Error creating trust relation", error);
-        }
-    };
+    const setupUser = useCallback(async (): Promise<SmashUser> => {
+        const user = await loadIdentity(state.logger, "WARN");
+        dispatch({ type: "SET_USER_ACTION", user });
+        const selfDid = await user.getDIDDocument();
+        dispatch({ type: "SET_SELF_DID_ACTION", selfDid });
+        return user;
+    }, [dispatch, state.logger]);
 
-    const initializeApp = async (
-        dispatch: Dispatch<Action>,
-        newUser: boolean
-    ) => {
+    const initializeUserAndDiscoverNetwork = useCallback(
+        async (user: SmashUser) => {
+            try {
+                state.logger.debug("Discovering network");
+            } catch (error) {
+                state.logger.error("Error creating trust relation", error);
+            }
+        },
+        [state.logger]
+    );
+
+    const initializeApp = async (isNewUser: boolean) => {
         await SplashScreen.hideAsync();
         changeNavigationBarColor(Colors.background, false);
 
-        if (newUser) {
-            await handleNewUser(dispatch);
-        } else {
-            await handleExistingUser(dispatch);
+        dispatch({
+            type: "SET_APP_WORKFLOW_ACTION",
+            appWorkflow: isNewUser ? "REGISTERING" : "CONNECTING",
+        });
+
+        const user = await setupUser();
+
+        if (isNewUser) {
+            dispatch({
+                type: "SET_APP_WORKFLOW_ACTION",
+                appWorkflow: "REGISTERED",
+            });
         }
-    };
 
-    const handleNewUser = async (dispatch: Dispatch<Action>) => {
-        dispatch({
-            type: "SET_APP_WORKFLOW_ACTION",
-            appWorkflow: "REGISTERING",
-        });
-
-        const user = await setupUser(dispatch);
-        dispatch({
-            type: "SET_APP_WORKFLOW_ACTION",
-            appWorkflow: "REGISTERED",
-        });
-
-        await finalizeSetup(dispatch, user);
-    };
-
-    const handleExistingUser = async (dispatch: Dispatch<Action>) => {
-        dispatch({
-            type: "SET_APP_WORKFLOW_ACTION",
-            appWorkflow: "CONNECTING",
-        });
-
-        const user = await setupUser(dispatch);
-        await finalizeSetup(dispatch, user);
-    };
-
-    const setupUser = async (dispatch: Dispatch<Action>) => {
-        const user = await loadIdentity(state.logger, "WARN");
-        dispatch({
-            type: "SET_USER_ACTION",
-            user,
-        });
-        dispatch({
-            type: "SET_SELF_DID_ACTION",
-            selfDid: await user.getDIDDocument(),
-        });
-        return user;
-    };
-
-    const finalizeSetup = async (
-        dispatch: Dispatch<Action>,
-        user: SmashUser
-    ) => {
         await handleUserMessages(user, state.logger);
         await initializeUserAndDiscoverNetwork(user);
+
         dispatch({
             type: "SET_APP_WORKFLOW_ACTION",
             appWorkflow: "CONNECTED",
@@ -95,30 +68,22 @@ export default function LoaderScreen() {
     };
 
     useEffect(() => {
-        dispatch({
-            type: "SET_APP_WORKFLOW_ACTION",
-            appWorkflow: "LOADING",
-        });
+        dispatch({ type: "SET_APP_WORKFLOW_ACTION", appWorkflow: "LOADING" });
 
         (async () => {
             const [settings, meta] = await Promise.all([
                 getData<Settings>("settings.settings"),
                 getData<Partial<IMProfile>>(PROFILE_KEY),
             ]);
-            const newUser = settings === null;
-            dispatch({
-                type: "SET_SETTINGS_ACTION",
-                settings,
-            });
-            dispatch({
-                type: "SET_SETTINGS_USER_META_ACTION",
-                userMeta: meta,
-            });
+
+            dispatch({ type: "SET_SETTINGS_ACTION", settings });
+            dispatch({ type: "SET_SETTINGS_USER_META_ACTION", userMeta: meta });
             dispatch({
                 type: "SET_LOGGER_ACTION",
                 logger: new Logger(meta?.title ?? "device", "DEBUG"),
             });
-            await initializeApp(dispatch, newUser);
+
+            await initializeApp(settings === null);
         })();
     }, []);
 

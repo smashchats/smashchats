@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { View, StyleSheet, Pressable, Alert } from "react-native";
 
-import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import * as ScreenOrientation from "expo-screen-orientation";
 import {
@@ -9,7 +8,7 @@ import {
     useCameraDevice,
     useCodeScanner,
 } from "react-native-vision-camera";
-import { generateQrCode } from "react-native-qr";
+import QRCode from "react-qr-code";
 import Animated, {
     useSharedValue,
     useAnimatedStyle,
@@ -39,23 +38,10 @@ export default function CodeScanner() {
     const [code, setCode] = useState<string | undefined>(undefined);
     const [flash, setFlash] = useState<boolean>(false);
     const [qrCode, setQrCode] = useState<string | undefined>(undefined);
-    const [qrCodeLoaded, setQrCodeLoaded] = useState(false);
 
     const qrOpacity = useSharedValue(0);
     const qrScale = useSharedValue(0.8);
     const targetOpacity = useSharedValue(1);
-
-    const generateQrCodeWithDid = async (did: DIDDocument) => {
-        try {
-            const img = await generateQrCode(JSON.stringify(did), 300);
-            if (img) {
-                Image.prefetch(img);
-                setQrCode(img);
-            }
-        } catch (error) {
-            console.error("Error generating QR code:", error);
-        }
-    };
 
     useEffect(() => {
         ScreenOrientation.lockAsync(
@@ -69,7 +55,7 @@ export default function CodeScanner() {
             if (!user) {
                 return;
             }
-            await generateQrCodeWithDid(await user.getDIDDocument());
+            setQrCode(JSON.stringify(await user.getDIDDocument()));
         })();
     }, [globalState.selfSmashUser]);
 
@@ -80,12 +66,11 @@ export default function CodeScanner() {
             qrScale.value = withTiming(0.8, { duration: 200 });
         } else {
             targetOpacity.value = withTiming(0, { duration: 200 });
-            if (qrCodeLoaded) {
-                qrOpacity.value = withTiming(1, { duration: 300 });
-                qrScale.value = withTiming(1, { duration: 400 });
-            }
+            qrOpacity.value = withTiming(1, { duration: 300 });
+            qrScale.value = withTiming(1, { duration: 400 });
+            setFlash(false);
         }
-    }, [mode, qrOpacity, qrScale, targetOpacity, qrCodeLoaded]);
+    }, [mode, qrOpacity, qrScale, targetOpacity]);
 
     const animatedQrStyle = useAnimatedStyle(() => {
         return {
@@ -96,6 +81,16 @@ export default function CodeScanner() {
             height: SCREEN_WIDTH * 0.9,
             top: 180,
             left: SCREEN_WIDTH / 2 - SCREEN_WIDTH * 0.45,
+            backgroundColor: "white",
+            padding: SCREEN_WIDTH * 0.05,
+            borderRadius: 16,
+        };
+    });
+
+    const animatedScannerStyle = useAnimatedStyle(() => {
+        return {
+            opacity: targetOpacity.value,
+            ...StyleSheet.absoluteFillObject,
         };
     });
 
@@ -157,14 +152,6 @@ export default function CodeScanner() {
         setFlash(!flash);
     };
 
-    const handleImageLoad = () => {
-        setQrCodeLoaded(true);
-        if (mode === "show") {
-            qrOpacity.value = withTiming(1, { duration: 300 });
-            qrScale.value = withTiming(1, { duration: 400 });
-        }
-    };
-
     return (
         <View
             style={[
@@ -172,7 +159,7 @@ export default function CodeScanner() {
                 { backgroundColor: Colors.background },
             ]}
         >
-            {mode === "scan" && (
+            <Animated.View style={animatedScannerStyle}>
                 <Pressable
                     style={{
                         flex: 1,
@@ -188,15 +175,13 @@ export default function CodeScanner() {
                         torch={flash ? "on" : "off"}
                     />
                 </Pressable>
-            )}
+            </Animated.View>
 
             <Animated.View style={animatedQrStyle}>
-                <Image
-                    cachePolicy="memory-disk"
-                    source={{ uri: qrCode }}
-                    contentFit="contain"
-                    style={{ width: "100%", height: "100%" }}
-                    onLoad={handleImageLoad}
+                <QRCode
+                    size={SCREEN_WIDTH * 0.8}
+                    value={qrCode ?? ""}
+                    fgColor={Colors.purple}
                 />
             </Animated.View>
 
