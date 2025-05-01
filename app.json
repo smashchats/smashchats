@@ -2,8 +2,8 @@
   "expo": {
     "name": "Smashchats",
     "slug": "smashchats",
-    "version": "1.3.10",
-    "runtimeVersion": "1.3.10",
+    "version": "1.3.11",
+    "runtimeVersion": "1.3.11",
     "newArchEnabled": true,
     "orientation": "default",
     "icon": "./assets/images/icon.png",
@@ -15,7 +15,7 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "buildNumber": "20",
+      "buildNumber": "21",
       "appleTeamId": "5P8Z824PGN",
       "associatedDomains": [
         "webcredentials:smashchats.com"
@@ -42,7 +42,7 @@
       "blockedPermissions": [
         "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"
       ],
-      "versionCode": 20,
+      "versionCode": 21,
       "adaptiveIcon": {
         "backgroundColor": "#ffffff"
       },
