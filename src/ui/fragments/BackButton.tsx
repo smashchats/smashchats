@@ -1,13 +1,17 @@
-import { StyleSheet, ViewStyle } from "react-native";
+import { StyleProp, StyleSheet, ViewStyle } from "react-native";
 
 import { useRouter } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { IconButton } from "@/src/ui/components/IconButton";
-import { INSETS } from "@/src/ui/constants";
 
 export const BackButton = ({ onPress }: { onPress?: () => void }) => {
+    const insets = useSafeAreaInsets();
     return (
-        <BareBackButton onPress={onPress} style={styles.floatingBackButton} />
+        <BareBackButton
+            onPress={onPress}
+            style={[styles.floatingBackButton, { top: insets.top + 20 }]}
+        />
     );
 };
 
@@ -16,7 +20,7 @@ export const BareBackButton = ({
     style,
 }: {
     onPress?: () => void;
-    style?: ViewStyle;
+    style?: StyleProp<ViewStyle>;
 }) => {
     const router = useRouter();
     return (
@@ -32,6 +36,5 @@ const styles = StyleSheet.create({
     floatingBackButton: {
         position: "absolute",
         left: 20,
-        top: INSETS.safeAreaInsetsTop + 20,
     },
 });

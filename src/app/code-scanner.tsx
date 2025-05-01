@@ -14,12 +14,13 @@ import Animated, {
     useAnimatedStyle,
     withTiming,
 } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { DIDDocument } from "@smashchats/library";
 
 import { ThemedText } from "@/src/ui/components/ThemedText";
 import { useGlobalState } from "@/src/context/GlobalContext";
-import { INSETS, SCREEN_HEIGHT, SCREEN_WIDTH } from "@/src/ui/constants";
+import { SCREEN_HEIGHT, SCREEN_WIDTH } from "@/src/ui/constants";
 import { BareBackButton } from "@/src/ui/fragments/BackButton";
 import { saveContactToDb } from "@/src/db/models/Contacts";
 import { MapDidToContactInsert } from "@/src/utils/mappers/contacts";
@@ -33,6 +34,7 @@ export default function CodeScanner() {
     const device = useCameraDevice("back");
     const cameraRef = useRef<Camera>(null);
     const router = useRouter();
+    const insets = useSafeAreaInsets();
 
     const [mode, setMode] = useState<"scan" | "show">("scan");
     const [code, setCode] = useState<string | undefined>(undefined);
@@ -135,7 +137,7 @@ export default function CodeScanner() {
         if (code) {
             handleCodeScanned(code);
         }
-    }, [code, router]);
+    }, [code]);
 
     if (!device) {
         return null;
@@ -206,7 +208,7 @@ export default function CodeScanner() {
                         top: (SCREEN_HEIGHT / 2) * 0.8,
                         left: 0,
                         right: 0,
-                        bottom: INSETS.safeAreaInsetsBottom,
+                        bottom: 0,
                         justifyContent: "center",
                         alignItems: "center",
                     }}
@@ -229,13 +231,13 @@ export default function CodeScanner() {
                     style={{
                         position: "absolute",
                         top:
-                            INSETS.safeAreaInsetsTop +
-                            (SCREEN_HEIGHT - 2 * INSETS.safeAreaInsetsTop) / 2 +
+                            insets.top +
+                            (SCREEN_HEIGHT - 2 * insets.top) / 2 +
                             140,
                         height: 70,
                         left: 30,
                         right: 30,
-                        bottom: INSETS.safeAreaInsetsBottom,
+                        bottom: insets.bottom,
                         justifyContent: "center",
                         alignItems: "center",
                         backgroundColor: "black",
@@ -262,7 +264,7 @@ export default function CodeScanner() {
                 style={[
                     styles.floatingRow,
                     {
-                        top: INSETS.safeAreaInsetsTop + 10,
+                        top: insets.top + 10,
                         justifyContent: "space-between",
                         width: "100%",
                         paddingHorizontal: 10,
@@ -278,7 +280,13 @@ export default function CodeScanner() {
                 )}
             </View>
 
-            <View style={[styles.floatingRow, styles.container]}>
+            <View
+                style={[
+                    styles.floatingRow,
+                    styles.container,
+                    { bottom: insets.bottom + 10 },
+                ]}
+            >
                 <TabBar
                     active={mode}
                     buttons={[
@@ -305,7 +313,6 @@ const styles = StyleSheet.create({
         flexDirection: "row",
     },
     container: {
-        bottom: INSETS.safeAreaInsetsBottom + 10,
         left: 0,
         right: 0,
         justifyContent: "center",
