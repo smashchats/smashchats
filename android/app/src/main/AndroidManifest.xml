@@ -33,7 +33,6 @@
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="smash"/>
-        <data android:scheme="com.unstaticlabs.smashchats"/>
         <data android:scheme="exp+smashchats"/>
       </intent-filter>
     </activity>

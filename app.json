@@ -55,6 +55,7 @@
     "plugins": [
       "expo-router",
       "react-native-vision-camera",
+      "react-native-edge-to-edge",
       "expo-localization",
       "expo-image-picker",
       "expo-font",
@@ -68,7 +69,10 @@
       ]
     ],
     "experiments": {
-      "typedRoutes": true
+      "reactCanary": true,
+      "typedRoutes": true,
+      "reactCompiler": true,
+      "tsconfigPaths": true
     },
     "updates": {
       "codeSigningCertificate": "./certs/certificate.pem",
@@ -77,6 +81,11 @@
         "alg": "rsa-v1_5-sha256"
       },
       "url": "https://updates.smashchats.com/api/manifest"
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      }
     }
   }
 }
