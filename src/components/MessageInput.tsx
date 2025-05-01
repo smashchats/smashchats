@@ -11,6 +11,7 @@ import { Box } from "@/src/ui/design-system/layout";
 import { Text } from "@/src/ui/design-system/Text";
 import { Colors } from "@/src/constants/Colors";
 import { formatDuration } from "@/src/utils/TimeUtils";
+import { useGlobalState } from "@/src/context/GlobalContext";
 
 interface MessageInputProps {
     newMessage: string;
@@ -44,6 +45,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     insets,
 }) => {
     const inputFieldRef = useRef<TextInput>(null);
+    const { featureFlags } = useGlobalState();
 
     return (
         <Pressable onPress={() => inputFieldRef.current?.focus()}>
@@ -98,27 +100,47 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                         />
                     </TouchableOpacity>
                 ) : (
-                    <View style={styles.recordingContainer}>
-                        {isRecording && (
-                            <View style={styles.recordingDurationContainer}>
-                                <Text color={Colors.textWhite} fontSize={12}>
-                                    {formatDuration(recordingDuration)}
-                                </Text>
+                    <>
+                        {featureFlags["media-allow-sending-voice-memos"] && (
+                            <View style={styles.recordingContainer}>
+                                {isRecording && (
+                                    <View
+                                        style={
+                                            styles.recordingDurationContainer
+                                        }
+                                    >
+                                        <Text
+                                            color={Colors.textWhite}
+                                            fontSize={12}
+                                        >
+                                            {formatDuration(recordingDuration)}
+                                        </Text>
+                                    </View>
+                                )}
+                                <TouchableOpacity
+                                    testID="microphone-button"
+                                    onPressIn={onStartRecording}
+                                    onPressOut={onStopRecording}
+                                    style={styles.microphoneButton}
+                                >
+                                    <MaterialCommunityIcons
+                                        name="microphone"
+                                        size={24}
+                                        color={Colors.textWhite}
+                                    />
+                                </TouchableOpacity>
                             </View>
                         )}
-                        <TouchableOpacity
-                            testID="microphone-button"
-                            onPressIn={onStartRecording}
-                            onPressOut={onStopRecording}
-                            style={styles.microphoneButton}
-                        >
-                            <MaterialCommunityIcons
-                                name="microphone"
-                                size={24}
-                                color={Colors.textWhite}
-                            />
-                        </TouchableOpacity>
-                    </View>
+                        {!featureFlags["media-allow-sending-voice-memos"] && (
+                            <View style={styles.sendButton}>
+                                <MaterialCommunityIcons
+                                    name="chevron-right"
+                                    size={24}
+                                    color={Colors.darkGray}
+                                />
+                            </View>
+                        )}
+                    </>
                 )}
             </Box>
         </Pressable>
