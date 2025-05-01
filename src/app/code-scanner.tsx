@@ -228,7 +228,10 @@ export default function CodeScanner() {
                 <View
                     style={{
                         position: "absolute",
-                        top: INSETS.safeAreaInsetsTop + 70 + SCREEN_HEIGHT / 2,
+                        top:
+                            INSETS.safeAreaInsetsTop +
+                            (SCREEN_HEIGHT - 2 * INSETS.safeAreaInsetsTop) / 2 +
+                            140,
                         height: 70,
                         left: 30,
                         right: 30,

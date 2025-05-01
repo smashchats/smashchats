@@ -3,6 +3,7 @@ import { StyleSheet, ViewStyle } from "react-native";
 import { useRouter } from "expo-router";
 
 import { IconButton } from "@/src/ui/components/IconButton";
+import { INSETS } from "@/src/ui/constants";
 
 export const BackButton = ({ onPress }: { onPress?: () => void }) => {
     return (
@@ -31,6 +32,6 @@ const styles = StyleSheet.create({
     floatingBackButton: {
         position: "absolute",
         left: 20,
-        top: 75,
+        top: INSETS.safeAreaInsetsTop + 20,
     },
 });
