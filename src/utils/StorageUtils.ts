@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const IDENTITY_KEY = "smash.identity";
 export const PROFILE_KEY = "smash.profile";
+export const FEATURE_FLAGS_KEY = "smash.feature_flags";
 
 export const getData = async <T extends {}>(key: string): Promise<T | null> => {
     try {

@@ -13,7 +13,11 @@ import {
     useGlobalDispatch,
     useGlobalState,
 } from "@/src/context/GlobalContext";
-import { PROFILE_KEY, getData } from "@/src/utils/StorageUtils";
+import {
+    FEATURE_FLAGS_KEY,
+    PROFILE_KEY,
+    getData,
+} from "@/src/utils/StorageUtils";
 import { ThemedText } from "@/src/ui/components/ThemedText";
 import { Colors } from "@/src/constants/Colors";
 
@@ -71,13 +75,18 @@ export default function LoaderScreen() {
         dispatch({ type: "SET_APP_WORKFLOW_ACTION", appWorkflow: "LOADING" });
 
         (async () => {
-            const [settings, meta] = await Promise.all([
+            const [settings, meta, featureFlags] = await Promise.all([
                 getData<Settings>("settings.settings"),
                 getData<Partial<IMProfile>>(PROFILE_KEY),
+                getData<Record<string, boolean>>(FEATURE_FLAGS_KEY),
             ]);
 
             dispatch({ type: "SET_SETTINGS_ACTION", settings });
             dispatch({ type: "SET_SETTINGS_USER_META_ACTION", userMeta: meta });
+            dispatch({
+                type: "SET_FEATURE_FLAGS_ACTION",
+                featureFlags: featureFlags ?? {},
+            });
             dispatch({
                 type: "SET_LOGGER_ACTION",
                 logger: new Logger(meta?.title ?? "device", "DEBUG"),

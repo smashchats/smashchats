@@ -1,5 +1,12 @@
 import React, { Dispatch, useEffect, useState } from "react";
-import { View, Text, StyleSheet, ScrollView, Button } from "react-native";
+import {
+    View,
+    Text,
+    StyleSheet,
+    ScrollView,
+    Button,
+    Switch,
+} from "react-native";
 
 import QRCode from "react-qr-code";
 import * as Updates from "expo-updates";
@@ -13,6 +20,7 @@ import { SheetManager } from "react-native-actions-sheet";
 import { generateNewIdentity, loadIdentity } from "@/src/utils/IdentityUtils";
 import { IDENTITY_KEY, saveObject } from "@/src/utils/StorageUtils";
 import { getDIDManager } from "@/src/utils/DIDManagerSingleton";
+import { Collapsible } from "../components/Collapsible";
 
 const SecretScreen = () => {
     const globalState = useGlobalState();
@@ -88,6 +96,25 @@ const SecretScreen = () => {
         return user;
     };
 
+    const featureFlags = [
+        {
+            name: "enable-new-identity-generation",
+            description: "Enable new identity generation",
+        },
+        {
+            name: "media-allow-sending-voice-memos",
+            description: "Allow sending voice memos",
+        },
+        {
+            name: "media-allow-sending-images",
+            description: "Allow sending images",
+        },
+        {
+            name: "media-allow-sending-videos",
+            description: "Allow sending videos",
+        },
+    ];
+
     return (
         <ScrollView
             style={{ flex: 1 }}
@@ -95,6 +122,43 @@ const SecretScreen = () => {
             showsVerticalScrollIndicator={true}
         >
             <Text style={styles.title}>Secret Development Screen</Text>
+            <Text style={styles.textTitle}>feature flags</Text>
+
+            {featureFlags.map((flag) => {
+                const enabled = globalState.featureFlags[flag.name];
+                return (
+                    <View
+                        key={flag.name}
+                        style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            marginTop: 10,
+                            width: "100%",
+                        }}
+                    >
+                        <Text style={styles.textContent}>
+                            {flag.description}
+                        </Text>
+                        <Switch
+                            style={{ marginLeft: 10 }}
+                            value={enabled}
+                            onValueChange={() => {
+                                globalDispatch({
+                                    type: "SET_FEATURE_FLAGS_ACTION",
+                                    featureFlags: { [flag.name]: !enabled },
+                                });
+                            }}
+                        />
+                    </View>
+                );
+            })}
+            <Collapsible title="installed feature flags">
+                <Text style={styles.textContent}>
+                    {JSON.stringify(globalState.featureFlags)}
+                </Text>
+            </Collapsible>
+
             <Text style={styles.textTitle}>identity actions</Text>
             <Button
                 title="generate new identity"

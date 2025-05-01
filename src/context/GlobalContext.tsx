@@ -15,7 +15,11 @@ import {
     chatListReducer,
     INITIAL_CHAT_LIST_STATE,
 } from "@/src/context/ChatListContext.js";
-import { PROFILE_KEY, saveObject } from "@/src/utils/StorageUtils";
+import {
+    FEATURE_FLAGS_KEY,
+    PROFILE_KEY,
+    saveObject,
+} from "@/src/utils/StorageUtils";
 import { GalleryMediaItem } from "@/src/app/gallery";
 
 // Types & Interfaces
@@ -110,6 +114,11 @@ export interface PauseMediaAction extends GlobalActionBase {
     type: "PAUSE_MEDIA_ACTION";
 }
 
+export interface SetFeatureFlagsAction extends GlobalActionBase {
+    type: "SET_FEATURE_FLAGS_ACTION";
+    featureFlags: Record<string, boolean>;
+}
+
 // Update Action type
 export type Action =
     | ChatListAction
@@ -124,7 +133,8 @@ export type Action =
     | AddShownMediaInGalleryAction
     | PlayMediaAction
     | StopMediaAction
-    | PauseMediaAction;
+    | PauseMediaAction
+    | SetFeatureFlagsAction;
 
 // Update GlobalParams
 export type GlobalParams = {
@@ -138,6 +148,7 @@ export type GlobalParams = {
     logger: Logger;
     shownMediaInGallery: GalleryMediaItem[];
     mediaPlayer: MediaPlayerState;
+    featureFlags: Record<string, boolean>;
 };
 
 // Update INITIAL_GLOBAL_STATE
@@ -158,6 +169,7 @@ export const INITIAL_GLOBAL_STATE: GlobalParams = {
     mediaPlayer: {
         currentMedia: null,
     },
+    featureFlags: {},
 };
 
 // Context Types
@@ -202,6 +214,7 @@ export const rootReducer = (
             action
         ),
         mediaPlayer: mediaPlayerReducer(state.mediaPlayer, action),
+        featureFlags: featureFlagsReducer(state.featureFlags, action),
     };
 };
 
@@ -250,6 +263,12 @@ export const GlobalProvider: React.FC<{
             saveObject(PROFILE_KEY, state.userMeta);
         }
     }, [state.userMeta]);
+
+    React.useEffect(() => {
+        if (state.featureFlags) {
+            saveObject(FEATURE_FLAGS_KEY, state.featureFlags);
+        }
+    }, [state.featureFlags]);
 
     return (
         <GlobalStateContext.Provider value={state}>
@@ -391,4 +410,17 @@ export function mediaPlayerReducer(
         default:
             return state;
     }
+}
+
+export function featureFlagsReducer(
+    featureFlags: Record<string, boolean>,
+    action: Action
+): Record<string, boolean> {
+    if (action.type !== "SET_FEATURE_FLAGS_ACTION") {
+        return featureFlags;
+    }
+    return {
+        ...featureFlags,
+        ...action.featureFlags,
+    };
 }
