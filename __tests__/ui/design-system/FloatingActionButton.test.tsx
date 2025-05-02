@@ -1,5 +1,9 @@
 import { act, fireEvent, render, waitFor } from "@testing-library/react-native";
+import mockSafeAreaContext from "react-native-safe-area-context/jest/mock";
+jest.mock("react-native-safe-area-context", () => mockSafeAreaContext);
+
 import { FloatingActionButton } from "@/src/ui/design-system/FloatingActionButton";
+
 
 describe("FloatingActionButton", () => {
     test("Renders correctly", () => {

@@ -1,6 +1,10 @@
 import React from "react";
 import { render, fireEvent } from "@testing-library/react-native";
 import { MessageInput } from "@/src/components/MessageInput";
+import {
+    GlobalProvider,
+    INITIAL_GLOBAL_STATE,
+} from "@/src/context/GlobalContext";
 
 describe("MessageInput", () => {
     const defaultProps = {
@@ -71,10 +75,36 @@ describe("MessageInput", () => {
         expect(defaultProps.onCollapse).toHaveBeenCalled();
     });
 
+    it("doesn't show microphone button when feature flag is false", () => {
+        const { queryByTestId } = render(
+            <GlobalProvider
+                initialState={{
+                    ...INITIAL_GLOBAL_STATE,
+                    featureFlags: {
+                        "media-allow-sending-voice-memos": false,
+                    },
+                }}
+            >
+                <MessageInput {...defaultProps} />
+            </GlobalProvider>
+        );
+
+        expect(queryByTestId("microphone-button")).toBeNull();
+    });
+
     it("shows microphone button when shouldShowSendIcon is false", () => {
         const props = { ...defaultProps, shouldShowSendIcon: false };
         const { getByTestId, queryByTestId } = render(
-            <MessageInput {...props} />
+            <GlobalProvider
+                initialState={{
+                    ...INITIAL_GLOBAL_STATE,
+                    featureFlags: {
+                        "media-allow-sending-voice-memos": true,
+                    },
+                }}
+            >
+                <MessageInput {...props} />
+            </GlobalProvider>
         );
 
         expect(queryByTestId("send-button")).toBeNull();
@@ -88,14 +118,35 @@ describe("MessageInput", () => {
             isRecording: true,
             recordingDuration: 65, // 1:05
         };
-        const { getByText } = render(<MessageInput {...props} />);
-
+        const { getByText } = render(
+            <GlobalProvider
+                initialState={{
+                    ...INITIAL_GLOBAL_STATE,
+                    featureFlags: {
+                        "media-allow-sending-voice-memos": true,
+                    },
+                }}
+            >
+                <MessageInput {...props} />
+            </GlobalProvider>
+        );
         expect(getByText("1:05")).toBeTruthy();
     });
 
     it("calls onStartRecording when microphone button is pressed", () => {
         const props = { ...defaultProps, shouldShowSendIcon: false };
-        const { getByTestId } = render(<MessageInput {...props} />);
+        const { getByTestId } = render(
+            <GlobalProvider
+                initialState={{
+                    ...INITIAL_GLOBAL_STATE,
+                    featureFlags: {
+                        "media-allow-sending-voice-memos": true,
+                    },
+                }}
+            >
+                <MessageInput {...props} />
+            </GlobalProvider>
+        );
 
         fireEvent(getByTestId("microphone-button"), "pressIn");
 
@@ -104,7 +155,18 @@ describe("MessageInput", () => {
 
     it("calls onStopRecording when microphone button is released", () => {
         const props = { ...defaultProps, shouldShowSendIcon: false };
-        const { getByTestId } = render(<MessageInput {...props} />);
+        const { getByTestId } = render(
+            <GlobalProvider
+                initialState={{
+                    ...INITIAL_GLOBAL_STATE,
+                    featureFlags: {
+                        "media-allow-sending-voice-memos": true,
+                    },
+                }}
+            >
+                <MessageInput {...props} />
+            </GlobalProvider>
+        );
 
         fireEvent(getByTestId("microphone-button"), "pressOut");
 

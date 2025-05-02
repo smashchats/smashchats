@@ -1,6 +1,10 @@
 import React from "react";
 import { render, fireEvent } from "@testing-library/react-native";
+import mockSafeAreaContext from "react-native-safe-area-context/jest/mock";
+jest.mock('react-native-safe-area-context', () => mockSafeAreaContext);
+
 import { BackButton, BareBackButton } from "@/src/ui/fragments/BackButton";
+
 
 jest.mock("expo-router", () => {
     const backMock = jest.fn();
