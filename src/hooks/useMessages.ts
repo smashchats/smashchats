@@ -1,5 +1,4 @@
 import { useState, useCallback, useEffect } from "react";
-import { eq, desc, and, sql } from "drizzle-orm";
 
 import {
     DIDString,
@@ -13,8 +12,6 @@ import {
     IMProtoMessage,
 } from "@smashchats/library";
 
-import { drizzle_db } from "@/src/db/database";
-import { messages as MessagesSchema, media } from "@/src/db/schema";
 import {
     Message,
     markAllMessagesNotFromSelfInDiscussionAsRead,
@@ -42,42 +39,15 @@ export const useMessages = (peerId: string, scrollToBottom?: () => void) => {
         useState(false);
 
     const getMessages = async (
-        peerId: string,
-        offset: number,
-        limit: number
+        _peerId: string,
+        _offset: number,
+        _limit: number
     ): Promise<Message[]> => {
-        const results = await drizzle_db
-            .select({
-                message: MessagesSchema,
-                media: media,
-            })
-            .from(MessagesSchema)
-            .leftJoin(media, eq(MessagesSchema.sha256, media.sha256))
-            .where(eq(MessagesSchema.discussion_id, peerId))
-            .orderBy(desc(MessagesSchema.created_at))
-            .offset(offset)
-            .limit(limit)
-            .execute();
-
-        return results.map(({ message, media }) => ({
-            ...message,
-            status: message.status as MessageStatus,
-            media: media || null,
-        }));
+        return [];
     };
 
-    const getUnreadMessagesCount = async (peerId: string): Promise<number> => {
-        const result = await drizzle_db
-            .select({ count: sql<number>`count(*)` })
-            .from(MessagesSchema)
-            .where(
-                and(
-                    eq(MessagesSchema.discussion_id, peerId),
-                    eq(MessagesSchema.status, "received")
-                )
-            )
-            .execute();
-        return result[0].count;
+    const getUnreadMessagesCount = async (_peerId: string): Promise<number> => {
+        return 0;
     };
 
     const loadMoreMessages = async () => {

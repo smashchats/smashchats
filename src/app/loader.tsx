@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from "react";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import { SplashScreen, Stack } from "expo-router";
 import { PostHogProvider } from "posthog-react-native";
 import changeNavigationBarColor from "react-native-navigation-bar-color";
@@ -157,15 +157,19 @@ export default function LoaderScreen() {
                             options={{ title: "Settings" }}
                         />
 
-                        <Stack.Screen
-                            name="camera"
-                            options={{ title: "Camera" }}
-                        />
+                        {Platform.OS !== "web" && (
+                            <Stack.Screen
+                                name="camera"
+                                options={{ title: "Camera" }}
+                            />
+                        )}
 
-                        <Stack.Screen
-                            name="code-scanner"
-                            options={{ headerShown: false }}
-                        />
+                        {Platform.OS !== "web" && (
+                            <Stack.Screen
+                                name="code-scanner"
+                                options={{ headerShown: false }}
+                            />
+                        )}
 
                         <Stack.Screen
                             name="licenses"

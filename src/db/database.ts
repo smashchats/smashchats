@@ -1,13 +1,47 @@
-import { drizzle } from "drizzle-orm/expo-sqlite";
-import { openDatabaseSync } from "expo-sqlite";
-import * as schema from "@/src/db/schema.js";
+class Db {
+    _fn = () => {};
+    select() {
+        this._fn();
+        return this;
+    }
+    from() {
+        this._fn();
+        return this;
+    }
+    where() {
+        this._fn();
+        return this;
+    }
+    leftJoin() {
+        this._fn();
+        return this;
+    }
+    limit() {
+        this._fn();
+        return this;
+    }
+    groupBy() {
+        this._fn();
+        return this;
+    }
+    orderBy() {
+        this._fn();
+        return this;
+    }
+    offset() {
+        this._fn();
+        return this;
+    }
+    execute() {
+        this._fn();
+    }
+    then() {
+        this._fn();
+        return this;
+    }
+    catch() {
+        this._fn();
+    }
+}
 
-export const DATABASE_NAME = __DEV__
-    ? "dev-smashchats-2025-04-05-10h-40"
-    : "prod-smashchats-alpha-2025-01-07";
-
-export const expo_db = openDatabaseSync(DATABASE_NAME, {
-    enableChangeListener: true,
-    useNewConnection: true,
-});
-export const drizzle_db = drizzle(expo_db, { schema });
+export const drizzle_db = new Db();
