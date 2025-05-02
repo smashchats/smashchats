@@ -10,6 +10,9 @@
     "test": "jest --watchAll --no-coverage",
     "lint": "expo lint",
     "postinstall": "patch-package",
+    "clean:android": "rimraf android/build android/app/build node_modules/**/android/build node_modules/**/**/android/build android/.cxx android/app/.cxx node_modules/**/android/.cxx node_modules/**/**/android/.cxx",
+    "clean:ios": "rimraf ios/Pods",
+    "clean": "npm run clean:android && npm run clean:ios",
     "storybook-generate": "sb-rn-get-stories -js",
     "storybook": "EXPO_PUBLIC_STORYBOOK_ENABLED='true' expo start",
     "storybook:ios": "EXPO_PUBLIC_STORYBOOK_ENABLED='true' expo run:ios",
@@ -97,6 +100,7 @@
     "patch-package": "^8.0.0",
     "react-native-svg": "^15.8.0",
     "react-test-renderer": "^18.3.1",
+    "rimraf": "^6.0.1",
     "typescript": "~5.3.3"
   },
   "private": true
