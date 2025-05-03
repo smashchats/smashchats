@@ -4,7 +4,7 @@
   "type": "module",
   "version": "1.0.0",
   "scripts": {
-    "start": "expo start",
+    "start": "expo start --private-key-path=./keys/private-key.pem",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "test": "jest --watchAll --no-coverage",
