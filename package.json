@@ -86,7 +86,7 @@
   "devDependencies": {
     "@babel/core": "^7.26.0",
     "@gorhom/bottom-sheet": "^4.6.4",
-    "@react-native-community/cli": "^18.0.0",
+    "@react-native-community/cli": "^18.0.1",
     "@testing-library/react-native": "^12.5.3",
     "@types/jest": "^29.5.14",
     "@types/react": "~18.3.12",
