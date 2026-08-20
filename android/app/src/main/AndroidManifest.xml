@@ -15,7 +15,7 @@
       <data android:scheme="https"/>
     </intent>
   </queries>
-  <application android:name=".MainApplication" android:label="@string/app_name" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:allowBackup="true" android:theme="@style/AppTheme" android:supportsRtl="true">
+  <application android:name=".MainApplication" android:label="@string/app_name" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:allowBackup="true" android:theme="@style/AppTheme" android:supportsRtl="true" android:enableOnBackInvokedCallback="false">
     <meta-data android:name="expo.modules.updates.CODE_SIGNING_CERTIFICATE" android:value="-----BEGIN CERTIFICATE-----&#xD;&#xA;MIIC3TCCAcWgAwIBAgIJZdAaecnkiMi3MA0GCSqGSIb3DQEBCwUAMBgxFjAUBgNV&#xD;&#xA;BAMTDVVuc3RhdGljIExhYnMwHhcNMjUwMjAzMTcxNDAzWhcNNDUwMjAzMTcxNDAz&#xD;&#xA;WjAYMRYwFAYDVQQDEw1VbnN0YXRpYyBMYWJzMIIBIjANBgkqhkiG9w0BAQEFAAOC&#xD;&#xA;AQ8AMIIBCgKCAQEAnmQ2l8SghpHEKItGIdd8NQLT41keROABH8iovvTOyjacNXJ7&#xD;&#xA;Pe5vbnQp2C8H7eugk28e3hidV4J8b5ccFenBExku5KNwLMeR0AYn2zR/pU0+m3ma&#xD;&#xA;csDXJ4jTirehQkKoebCnDZEb5iUUN/Hg6644JHXNp1L7AxPMJ9J5SdJ/KmPgaWYT&#xD;&#xA;N5RA7Yqc3J3nK8RSdMkY80dK0yq2T910nX6KvOeEw49D9l6q0Zd9AzfKPOZNffSN&#xD;&#xA;vcOPZrdKmpK++a2DgAwCrQz7sjwAA0EdU9SJvhgC5PP16PPL1EPjyMO1lagVMWiq&#xD;&#xA;NBiz2ToONYv0LDTuW0hpIf1MjE2OofOioQX1VQIDAQABoyowKDAOBgNVHQ8BAf8E&#xD;&#xA;BAMCB4AwFgYDVR0lAQH/BAwwCgYIKwYBBQUHAwMwDQYJKoZIhvcNAQELBQADggEB&#xD;&#xA;AEuzaV2fiiDlX6JyAI7f297Dc9Criv3LaoY7IZgkIVYaPQonncUziHFm+YESJn+s&#xD;&#xA;4lQzJAn5NYe8zS68oJgE7GHJHRswu59gCDfvB59MtpEIv4WjfI3UigjbBd+89qqi&#xD;&#xA;D3uTK7R328BjwhTsMuaH089iyoqyAKS+Ym3W+ch+DoYullCZGYO4oR0bUvBCEOYQ&#xD;&#xA;BeedMwW8StDGtnbBMpWpJwd2TQk64lXINuGPZI07cy8u+LDs6sWjsQaX6nDEevpn&#xD;&#xA;JqJ1tl6Fn4J5NKwtvFbd3Z+D3wWPzxJ4lsrX7gANYQE2nfsZTXjWzd9qhEGmPNe3&#xD;&#xA;RhRzvvrBAEHlqiIEewI1Mw0=&#xD;&#xA;-----END CERTIFICATE-----&#xD;&#xA;"/>
     <meta-data android:name="expo.modules.updates.CODE_SIGNING_METADATA" android:value="{&quot;keyid&quot;:&quot;main&quot;,&quot;alg&quot;:&quot;rsa-v1_5-sha256&quot;}"/>
     <meta-data android:name="expo.modules.updates.ENABLED" android:value="true"/>
@@ -33,7 +33,6 @@
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="smash"/>
-        <data android:scheme="com.unstaticlabs.smashchats"/>
         <data android:scheme="exp+smashchats"/>
       </intent-filter>
     </activity>

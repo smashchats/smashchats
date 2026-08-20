@@ -8,7 +8,7 @@ import {
 } from "expo-audio";
 import type { AudioStatus } from "expo-audio";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import * as FileSystem from "expo-file-system";
+import * as FileSystem from "expo-file-system/legacy";
 
 import { Box, HStack } from "@/src/ui/design-system/layout";
 import { useGlobalDispatch, useGlobalState } from "@/src/context/GlobalContext";

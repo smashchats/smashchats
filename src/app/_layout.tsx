@@ -52,7 +52,12 @@ function RootLayout() {
     success = _success;
     error = _error;
 
-    SmashMessaging.setCrypto(window.crypto);
+    // TypeScript 5.7 made ArrayBufferView generic, so the DOM `Crypto` type no
+    // longer structurally matches the library's narrowed IRestrictedCryptoEngine.
+    // The runtime object is unchanged — this is purely a type-level mismatch.
+    SmashMessaging.setCrypto(
+        window.crypto as unknown as Parameters<typeof SmashMessaging.setCrypto>[0]
+    );
 
     useEffect(() => {
         if (error) {

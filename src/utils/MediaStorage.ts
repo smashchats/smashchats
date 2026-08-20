@@ -1,4 +1,4 @@
-import * as FileSystem from "expo-file-system";
+import * as FileSystem from "expo-file-system/legacy";
 import { eq } from "drizzle-orm";
 import { v7 as uuidv7 } from "uuid";
 import * as VideoThumbnails from "expo-video-thumbnails";

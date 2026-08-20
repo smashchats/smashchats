@@ -1,9 +1,9 @@
 import { convertImageToBase64 } from "@/src/utils/ImageUtils";
 
-import * as FileSystem from "expo-file-system";
-import { readAsStringAsync } from "expo-file-system";
+import * as FileSystem from "expo-file-system/legacy";
+import { readAsStringAsync } from "expo-file-system/legacy";
 
-jest.mock('expo-file-system', () => ({
+jest.mock('expo-file-system/legacy', () => ({
     readAsStringAsync: jest.fn(),
     EncodingType: {
         Base64: "base64"
