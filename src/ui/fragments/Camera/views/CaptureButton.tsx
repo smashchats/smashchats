@@ -30,7 +30,7 @@ const START_RECORDING_DELAY = 200;
 const BORDER_WIDTH = CAPTURE_BUTTON_SIZE * 0.1;
 
 export interface Props extends ViewProps {
-    camera: React.RefObject<Camera>;
+    camera: React.RefObject<Camera | null>;
     onMediaCaptured: (
         media: PhotoFile | VideoFile,
         type: "photo" | "video"
@@ -125,7 +125,7 @@ const _CaptureButton: React.FC<Props> = ({
     //#endregion
 
     //#region Tap handler
-    const tapHandler = useRef<TapGestureHandler>();
+    const tapHandler = useRef<TapGestureHandler | undefined>(undefined);
     const onHandlerStateChanged = useCallback(
         async ({ nativeEvent: event }: TapGestureHandlerStateChangeEvent) => {
             // This is the gesture handler for the circular "shutter" button.
@@ -202,7 +202,7 @@ const _CaptureButton: React.FC<Props> = ({
         startY?: number;
     }>({});
 
-    const panHandler = useRef<PanGesture>();
+    const panHandler = useRef<PanGesture | undefined>(undefined);
     const panGesture = Gesture.Pan()
         .failOffsetX([-SCREEN_WIDTH, SCREEN_WIDTH])
         .activeOffsetY([-2, 2])

@@ -42,7 +42,7 @@
       "blockedPermissions": [
         "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"
       ],
-      "versionCode": 21,
+      "versionCode": 22,
       "adaptiveIcon": {
         "backgroundColor": "#ffffff"
       },
@@ -64,15 +64,6 @@
         {
           "supportsBackgroundPlayback": false,
           "supportsPictureInPicture": false
-        }
-      ],
-      [
-        "react-native-edge-to-edge",
-        {
-          "android": {
-            "parentTheme": "Light",
-            "enforceNavigationBarContrast": false
-          }
         }
       ]
     ],

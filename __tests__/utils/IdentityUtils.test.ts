@@ -101,7 +101,12 @@ describe("IdentityUtils", () => {
         it("should create a new identity", async () => {
             const didDocumentManager = new DIDDocManager();
             SmashMessaging.use(didDocumentManager);
-            SmashMessaging.setCrypto(window.crypto);
+            // TypeScript 5.7 made ArrayBufferView generic, so the DOM `Crypto` type no
+            // longer structurally matches the library's narrowed IRestrictedCryptoEngine.
+            // The runtime object is unchanged — this is purely a type-level mismatch.
+            SmashMessaging.setCrypto(
+                window.crypto as unknown as Parameters<typeof SmashMessaging.setCrypto>[0]
+            );
 
             const { getData } = require("@/src/utils/StorageUtils");
             (getData as jest.Mock).mockResolvedValue(null);
@@ -120,7 +125,12 @@ describe("IdentityUtils", () => {
         it("should load an existing identity", async () => {
             const didDocumentManager = new DIDDocManager();
             SmashMessaging.use(didDocumentManager);
-            SmashMessaging.setCrypto(window.crypto);
+            // TypeScript 5.7 made ArrayBufferView generic, so the DOM `Crypto` type no
+            // longer structurally matches the library's narrowed IRestrictedCryptoEngine.
+            // The runtime object is unchanged — this is purely a type-level mismatch.
+            SmashMessaging.setCrypto(
+                window.crypto as unknown as Parameters<typeof SmashMessaging.setCrypto>[0]
+            );
 
             const { getData } = require("@/src/utils/StorageUtils");
             (getData as jest.Mock).mockResolvedValue(MOCK_IDENTITY);

@@ -16,6 +16,12 @@ jest.mock("react-native", () => ({
 describe("useKeyboard", () => {
     beforeEach(() => {
         mockMasterUnsubscription = jest.fn();
+        // afterEach calls jest.resetAllMocks(), which strips the implementation
+        // set in the module factory above. Re-establish it for every test so
+        // addListener keeps returning a subscription with .remove().
+        (Keyboard.addListener as jest.Mock).mockImplementation(() => ({
+            remove: mockMasterUnsubscription,
+        }));
     });
 
     afterEach(() => {

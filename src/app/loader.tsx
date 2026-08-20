@@ -1,8 +1,8 @@
 import { useCallback, useEffect } from "react";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import { SplashScreen, Stack } from "expo-router";
 import { PostHogProvider } from "posthog-react-native";
-import changeNavigationBarColor from "react-native-navigation-bar-color";
+import * as NavigationBar from "expo-navigation-bar";
 
 import { Logger, SmashUser, IMProfile } from "@smashchats/library";
 
@@ -19,7 +19,6 @@ import {
     getData,
 } from "@/src/utils/StorageUtils";
 import { ThemedText } from "@/src/ui/components/ThemedText";
-import { Colors } from "@/src/constants/Colors";
 
 export default function LoaderScreen() {
     const dispatch = useGlobalDispatch();
@@ -46,7 +45,12 @@ export default function LoaderScreen() {
 
     const initializeApp = async (isNewUser: boolean) => {
         await SplashScreen.hideAsync();
-        changeNavigationBarColor(Colors.background, false);
+        // Android 16 forces edge-to-edge, so the navigation bar is transparent and
+        // its background colour can no longer be set. Only the button style still
+        // applies: "light" buttons to sit over the dark app background.
+        if (Platform.OS === "android") {
+            NavigationBar.setButtonStyleAsync("light");
+        }
 
         dispatch({
             type: "SET_APP_WORKFLOW_ACTION",
