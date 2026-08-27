@@ -50,6 +50,10 @@ jobs:
     build-and-push-updates:
         runs-on: ubuntu-24.04
         needs: test-and-quality
+        # This job uploads an OTA build to the production updates server.
+        # A pull request must never publish. Only push and workflow_dispatch
+        # reach this job.
+        if: github.event_name != 'pull_request'
         steps:
             - uses: actions/checkout@v4
               with:
