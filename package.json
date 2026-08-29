@@ -33,7 +33,7 @@
     "@storybook/react-native": "^8.4.4",
     "@ungap/structured-clone": "^1.2.0",
     "drizzle-orm": "^0.36.4",
-    "expo": "~54.0.36",
+    "expo": "~57.0.17",
     "expo-application": "~7.0.8",
     "expo-audio": "~1.1.1",
     "expo-constants": "~18.0.13",
