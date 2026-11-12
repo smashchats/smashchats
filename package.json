@@ -85,7 +85,7 @@
   "devDependencies": {
     "@babel/core": "^7.26.0",
     "@gorhom/bottom-sheet": "^4.6.4",
-    "@react-native-community/cli": "^18.0.0",
+    "@react-native-community/cli": "^20.2.0",
     "@storybook/addon-ondevice-actions": "^9.1.4",
     "@storybook/addon-ondevice-controls": "^9.1.4",
     "@storybook/react-native": "^9.1.4",
